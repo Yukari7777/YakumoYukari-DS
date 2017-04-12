@@ -1,0 +1,41 @@
+Change Log Beta v10
+
+- Added Farmer difficulty.
+ㄴ Upgrade costs more ingredients but you can upgrade her unlimitedly.
+ㄴ Farmer difficulty has unique upgrade multplier after specific level.
+ㄴ First Stat is same as normal difficulty.
+
+- Upgrader panel is now 'spell' type.
+ㄴ Upgrade panel Ingredients are changed.
+ㄴ You need much more ingredients to reach maximum stats.
+
+- Added 1 more ability for each stats. 
+ㄴ You can't now upgrade lev4 upgrade in Easy defficulty.
+ㄴ Ultimate unlocking requires final level of abilites.
+
+- Yukari's abilities are nerfed.
+ㄴ Yukari now drains much more sanity when wet.
+ㄴ Decrased health regen effects.
+ㄴ Increased health regen period.
+ㄴ Health regen effects is now effect when hunger is over 80%.
+ㄴ Final Hunger Rate value is increased(0.5 -> 0.75; hunger drains faster). 
+
+- Added Chinese speech. (Thanks for translaters!)
+
+- Shadow(Nightmare) Creatures are now inspectable. Also you can disable it in mod settings.
+- Graze is now gain 0 ~ 2 power.
+- Increased Yukari Hat Upgrade ingredients.
+- Starting items are reduced over normal difficulty.
+- Reduced Spell Bewitching Butterfly ingredients.
+- Increased Spell Bewitching Butterfly power costs.
+- Upgrade notification now shows player's stored item counts.
+- Added recipe description.
+- Added Shipwrecked world's upgrade panel ingredients.
+- Some spellcards are now stackable.
+- Upgrade Panel is now floatable.
+
+- Fixed crash issue due to spellcard. 
+- Fixed upgrade ingredient in backpack wasn't costed.
+- Fixed Shift + V / Shift + B didn't work propely after Alt+Tab-ing.
+- Fixed hat upgrade comsumes more ingredients.
+- Fixed damage reduction issue.
