@@ -388,8 +388,10 @@ function MakeCard(name)
 		inst.components.finiteuses:SetMaxUses(300)
 		inst.components.finiteuses:SetUses(300)
 		inst.Activated = nil
-		fx = local function barrier()
-			if inst.fx == nil then 
+		function barrier()
+			if inst.fx then 
+				return inst.fx
+			else
 				local fx = SpawnPrefab("barrierfieldfx")
 				local fx_hitanim = function()
 				fx.AnimState:PlayAnimation("hit")
@@ -399,21 +401,18 @@ function MakeCard(name)
 				fx.AnimState:SetScale(0.7,0.7,0.7)
 				fx.AnimState:SetMultColour(0.5,0,0.5,0.3)
 				fx.Transform:SetPosition(0, 0.2, 0)
+				inst.fx = fx
 				return fx
-			else
-				return inst.fx
 			end
 		end
 		inst.components.spellcard:SetSpellFn(function()
 			local Chara = GetPlayer()
-			-- local fx = barrier()
-			inst.fx = fx
-			if inst.Activated == nil then
+			local fx = barrier()
+			if inst.Activated == nil then -- create barrier
 				inst.Activated = true
 				Chara:DoPeriodicTask(1, function()
 					if inst.Activated then
 						if Chara.components.power and Chara.components.power.current >= 1 then
-							-- fx = barrier()
 							Chara.components.power:DoDelta(-1, false)
 							Chara:AddTag("IsDamage")
 							local x,y,z = Chara.Transform:GetWorldPosition()
@@ -440,11 +439,12 @@ function MakeCard(name)
 					fx.kill_fx(fx)
 					inst.fx = nil
 				else
-					inst.Activated = true -- create barrier
+					inst.Activated = true -- enable barrier
 				end
 			end
 		end)
 		inst.components.finiteuses:SetOnFinished(function()
+			local fx = inst.fx
 			inst.Activated = false
 			fx.kill_fx(fx)
 			inst.fx = nil
