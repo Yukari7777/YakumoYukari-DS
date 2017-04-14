@@ -388,7 +388,7 @@ function MakeCard(name)
 		inst.components.finiteuses:SetMaxUses(300)
 		inst.components.finiteuses:SetUses(300)
 		inst.Activated = nil
-		function barrier()
+		local function barrier()
 			if inst.fx then 
 				return inst.fx
 			else
