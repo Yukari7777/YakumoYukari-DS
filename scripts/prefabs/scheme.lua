@@ -265,7 +265,7 @@ local function fn()
 	inst.components.spellcard:SetSpellFn( DoUpgrade )
 	inst.components.spellcard:SetOnFinish( OnFinish )
 	inst.components.spellcard:SetCondition( false )
-	inst.hatlevel = 1
+	inst.hatlevel = GetPlayer().hatlevel
 	
 	inst:AddComponent("characterspecific")
     inst.components.characterspecific:SetOwner("yakumoyukari")
