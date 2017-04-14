@@ -427,7 +427,7 @@ function MakeCard(name)
 						else 
 							Chara.components.talker:Say(GetString(Chara.prefab, "DESCRIBE_LOWPOWER"))
 							inst.Activated = false
-							fx.kill_fx(fx)
+							fx.kill_fx(inst.fx)
 							inst.fx = nil
 						end
 					else
