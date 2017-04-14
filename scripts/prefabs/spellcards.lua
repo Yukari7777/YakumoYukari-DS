@@ -388,7 +388,7 @@ function MakeCard(name)
 		inst.components.finiteuses:SetMaxUses(300)
 		inst.components.finiteuses:SetUses(300)
 		inst.Activated = nil
-		local function barrier()
+		fx = local function barrier()
 			if inst.fx == nil then 
 				local fx = SpawnPrefab("barrierfieldfx")
 				local fx_hitanim = function()
@@ -406,14 +406,14 @@ function MakeCard(name)
 		end
 		inst.components.spellcard:SetSpellFn(function()
 			local Chara = GetPlayer()
-			local fx = barrier()
+			-- local fx = barrier()
 			inst.fx = fx
 			if inst.Activated == nil then
 				inst.Activated = true
 				Chara:DoPeriodicTask(1, function()
 					if inst.Activated then
 						if Chara.components.power and Chara.components.power.current >= 1 then
-							fx = barrier()
+							-- fx = barrier()
 							Chara.components.power:DoDelta(-1, false)
 							Chara:AddTag("IsDamage")
 							local x,y,z = Chara.Transform:GetWorldPosition()
@@ -427,7 +427,7 @@ function MakeCard(name)
 						else 
 							Chara.components.talker:Say(GetString(Chara.prefab, "DESCRIBE_LOWPOWER"))
 							inst.Activated = false
-							fx.kill_fx(inst.fx)
+							fx.kill_fx(fx)
 							inst.fx = nil
 						end
 					else
