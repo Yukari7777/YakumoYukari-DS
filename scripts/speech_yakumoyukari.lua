@@ -49,12 +49,12 @@ return {
 	ANNOUNCE_KNOCKEDOUT = "Ough, my head!",
 	ANNOUNCE_LOWRESEARCH = "I didn't learn very much from that.",
 	ANNOUNCE_MOSQUITOS = "The cause of communicable diseases.",
-	ANNOUNCE_NODANGERSLEEP = "They might notice me. I can't sleep now.",
+	ANNOUNCE_NODANGERSLEEP = "They might notice me. I can't sleep for now.",
 	ANNOUNCE_NODAYSLEEP = "Well, I'm not sleepy.",
 	ANNOUNCE_NODAYSLEEP_CAVE = "Well, I'm not sleepy.",
 	ANNOUNCE_NOHUNGERSLEEP = "I didn't want to sleep while I'm starving.",
 	ANNOUNCE_NOSLEEPONFIRE = "Sleeping is not the way ignite these fire.",
-	ANNOUNCE_NODANGERSIESTA = "They should notice me. I can't sleep now.",
+	ANNOUNCE_NODANGERSIESTA = "They should notice me. I can't sleep for now.",
 	ANNOUNCE_NONIGHTSIESTA = "Night is for sleeping, not taking siestas.",
 	ANNOUNCE_NONIGHTSIESTA_CAVE = "I don't think I could really relax down here.",
 	ANNOUNCE_NOHUNGERSIESTA = "I'm too hungry for a siesta!",
@@ -296,26 +296,26 @@ return {
 		STALAGMITE_TALL_LOW="They do growth. but they aren't organism.",
 		STALAGMITE_TALL_MED="They do growth. but they aren't organism.",
 
-		TURF_CARPETFLOOR = "It's an item form now. So I can hold it.",
-		TURF_CHECKERFLOOR = "It's an item form now. So I can hold it.",
-		TURF_DIRT = "It's an item form now. So I can hold it.",
-		TURF_FOREST = "It's an item form now. So I can hold it.",
-		TURF_GRASS = "It's an item form now. So I can hold it.",
-		TURF_MARSH = "It's an item form now. So I can hold it.",
-		TURF_ROAD = "It's an item form now. So I can hold it.",
-		TURF_ROCKY = "It's an item form now. So I can hold it.",
-		TURF_SAVANNA = "It's an item form now. So I can hold it.",
-		TURF_WOODFLOOR = "It's an item form now. So I can hold it.",
+		TURF_CARPETFLOOR = "It's an item form. So I can hold it.",
+		TURF_CHECKERFLOOR = "It's an item form. So I can hold it.",
+		TURF_DIRT = "It's an item form. So I can hold it.",
+		TURF_FOREST = "It's an item form. So I can hold it.",
+		TURF_GRASS = "It's an item form. So I can hold it.",
+		TURF_MARSH = "It's an item form. So I can hold it.",
+		TURF_ROAD = "It's an item form. So I can hold it.",
+		TURF_ROCKY = "It's an item form. So I can hold it.",
+		TURF_SAVANNA = "It's an item form. So I can hold it.",
+		TURF_WOODFLOOR = "It's an item form. So I can hold it.",
 
-		TURF_CAVE="It's an item form now. So I can hold it.",
-		TURF_FUNGUS="It's an item form now. So I can hold it.",
-		TURF_SINKHOLE="It's an item form now. So I can hold it.",
-		TURF_UNDERROCK="It's an item form now. So I can hold it.",
-		TURF_MUD="It's an item form now. So I can hold it.",
+		TURF_CAVE="It's an item form. So I can hold it.",
+		TURF_FUNGUS="It's an item form. So I can hold it.",
+		TURF_SINKHOLE="It's an item form. So I can hold it.",
+		TURF_UNDERROCK="It's an item form. So I can hold it.",
+		TURF_MUD="It's an item form. So I can hold it.",
 
-		TURF_DECIDUOUS = "It's an item form now. So I can hold it.",
-		TURD_SANDY = "It's an item form now. So I can hold it.",
-		TURF_BADLANDS = "It's an item form now. So I can hold it.",
+		TURF_DECIDUOUS = "It's an item form. So I can hold it.",
+		TURD_SANDY = "It's an item form. So I can hold it.",
+		TURF_BADLANDS = "It's an item form. So I can hold it.",
 
 		POWCAKE = "I think it has no nutrient.",
         CAVE_ENTRANCE = 
@@ -413,7 +413,7 @@ return {
 		BLUE_MUSHROOM =
 		{
 			GENERIC = "It will grow back on night.",
-			INGROUND = "I can't pick it up now.",
+			INGROUND = "I can't pick it up for now.",
 			PICKED = "Will grow after raining.",
 		},
 		BOARDS = "Flat log.",
@@ -996,7 +996,7 @@ return {
 		SANITYROCK =
 		{
 			ACTIVE = "It's an active rock.", -- big
-			INACTIVE = "Seems I can go through it now.", -- small
+			INACTIVE = "Seems I can go through it for now.", -- small
 		},
 		SAPLING =
 		{
@@ -1026,7 +1026,7 @@ return {
 		{
 			DEAD = "I killed it.",
 			GENERIC = "It's not Yamame.",
-			SLEEPING = "Well, At least It's cute now.",
+			SLEEPING = "Well, At least It's cute. for now.",
 		},
 		SPIDERDEN = "eh, something was changed..",
 		SPIDEREGGSACK = "Why it's just...",
@@ -1230,7 +1230,7 @@ return {
 		LUGGAGECHEST = "Floated inventory",
 		PIRATIHATITATOR =
 		{
-			GENERIC = "Ingredients for magic is just poor now.",
+			GENERIC = "Ingredients for magic is just poor for now.",
 			BURNT = "It burnt",
 		},
 		COFFEEBEANS = "I can't smell yet.",
