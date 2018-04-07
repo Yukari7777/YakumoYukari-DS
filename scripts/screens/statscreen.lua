@@ -8,7 +8,6 @@ local Menu = require "widgets/menu"
 local Grid = require "widgets/grid"
 local Text = require "widgets/text"
 local Image = require "widgets/image"
-local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
 
 local text_font = UIFONT

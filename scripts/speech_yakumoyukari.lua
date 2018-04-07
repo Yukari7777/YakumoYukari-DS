@@ -5,7 +5,7 @@ return {
 		{
 			AWAKEBEEFALO = "I don't want to annoy him.",
 			GENERIC = "I can't shave that!",
-			NOBITS = "Poor naked one..",
+			NOBITS = "Artificial.",
 		},
 		STORE =
 		{
@@ -24,7 +24,7 @@ return {
 	ANNOUNCE_CHARLIE_ATTACK = "IT FORCES ME OUT OF THIS WORLD!!",
 	ANNOUNCE_COLD = "It's Too Cold!",
 	ANNOUNCE_HOT = "I can't resist anymore!",
-	ANNOUNCE_CRAFTING_FAIL = "I don't have all of the ingredients.",
+	ANNOUNCE_CRAFTING_FAIL = "I don't have enough of the ingredients.",
 	ANNOUNCE_DEERCLOPS = "I feel something huge is coming!",
 	ANNOUNCE_DUSK = "I'm getting sleepy..",
 	ANNOUNCE_EAT =
@@ -35,10 +35,10 @@ return {
 		STALE = "That wass not actually food.",
 		INVALID = "I can eat humans but this is not!",
 	},
-	ANNOUNCE_ENTER_DARK = "It's BLACK!",
+	ANNOUNCE_ENTER_DARK = "It's #000000!",
 	ANNOUNCE_ENTER_LIGHT = "Now I can see a color.",
 	ANNOUNCE_FREEDOM = "Finally, I can rest in my home!",
-	ANNOUNCE_HIGHRESEARCH = "Leaning is.. unlimited",
+	ANNOUNCE_HIGHRESEARCH = "To the Akashic Records.",
 	ANNOUNCE_HOUNDS = "Hounds are coming!",
 	ANNOUNCE_SHARX = "Jaws!",
 	ANNOUNCE_HUNGRY = "Time to eat some food.",
@@ -49,12 +49,12 @@ return {
 	ANNOUNCE_KNOCKEDOUT = "Ough, my head!",
 	ANNOUNCE_LOWRESEARCH = "I didn't learn very much from that.",
 	ANNOUNCE_MOSQUITOS = "The cause of communicable diseases.",
-	ANNOUNCE_NODANGERSLEEP = "They might notice me. I can't sleep for now.",
+	ANNOUNCE_NODANGERSLEEP = "They might notice me. I can't sleep now.",
 	ANNOUNCE_NODAYSLEEP = "Well, I'm not sleepy.",
 	ANNOUNCE_NODAYSLEEP_CAVE = "Well, I'm not sleepy.",
 	ANNOUNCE_NOHUNGERSLEEP = "I didn't want to sleep while I'm starving.",
 	ANNOUNCE_NOSLEEPONFIRE = "Sleeping is not the way ignite these fire.",
-	ANNOUNCE_NODANGERSIESTA = "They should notice me. I can't sleep for now.",
+	ANNOUNCE_NODANGERSIESTA = "They should notice me. I can't sleep now.",
 	ANNOUNCE_NONIGHTSIESTA = "Night is for sleeping, not taking siestas.",
 	ANNOUNCE_NONIGHTSIESTA_CAVE = "I don't think I could really relax down here.",
 	ANNOUNCE_NOHUNGERSIESTA = "I'm too hungry for a siesta!",
@@ -108,18 +108,18 @@ return {
 	
 	BATTLECRY =
 	{
-		GENERIC = "I'll let you a death!",
-		PIG = "Ha! Now I kick a piggy!",
-		PREY = "I will erase you!",
+		GENERIC = "I'll let you should have been.",
+		PIG = "I will kick you!",
+		PREY = "Death devours you!",
 		SPIDER = "I'll let your guts out!",
-		SPIDER_WARRIOR = "Hey! You wanna go?",
+		SPIDER_WARRIOR = "I'm going to show you the physical difference!",
 	},
 	COMBAT_QUIT =
 	{
-		GENERIC = "Now you murdered by me.",
+		GENERIC = "The state you should have been.",
 		PIG = "That pos is what I supposed to!",
 		PREY = "You were weaker then me.",
-		SPIDER = "Still Creepy!",
+		SPIDER = "Still Creepy.",
 		SPIDER_WARRIOR = "How Weak were you!",
 	},
 	DESCRIBE =
@@ -127,7 +127,7 @@ return {
         GLOMMER = "Hey! can you see UV rays?",
         GLOMMERFLOWER = 
         {
-        	GENERIC = "Rafflesia! But, seems it smells nothing.",
+        	GENERIC = "Rafflesia, without smell.",
         	DEAD = "I'm weird what if it smells like a heck.",
         },
         GLOMMERWINGS = "Did It floated with this wings?",
@@ -143,7 +143,7 @@ return {
 		WORMLIGHT = "Is this digestible?",
 		WORM =
 		{
-		    PLANT = "It lures me.",
+		    PLANT = "It lures me blatantly.",
 		    DIRT = "The worm inside of it.",
 		    WORM = "What a huge worm!",
 		},
@@ -296,26 +296,26 @@ return {
 		STALAGMITE_TALL_LOW="They do growth. but they aren't organism.",
 		STALAGMITE_TALL_MED="They do growth. but they aren't organism.",
 
-		TURF_CARPETFLOOR = "It's an item form. So I can hold it.",
-		TURF_CHECKERFLOOR = "It's an item form. So I can hold it.",
-		TURF_DIRT = "It's an item form. So I can hold it.",
-		TURF_FOREST = "It's an item form. So I can hold it.",
-		TURF_GRASS = "It's an item form. So I can hold it.",
-		TURF_MARSH = "It's an item form. So I can hold it.",
-		TURF_ROAD = "It's an item form. So I can hold it.",
-		TURF_ROCKY = "It's an item form. So I can hold it.",
-		TURF_SAVANNA = "It's an item form. So I can hold it.",
-		TURF_WOODFLOOR = "It's an item form. So I can hold it.",
+		TURF_CARPETFLOOR = "It's an item form now. So I can hold it.",
+		TURF_CHECKERFLOOR = "It's an item form now. So I can hold it.",
+		TURF_DIRT = "It's an item form now. So I can hold it.",
+		TURF_FOREST = "It's an item form now. So I can hold it.",
+		TURF_GRASS = "It's an item form now. So I can hold it.",
+		TURF_MARSH = "It's an item form now. So I can hold it.",
+		TURF_ROAD = "It's an item form now. So I can hold it.",
+		TURF_ROCKY = "It's an item form now. So I can hold it.",
+		TURF_SAVANNA = "It's an item form now. So I can hold it.",
+		TURF_WOODFLOOR = "It's an item form now. So I can hold it.",
 
-		TURF_CAVE="It's an item form. So I can hold it.",
-		TURF_FUNGUS="It's an item form. So I can hold it.",
-		TURF_SINKHOLE="It's an item form. So I can hold it.",
-		TURF_UNDERROCK="It's an item form. So I can hold it.",
-		TURF_MUD="It's an item form. So I can hold it.",
+		TURF_CAVE="It's an item form now. So I can hold it.",
+		TURF_FUNGUS="It's an item form now. So I can hold it.",
+		TURF_SINKHOLE="It's an item form now. So I can hold it.",
+		TURF_UNDERROCK="It's an item form now. So I can hold it.",
+		TURF_MUD="It's an item form now. So I can hold it.",
 
-		TURF_DECIDUOUS = "It's an item form. So I can hold it.",
-		TURD_SANDY = "It's an item form. So I can hold it.",
-		TURF_BADLANDS = "It's an item form. So I can hold it.",
+		TURF_DECIDUOUS = "It's an item form now. So I can hold it.",
+		TURD_SANDY = "It's an item form now. So I can hold it.",
+		TURF_BADLANDS = "It's an item form now. So I can hold it.",
 
 		POWCAKE = "I think it has no nutrient.",
         CAVE_ENTRANCE = 
@@ -413,7 +413,7 @@ return {
 		BLUE_MUSHROOM =
 		{
 			GENERIC = "It will grow back on night.",
-			INGROUND = "I can't pick it up for now.",
+			INGROUND = "I can't pick it up now.",
 			PICKED = "Will grow after raining.",
 		},
 		BOARDS = "Flat log.",
@@ -996,7 +996,7 @@ return {
 		SANITYROCK =
 		{
 			ACTIVE = "It's an active rock.", -- big
-			INACTIVE = "Seems I can go through it for now.", -- small
+			INACTIVE = "Seems I can go through it now.", -- small
 		},
 		SAPLING =
 		{
@@ -1026,7 +1026,7 @@ return {
 		{
 			DEAD = "I killed it.",
 			GENERIC = "It's not Yamame.",
-			SLEEPING = "Well, At least It's cute. for now.",
+			SLEEPING = "Well, At least It's cute now.",
 		},
 		SPIDERDEN = "eh, something was changed..",
 		SPIDEREGGSACK = "Why it's just...",
@@ -1230,7 +1230,7 @@ return {
 		LUGGAGECHEST = "Floated inventory",
 		PIRATIHATITATOR =
 		{
-			GENERIC = "Ingredients for magic is just poor for now.",
+			GENERIC = "Ingredients for magic is just poor now.",
 			BURNT = "It burnt",
 		},
 		COFFEEBEANS = "I can't smell yet.",
@@ -1459,7 +1459,7 @@ return {
 			BURNING = "Combustion",
 			BURNT = "It burnt.",
 			CHOPPED = "It cut.",
-			GENERIC = "Watch out for palms falling",
+			GENERIC = "Watch out for palms falling!",
 		},
 		PALMLEAF = "What a large leaf, might be useful.",
 		CHIMINEA = "Windproof pit",
@@ -1476,7 +1476,7 @@ return {
 		},
 		VOLCANO_EXIT = "It's an exit.",
 		SHARX = "That remind me about Jaws.",
-		SEASHELL = "Murasa liked this.",
+		SEASHELL = "It's like Murasa",
 		WHALE_BUBBLES = "Giant Beast is under water.",
 		MAGMAROCK = "Dig it!",
 		MAGMAROCK_GOLD = "Something gold is in here.",
@@ -1623,7 +1623,27 @@ return {
         INVENTORYMOUND = "",
 		LIMPETS_COOKED = "It smells good",
 		RAWLING = "It's weird.",
+
+		ENCRUSTEDBOAT = "Can this be floated?",
+        BABYOX = "That's not cute.",
+        BALLPHINHOUSE = "Ballphin's house. More like playgounds",
+        DORSALFIN = "The dorsal fin of.. carbone?",
+        NUBBIN = "The seed of sea.",
+        CORALLARVE = "That's a baby coral reef.", -------------
+        RAINBOWJELLYFISH = "That's a lot of tendrils.",
+        RAINBOWJELLYFISH_PLANTED = "A colorful blob of science.",
+        RAINBOWJELLYFISH_DEAD = "An electric shock will not revive it. I tried.",
+        RAINBOWJELLYFISH_COOKED = "A colorful snack!",
+        RAINBOWJELLYJERKY = "All the water's dried right out of it.",
+        WALL_ENFORCEDLIMESTONE = "I shelled out for the good stuff.",
+        WALL_ENFORCEDLIMESTONE_ITEM = "I have to build it in the water.",
+        CROCODOG = "I'd rather stay away from the business end of that jerk.",
+        POISONCROCODOG = "That looks like an experiment gone wrong.",
+        WATERCROCODOG = "It's a dog-eat-me world out here.",
+        QUACKENBEAK = "I'd say I made the pecking order around here quite clear.",
+        QUACKERINGRAM = "Does my ingenuity know no bounds?!",
 		
+		-------------- Examinations of shadow creatures ---------------
 		CREAWLINGNIGHTMARE = "Reincarnation. Your existence is unlimited.",
 		NIGHTMAREBEAK = "Reincarnation. Your existence is unlimited.",
 		CRAWLINGHORROR = "Improbitas. Licks human of greed.",
@@ -1635,7 +1655,7 @@ return {
 		CREEPYEYES = "Superintentor. But you can't see inside.",
 	},
 	DESCRIBE_GENERIC = "I don't even know about this.",
-	DESCRIBE_TOODARK = "It's BLACK!",
+	DESCRIBE_TOODARK = "It's #000000!",
 	DESCRIBE_SMOLDERING = "That thing is about to catch fire.",
 		
 	DESCRIBE_LOWPOWER = "I don't have enough power!",

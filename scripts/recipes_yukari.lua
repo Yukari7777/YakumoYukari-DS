@@ -14,9 +14,9 @@ local function RecipePostInit(yakumoyukari)
 	
 	if IsDLCEnabled(GLOBAL.CAPY_DLC) then
 		if Difficulty == "easy" then
-			local healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("log", 5), Ingredient("honey", 2)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
+			local healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("spidergland", 2), Ingredient("honey", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
 			healthpanelrecipe.atlas = "images/inventoryimages/healthpanel.xml"
-			local sw_healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("log", 3), Ingredient("honey", 3)}, RECIPETABS.TOUHOU, {SCIENCE = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
+			local sw_healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("log", 5), Ingredient("honey", 2)}, RECIPETABS.TOUHOU, {SCIENCE = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
 			sw_healthpanelrecipe.atlas = "images/inventoryimages/healthpanel.xml"
 			local hungerpanelrecipe = Recipe( ("hungerpanel"), {Ingredient("meatballs", 2)}, RECIPETABS.TOUHOU, {SCIENCE = 2} )
 			hungerpanelrecipe.atlas = "images/inventoryimages/hungerpanel.xml"
@@ -24,16 +24,16 @@ local function RecipePostInit(yakumoyukari)
 			sw_hungerpanelrecipe.atlas = "images/inventoryimages/hungerpanel.xml"
 			local sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("petals", 4), Ingredient("nightmarefuel", 1)}, RECIPETABS.TOUHOU, {MAGIC = 1} )
 			sanitypanelrecipe.atlas = "images/inventoryimages/sanitypanel.xml"
-			local sw_sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("seashell", 4)}, RECIPETABS.TOUHOU, {MAGIC = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
+			local sw_sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("seashell", 4), Ingredient("tar", 2)}, RECIPETABS.TOUHOU, {MAGIC = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
 			sw_sanitypanelrecipe.atlas = "images/inventoryimages/sanitypanel.xml"
-			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("purplegem", 1), Ingredient("livinglog", 2)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
+			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("houndstooth", 3), Ingredient("livinglog", 1)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
 			powerpanelrecipe.atlas = "images/inventoryimages/powerpanel.xml"
-			local sw_powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("goldnugget", 3), Ingredient("livinglog", 2)}, RECIPETABS.TOUHOU, {MAGIC = 2}, RECIPE_GAME_TYPE.SHIPWRECKED )
+			local sw_powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("houndstooth", 2), Ingredient("shark_fin", 1)}, RECIPETABS.TOUHOU, {MAGIC = 2}, RECIPE_GAME_TYPE.SHIPWRECKED )
 			sw_powerpanelrecipe.atlas = "images/inventoryimages/powerpanel.xml"
 		else
-			local healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("log", 10), Ingredient("honey", 5)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
+			local healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("spidergland", 5), Ingredient("honey", 2)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
 			healthpanelrecipe.atlas = "images/inventoryimages/healthpanel.xml"
-			local sw_healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("log", 7), Ingredient("honey", 7)}, RECIPETABS.TOUHOU, {SCIENCE = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
+			local sw_healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("honey", 3), Ingredient("venomgland", 2)}, RECIPETABS.TOUHOU, {SCIENCE = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
 			sw_healthpanelrecipe.atlas = "images/inventoryimages/healthpanel.xml"
 			local hungerpanelrecipe = Recipe( ("hungerpanel"), {Ingredient("meatballs", 3), Ingredient("bonestew", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 2} )
 			hungerpanelrecipe.atlas = "images/inventoryimages/hungerpanel.xml"
@@ -41,11 +41,11 @@ local function RecipePostInit(yakumoyukari)
 			sw_hungerpanelrecipe.atlas = "images/inventoryimages/hungerpanel.xml"
 			local sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("petals_evil", 4), Ingredient("nightmarefuel", 2)}, RECIPETABS.TOUHOU, {MAGIC = 1} )
 			sanitypanelrecipe.atlas = "images/inventoryimages/sanitypanel.xml"
-			local sw_sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("seashell", 10), Ingredient("nightmarefuel", 2)}, RECIPETABS.TOUHOU, {MAGIC = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
+			local sw_sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("seashell", 6), Ingredient("tar", 6), Ingredient("nightmarefuel", 1)}, RECIPETABS.TOUHOU, {MAGIC = 1}, RECIPE_GAME_TYPE.SHIPWRECKED )
 			sw_sanitypanelrecipe.atlas = "images/inventoryimages/sanitypanel.xml"
-			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("purplegem", 3), Ingredient("livinglog", 3)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
+			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("houndstooth", 5), Ingredient("livinglog", 2)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
 			powerpanelrecipe.atlas = "images/inventoryimages/powerpanel.xml"
-			local sw_powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("goldnugget", 10), Ingredient("livinglog", 3)}, RECIPETABS.TOUHOU, {MAGIC = 2}, RECIPE_GAME_TYPE.SHIPWRECKED )
+			local sw_powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("houndstooth", 4), Ingredient("shark_fin", 2)}, RECIPETABS.TOUHOU, {MAGIC = 2}, RECIPE_GAME_TYPE.SHIPWRECKED )
 			sw_powerpanelrecipe.atlas = "images/inventoryimages/powerpanel.xml"
 		end
 		
@@ -80,17 +80,17 @@ local function RecipePostInit(yakumoyukari)
 		sanityultrecipe.atlas = "images/inventoryimages/sanityult.xml"
 		local powerultrecipe = Recipe( ("powerult"), {Ingredient("minotaurhorn", 1), Ingredient("goose_feather", 5), Ingredient("transistor", 10), Ingredient("gears", 10)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, RECIPE_GAME_TYPE.ROG, nil, nil, true)
 		powerultrecipe.atlas = "images/inventoryimages/powerult.xml"
-		local spellnecrorecipe = Recipe( ("spellcard_necro"), {Ingredient("thulecite", 10), Ingredient("purplegem", 10), Ingredient("greengem", 2)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, RECIPE_GAME_TYPE.ROG, nil, nil, true)
+		local spellnecrorecipe = Recipe( ("spellcard_necro"), {Ingredient("nightmarefuel", 10), Ingredient("thulecite", 4), Ingredient("purplegem", 4)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, RECIPE_GAME_TYPE.ROG, nil, nil, true)
 		spellnecrorecipe.atlas = "images/inventoryimages/spellcard_necro.xml"
 		local sw_healthultrecipe = Recipe( ("healthultsw"), {Ingredient("ruins_bat", 1), Ingredient("nightsword", 2), Ingredient("antivenom", 5), Ingredient("obsidian", 10)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
 		sw_healthultrecipe.atlas = "images/inventoryimages/healthultsw.xml"
-		local sw_hungerultrecipe = Recipe( ("hungerultsw"), {Ingredient("volcanostaff", 1), Ingredient("obsidiancoconade", 3), Ingredient("dragoonheart", 3)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
+		local sw_hungerultrecipe = Recipe( ("hungerultsw"), {Ingredient("obsidiancoconade", 3), Ingredient("tigereye", 1), Ingredient("doydoyegg", 3) }, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
 		sw_hungerultrecipe.atlas = "images/inventoryimages/hungerultsw.xml"
-		local sw_sanityultrecipe = Recipe( ("sanityultsw"), {Ingredient("magic_seal", 1), Ingredient("tigereye", 1), Ingredient("coral_brain", 4)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
+		local sw_sanityultrecipe = Recipe( ("sanityultsw"), {Ingredient("magic_seal", 1), Ingredient("volcanostaff", 1), Ingredient("coral_brain", 4)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
 		sw_sanityultrecipe.atlas = "images/inventoryimages/sanityultsw.xml"
-		local sw_powerultrecipe = Recipe( ("powerultsw"), {Ingredient("doydoyegg", 3), Ingredient("shark_gills", 3), Ingredient("shark_fin", 4), Ingredient("doydoyfeather", 6)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
+		local sw_powerultrecipe = Recipe( ("powerultsw"), {Ingredient("quackenbeak", 1), Ingredient("shark_gills", 3), Ingredient("shark_fin", 5), Ingredient("doydoyfeather", 6)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
 		sw_powerultrecipe.atlas = "images/inventoryimages/powerultsw.xml"
-		local sw_spellnecrorecipe = Recipe( ("spellcard_necro"), {Ingredient("obsidian", 10), Ingredient("purplegem", 3), Ingredient("magic_seal", 1)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
+		local sw_spellnecrorecipe = Recipe( ("spellcard_necro"), {Ingredient("nightmarefuel", 8), Ingredient("obsidian", 4), Ingredient("dragoonheart", 2)}, RECIPETABS.TOUHOU, TECH.OBSIDIAN_TWO, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true)
 		sw_spellnecrorecipe.atlas = "images/inventoryimages/spellcard_necro.xml"
 	else
 	
@@ -101,7 +101,7 @@ local function RecipePostInit(yakumoyukari)
 			hungerpanelrecipe.atlas = "images/inventoryimages/hungerpanel.xml"
 			local sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("petals", 3), Ingredient("nightmarefuel", 1)}, RECIPETABS.TOUHOU, {MAGIC = 1} )
 			sanitypanelrecipe.atlas = "images/inventoryimages/sanitypanel.xml"
-			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("purplegem", 1), Ingredient("livinglog", 2)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
+			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("houndstooth", 2), Ingredient("livinglog", 1)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
 			powerpanelrecipe.atlas = "images/inventoryimages/powerpanel.xml"
 		else
 			local healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("healingsalve", 2), Ingredient("log", 3)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
@@ -110,7 +110,7 @@ local function RecipePostInit(yakumoyukari)
 			hungerpanelrecipe.atlas = "images/inventoryimages/hungerpanel.xml"
 			local sanitypanelrecipe = Recipe( ("sanitypanel"), {Ingredient("petals", 4), Ingredient("nightmarefuel", 2)}, RECIPETABS.TOUHOU, {MAGIC = 1} )
 			sanitypanelrecipe.atlas = "images/inventoryimages/sanitypanel.xml"
-			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("purplegem", 2), Ingredient("livinglog", 3)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
+			local powerpanelrecipe = Recipe( ("powerpanel"), {Ingredient("houndstooth", 4), Ingredient("livinglog", 2)}, RECIPETABS.TOUHOU, {MAGIC = 2} )
 			powerpanelrecipe.atlas = "images/inventoryimages/powerpanel.xml"
 		end
 		
@@ -136,13 +136,13 @@ local function RecipePostInit(yakumoyukari)
 		spelllaplacerecipe.atlas = "images/inventoryimages/spellcard_laplace.xml"
 		local healthultrecipe = Recipe( ("healthult"), {Ingredient("dragon_scales", 1), Ingredient("trunk_winter", 1), Ingredient("ice", 30)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, nil, nil, true)
 		healthultrecipe.atlas = "images/inventoryimages/healthult.xml"
-		local hungerultrecipe = Recipe( ("hungerult"), {Ingredient("bearger_fur", 1), Ingredient("armormarble", 1), Ingredient("bonestew", 5)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, nil, nil, true)
+		local hungerultrecipe = Recipe( ("hungerult"), {Ingredient("bearger_fur", 1), Ingredient("bonestew", 8), Ingredient("armormarble", 1)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, nil, nil, true)
 		hungerultrecipe.atlas = "images/inventoryimages/hungerult.xml"
-		local sanityultrecipe = Recipe( ("sanityult"), {Ingredient("deerclops_eyeball", 1), Ingredient("orangegem", 3), Ingredient("yellowgem", 3), Ingredient("greengem", 3)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, nil, nil, true)
+		local sanityultrecipe = Recipe( ("sanityult"), {Ingredient("deerclops_eyeball", 1), Ingredient("orangegem", 4), Ingredient("yellowgem", 4), Ingredient("greengem", 4)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, nil, nil, true)
 		sanityultrecipe.atlas = "images/inventoryimages/sanityult.xml"
 		local powerultrecipe = Recipe( ("powerult"), {Ingredient("minotaurhorn", 1), Ingredient("goose_feather", 5), Ingredient("transistor", 10), Ingredient("gears", 10)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR, nil, nil, true)
 		powerultrecipe.atlas = "images/inventoryimages/powerult.xml"
-		local spellnecrorecipe = Recipe( ("spellcard_necro"), {Ingredient("thulecite", 10), Ingredient("purplegem", 10), Ingredient("greengem", 2)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR)
+		local spellnecrorecipe = Recipe( ("spellcard_necro"), {Ingredient("nightmarefuel", 10), Ingredient("thulecite", 4), Ingredient("purplegem", 4)}, RECIPETABS.TOUHOU, TECH.ANCIENT_FOUR)
 		spellnecrorecipe.atlas = "images/inventoryimages/spellcard_necro.xml"
 	end
 end
