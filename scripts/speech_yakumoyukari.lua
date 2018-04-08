@@ -268,11 +268,11 @@ return {
 		FLOWER_CAVE_TRIPLE="That's not a LED.",
 		GUANO="Extra smelly.",
 		LANTERN="It's a bit heavy.",
-		LIGHTBULB="...Edible lightbulb.",
+		LIGHTBULB="...Edible light bulb.",
 		MANRABBIT_TAIL="So furry.",
 		MUSHTREE_TALL  ="This one is taller than common trees!.",
 		MUSHTREE_MEDIUM="Looks different with Minecraft ones.",
-		MUSHTREE_SMALL ="Green magic mushtree.",
+		MUSHTREE_SMALL ="Green magic mush-tree.",
 		RABBITHOUSE=
 		{
 			GENERIC = "Are they really like carrots?",
@@ -282,8 +282,8 @@ return {
 		SLURTLE_SHELLPIECES="Looks good ingredients for flowerpot.",
 		SLURTLEHAT="It's unexpectedly tight as head.",
 		SLURTLEHOLE="Why this is so spiky?",
-		SLURTLESLIME="An explodable slime.",
-		SNURTLE="He seems to be less agressive.",
+		SLURTLESLIME="An explosive slime.",
+		SNURTLE="He seems to be less aggressive.",
 		SPIDER_HIDER="Their skins are so tight!",
 		SPIDER_SPITTER="Common AD monster.",
 		SPIDERHOLE="Looks like a spider den.",
@@ -1287,7 +1287,7 @@ return {
 		FISHINHOLE = "Lots of planktons are here.",
 		GOLDENMACHETE = "It's a golden machete.",
 		JELLYFISH = "Scyphozoa Creature.",
-		JELLYFISH_PLANTED = "How do I explain it?",
+		JELLYFISH_PLANTED = "How do I explain it? An invertebrate?",
 		JELLYJERKY = "Unpleasantly tough.",
 
 		LIMPETROCK =
@@ -1628,20 +1628,82 @@ return {
         BABYOX = "That's not cute.",
         BALLPHINHOUSE = "Ballphin's house. More like playgounds",
         DORSALFIN = "The dorsal fin of.. carbone?",
-        NUBBIN = "The seed of sea.",
-        CORALLARVE = "That's a baby coral reef.", -------------
-        RAINBOWJELLYFISH = "That's a lot of tendrils.",
+        NUBBIN = "A coral starter",
+        CORALLARVE = "The seed of coral.",
+        RAINBOWJELLYFISH = "This one might use most of the energy for lit.",
         RAINBOWJELLYFISH_PLANTED = "A colorful blob of science.",
-        RAINBOWJELLYFISH_DEAD = "An electric shock will not revive it. I tried.",
-        RAINBOWJELLYFISH_COOKED = "A colorful snack!",
-        RAINBOWJELLYJERKY = "All the water's dried right out of it.",
-        WALL_ENFORCEDLIMESTONE = "I shelled out for the good stuff.",
-        WALL_ENFORCEDLIMESTONE_ITEM = "I have to build it in the water.",
-        CROCODOG = "I'd rather stay away from the business end of that jerk.",
-        POISONCROCODOG = "That looks like an experiment gone wrong.",
-        WATERCROCODOG = "It's a dog-eat-me world out here.",
-        QUACKENBEAK = "I'd say I made the pecking order around here quite clear.",
-        QUACKERINGRAM = "Does my ingenuity know no bounds?!",
+        RAINBOWJELLYFISH_DEAD = "Was this a Self-luminous?",
+        RAINBOWJELLYFISH_COOKED = "The color never dim.",
+        RAINBOWJELLYJERKY = "What a painted jerky",
+        WALL_ENFORCEDLIMESTONE = "I hope this doesn't rot.",
+        WALL_ENFORCEDLIMESTONE_ITEM = "Won't this rot?",
+        CROCODOG = "Shipwreked version of hounds. Still aggressive.",
+        POISONCROCODOG = "A radioactive mutation.",
+        WATERCROCODOG = "OK, this looks more radioactive..",
+        QUACKENBEAK = "This one is like an obsidian with more hardness.",
+        QUACKERINGRAM = "Almost invincible!",
+		
+		CAVIAR = "Developers couldn't put this game an salmon-roe-sushi.",
+        CORMORANT = "Phalacrocorax spp. This one used to catch some fishes.",
+
+        FISH3 = "Your color looks purple but not Yukari.",
+        FISH4 = "Some tropical fishes may colored like this I think.",
+        FISH5 = "A Solid-colored Paracheirodon.",
+
+        FISH3_COOKED = "", -----------------
+        FISH4_COOKED = "Fish are host to all sorts of parasites, you know.",
+        FISH5_COOKED = "A cousin of Paracheirodon innesi, ready for dinner.",
+
+        FISH_FARM = 
+        {
+            EMPTY = "I must find roe if I'm to raise captive fish.",
+            STOCKED = "The fish roe will mature soon.",
+            ONEFISH = "Domestication was a success!",
+            TWOFISH = "It seems to be doing quite well.",
+            REDFISH = "My, what a yield!",
+            BLUEFISH  = "How studious. They've formed a whole school.",
+        },
+
+        ROE = "The first stage in the fish life cycle.",
+        ROE_COOKED = "The first and last stages of this life cycle.",
+        
+        SEA_YARD = 
+        {
+            ON = "It's at peak performance.",
+            OFF = "I must procure a new fuel source.",
+            LOWFUEL = "The fuel is running quite low.",
+        },
+        SEA_CHIMINEA =
+        {
+            EMBERS = "I risk losing my fire without more fuel.",
+            GENERIC = "That should serve my purposes nicely.",
+            HIGH = "Quite the blaze!",
+            LOW = "It's getting a touch low.",
+            NORMAL = "It's burning quite well.",
+            OUT = "It will need to be relit.",
+        }, 
+
+        TAR = "Historically used for waterproofing ships.",
+        TAR_EXTRACTOR =
+        {
+            ON = "I must remember to switch it off when done.",
+            OFF = "I must switch it on to begin tar extraction.",
+            LOWFUEL = "I'll need to refuel it if I want more tar.",
+        },
+        TAR_POOL = "It appears to be a natural tar well.",
+
+        TARLAMP = "Tar ought to combust quite well in this.",
+        TARSUIT = "Effective, but not very durable.",
+        TAR_TRAP = "Well, anyone ensnared will preserve quite nicely.",
+
+        TROPICALBOUILLABAISSE = "An inventive twist on a traditional Marseille dish.",
+
+        RESEARCHLAB5 = "A dedicated scholar can study anywhere.",
+        WATERCHEST = "A buoy I repurposed as a storage device.",
+        QUACKENDRILL = "An implement of deepwater drilling.",
+        HARPOON = "I do hope my throwing arm's not rusty.",
+        MUSSEL_BED = "These mollusks will be sure to thrive once planted.",
+		
 		
 		-------------- Examinations of shadow creatures ---------------
 		CREAWLINGNIGHTMARE = "Reincarnation. Your existence is unlimited.",
