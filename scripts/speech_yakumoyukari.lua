@@ -1650,43 +1650,43 @@ return {
         FISH4 = "Some tropical fishes may colored like this I think.",
         FISH5 = "A Solid-colored Paracheirodon.",
 
-        FISH3_COOKED = "", -----------------
-        FISH4_COOKED = "Fish are host to all sorts of parasites, you know.",
-        FISH5_COOKED = "A cousin of Paracheirodon innesi, ready for dinner.",
+        FISH3_COOKED = "Now you don't even look like Yukari.",
+        FISH4_COOKED = "It looks like Ananas flavor.",
+        FISH5_COOKED = "Oh, It's not solid-colored inside.",
 
         FISH_FARM = 
         {
             EMPTY = "I must find roe if I'm to raise captive fish.",
-            STOCKED = "The fish roe will mature soon.",
-            ONEFISH = "Domestication was a success!",
+            STOCKED = "I believe this should work.",
+            ONEFISH = "It works at least.",
             TWOFISH = "It seems to be doing quite well.",
-            REDFISH = "My, what a yield!",
-            BLUEFISH  = "How studious. They've formed a whole school.",
+            REDFISH = "Not quite bad.",
+            BLUEFISH  = "I need to harvest this right now.",
         },
 
-        ROE = "The first stage in the fish life cycle.",
-        ROE_COOKED = "The first and last stages of this life cycle.",
+        ROE = "With some rice would be perfect.",
+        ROE_COOKED = "All I needed to do was just put this on rice.",
         
         SEA_YARD = 
         {
-            ON = "It's at peak performance.",
-            OFF = "I must procure a new fuel source.",
-            LOWFUEL = "The fuel is running quite low.",
+            ON = "What an over-technology.",
+            OFF = "It needs tar to work again.",
+            LOWFUEL = "It needs energy source.",
         },
         SEA_CHIMINEA =
         {
-            EMBERS = "I risk losing my fire without more fuel.",
-            GENERIC = "That should serve my purposes nicely.",
-            HIGH = "Quite the blaze!",
-            LOW = "It's getting a touch low.",
-            NORMAL = "It's burning quite well.",
-            OUT = "It will need to be relit.",
+            EMBERS = "It is going to be disappeared.",
+			GENERIC = "Boring.",
+			HIGH = "Much warmer.",
+			LOW = "Better put some fuels on it.",
+			NORMAL = "What's the next plan?",
+			OUT = "Well, that's over.",
         }, 
 
-        TAR = "Historically used for waterproofing ships.",
+        TAR = "It looks like coal tar rather than asphalt.",
         TAR_EXTRACTOR =
         {
-            ON = "I must remember to switch it off when done.",
+            ON = "", ------------------------
             OFF = "I must switch it on to begin tar extraction.",
             LOWFUEL = "I'll need to refuel it if I want more tar.",
         },
