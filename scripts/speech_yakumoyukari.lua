@@ -1686,23 +1686,23 @@ return {
         TAR = "It looks like coal tar rather than asphalt.",
         TAR_EXTRACTOR =
         {
-            ON = "", ------------------------
+            ON = "It's working now",
             OFF = "I must switch it on to begin tar extraction.",
             LOWFUEL = "I'll need to refuel it if I want more tar.",
         },
-        TAR_POOL = "It appears to be a natural tar well.",
+        TAR_POOL = "This is real natural tar seep.",
 
-        TARLAMP = "Tar ought to combust quite well in this.",
-        TARSUIT = "Effective, but not very durable.",
-        TAR_TRAP = "Well, anyone ensnared will preserve quite nicely.",
+        TARLAMP = "Smells bad.",
+        TARSUIT = "Argh, should I pour this on?",
+        TAR_TRAP = "Dirtiest trap ever.",
 
-        TROPICALBOUILLABAISSE = "An inventive twist on a traditional Marseille dish.",
+        TROPICALBOUILLABAISSE = "Traditional Provençal fish stew.",
 
-        RESEARCHLAB5 = "A dedicated scholar can study anywhere.",
-        WATERCHEST = "A buoy I repurposed as a storage device.",
-        QUACKENDRILL = "An implement of deepwater drilling.",
-        HARPOON = "I do hope my throwing arm's not rusty.",
-        MUSSEL_BED = "These mollusks will be sure to thrive once planted.",
+        RESEARCHLAB5 = "I don't even know what I've made...",
+        WATERCHEST = "Hope this doesn't flew away.",
+        QUACKENDRILL = "I can get more tar if I used this at sea.",
+        HARPOON = "One of the most primitive fishing mechanism.",
+        MUSSEL_BED = "I should be careful setting it.",
 		
 		
 		-------------- Examinations of shadow creatures ---------------
