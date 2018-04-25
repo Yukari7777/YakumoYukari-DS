@@ -7,17 +7,17 @@ local assets=
 prefabs = {}
 
 local Ingredients = {
-	{{"rocks", 40}, {"log", 40}},
+	{{"rocks", 60}, {"log", 60}},
 	{{"silk", 30}, {"pigskin", 20}, {"tentaclespots", 10}, {"strawhat", 1}},
-	{{"monstermeat", 50}, {"nightmarefuel", 30}, {"livinglog", 20}, {"dragon_scales", 1}},
-	{{"thulecite", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_laplace", 2}, {"spellcard_necro", 1}}
+	{{"monstermeat", 50}, {"nightmarefuel", 30}, {"livinglog", 20}, {"purplegem", 10}, {"dragon_scales", 1}},
+	{{"thulecite", 40}, {"orangegem", 5}, {"greengem", 5}, {"yellowgem", 5}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
 }
 
 local Ingredients_sw = {
-	{{"rocks", 20}, {"log", 20}, {"bamboo", 10}, {"vine", 10}},
-	{{"silk", 25}, {"pigskin", 15}, {"limestone", 10}, {"strawhat", 1}},
-	{{"monstermeat", 30}, {"fish", 30}, {"antivenom", 10}, {"shark_gills", 1}},
-	{{"obsidian", 25}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_laplace", 2}, {"spellcard_necro", 1}}
+	{{"rocks", 30}, {"log", 30}, {"bamboo", 10}, {"vine", 10}},
+	{{"tar", 30}, {"silk", 20}, {"pigskin", 10}, {"limestone", 10}, {"strawhat", 1}},
+	{{"monstermeat", 30}, {"fish", 30}, {"antivenom", 10}, {"quackenbeak", 1}, {"shark_gills", 1}},
+	{{"obsidian", 40}, {"dragoonheart", 20)} {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
 }
 
 local function GetIngameName(prefab)

@@ -543,7 +543,7 @@ function MakeCard(name)
 			{"greengem", 1, "rare"},
 			{"thulecite", math.random(1, 3), "rare"},
 			-- SW
-			{"obsidian", math.random(2,4), "rare", nil,"sw"},
+			{"obsidian", math.random(2,4), "rare", nil, "sw"},
 			{"purplegem", 2, "rare", nil, "sw"}, -- gives additional chance
 		}
 		local LootTable_b = {
@@ -563,7 +563,7 @@ function MakeCard(name)
 			{"tallbird", 1, "bad"},
 			{"crawlingnightmare", 1, "bad"},
 			{"nightmarebeak", 1, "bad"},
-			{"deerclops", 1, "bad", function(prefab) prefab:Remove(); GetSeasonManager():DoLightningStrike(TheInput:GetWorldPosition()) end},
+			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(15, function() prefab:Remove(); GetSeasonManager():DoLightningStrike(TheInput:GetWorldPosition())) end},
 		}
 		local function spawn() -- TODO : makes character stop while spelling
 			local Chara = GetPlayer()
@@ -666,11 +666,13 @@ function MakeCard(name)
 					spawn()
 				end)
 			elseif count == 1 then
+				local Speech = GetString(Chara.prefab, "ANNOUNCE_TRAP_WENT_OFF") -- "Oops"
 				Chara:DoTaskInTime(1.2, function()
 					if naughtiness < 0.8 then
 						name = LootTable_b 
 					else
 						name = LootTable_h
+						Speech = "Oh, no"
 					end
 					local key = math.random(table.maxn(name))
 					amount = name[key][2]
@@ -689,7 +691,7 @@ function MakeCard(name)
 						prefab.Transform:SetPosition(pt.x, pt.y, pt.z)
 					end
 					 
-					Chara.components.kramped:OnNaughtyAction( math.min(threshold - (actions + 1), math.random(4, 9)) )
+					Chara.components.kramped:OnNaughtyAction( math.min(threshold - (actions + 1), math.random(6, 9)) )
 					-- So Naughty points can be gained until 'threshold - 1' so that prevent spawning Krampus.
 					local x,y,z = Chara.Transform:GetWorldPosition()
 					local ents = TheSim:FindEntities(x, y, z, 14)
@@ -702,7 +704,7 @@ function MakeCard(name)
 					count = count - 1
 					Chara.components.health:SetInvincible(false)
 					Chara.components.playercontroller:Enable(true)
-					Chara.components.talker:Say(GetString(Chara.prefab, "ANNOUNCE_TRAP_WENT_OFF"))
+					Chara.components.talker:Say(Speech)
 					inst.Activated = false
 				end)
 			end

@@ -140,7 +140,7 @@ local function OnhitEvent(inst, data)
 	
 	-- AOE Hit
 	if inst.components.upgrader.IsAOE then
-		if math.random() < 0.4 then -- remember chance of 40% is < 0.4 not <= 0.4
+		if math.random() < 0.4 then
 			inst.components.combat:SetAreaDamage(5, 0.6)
 		else
 			inst.components.combat:SetAreaDamage(0, 0)
@@ -217,7 +217,7 @@ end
 local function InvincibleRegen(inst)
 	if inst.components.health and inst.components.upgrader.emergency then
 		local emergency = inst.components.upgrader.emergency
-		inst.components.health:DoDelta(emergency, nil, nil, true) -- DoDelta(amount, overtime, cause, ignore_invincible)
+		inst.components.health:DoDelta(emergency, nil, nil, true)
 	end
 end
 
@@ -416,7 +416,6 @@ local fn = function(inst)
 			if food.prefab == "minotaurhorn"
 			or food.prefab == "deerclops_eyeball"
 			or food.prefab == "tigereye" then
-				-- I don't think Yukari wants to eat eyes..
 				DoPowerRestore(inst, 300)
 				
 			elseif food.prefab == "trunk_winter"
@@ -465,7 +464,7 @@ local fn = function(inst)
 			elseif food.prefab == "drumstick" 
 			or food.prefab == "drumstick_cooked" then
 				food.components.edible.sanityvalue = 0
-				DoPowerRestore(inst, 16) -- easter chicken
+				DoPowerRestore(inst, 16)
 				
 			elseif food.prefab == "doydoyegg_cooked" 
 			or food.prefab == "bird_egg_cooked"
@@ -497,7 +496,6 @@ local fn = function(inst)
 			or food.prefab == "frogglebunwich"
 			or food.prefab == "fish_raw_small_cooked" then
 				DoPowerRestore(inst, 8)
-			
 			end
 			
 			if food.prefab == "monstermeat" 

@@ -54,7 +54,7 @@ local function RecipePostInit(yakumoyukari)
 		spellcardbaitrecipe.atlas = "images/inventoryimages/spellcard_bait.xml"
 		local sw_spellcardbaitrecipe = Recipe( ("spellcard_bait"), {Ingredient("honey", 2), Ingredient("armorseashell", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1}, RECIPE_GAME_TYPE.SHIPWRECKED, nil, nil, true )
 		sw_spellcardbaitrecipe.atlas = "images/inventoryimages/spellcard_bait.xml"
-		local spelllamentrecipe = Recipe( ("spellcard_lament"), {Ingredient("boards", 3), Ingredient("nightmarefuel", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
+		local spelllamentrecipe = Recipe( ("spellcard_lament"), {Ingredient("boards", 2), Ingredient("nightmarefuel", 3)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
 		spelllamentrecipe.atlas = "images/inventoryimages/spellcard_lament.xml"
 		local spellbutterrecipe = Recipe( ("spellcard_butter"), {Ingredient("butter", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1})
 		spellbutterrecipe.atlas = "images/inventoryimages/spellcard_butter.xml"
@@ -116,7 +116,7 @@ local function RecipePostInit(yakumoyukari)
 		
 		local spellcardbaitrecipe = Recipe( ("spellcard_bait"), {Ingredient("honey", 4), Ingredient("armorgrass", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
 		spellcardbaitrecipe.atlas = "images/inventoryimages/spellcard_bait.xml"
-		local spelllamentrecipe = Recipe( ("spellcard_lament"), {Ingredient("boards", 3), Ingredient("nightmarefuel", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
+		local spelllamentrecipe = Recipe( ("spellcard_lament"), {Ingredient("boards", 2), Ingredient("nightmarefuel", 3)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
 		spelllamentrecipe.atlas = "images/inventoryimages/spellcard_lament.xml"
 		local spellbutterrecipe = Recipe( ("spellcard_butter"), {Ingredient("butter", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1})
 		spellbutterrecipe.atlas = "images/inventoryimages/spellcard_butter.xml"
