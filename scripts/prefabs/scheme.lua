@@ -17,7 +17,7 @@ local Ingredients_sw = {
 	{{"rocks", 30}, {"log", 30}, {"bamboo", 10}, {"vine", 10}},
 	{{"tar", 30}, {"silk", 20}, {"pigskin", 10}, {"limestone", 10}, {"strawhat", 1}},
 	{{"monstermeat", 30}, {"fish", 30}, {"antivenom", 10}, {"quackenbeak", 1}, {"shark_gills", 1}},
-	{{"obsidian", 40}, {"dragoonheart", 20} {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
+	{{"obsidian", 40}, {"dragoonheart", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
 }
 
 local function GetIngameName(prefab)
