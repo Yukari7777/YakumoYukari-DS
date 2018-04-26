@@ -514,6 +514,7 @@ local fn = function(inst)
 	inst.components.inventory:GuaranteeItems(important_items)
 	
 	inst:AddTag("youkai")
+	inst:AddTag("monster")
 	inst:AddTag("yakumoga")
 	inst:AddTag("yakumoyukari")
 	inst:RemoveTag("notarget")
@@ -521,7 +522,7 @@ local fn = function(inst)
 	inst:RemoveTag("IsDamage")
 	inst.components.health:SetInvincible(false)
 
-	--inst:DoPeriodicTask(1, DebugFunction)
+	inst:DoPeriodicTask(1, DebugFunction)
 	inst:DoPeriodicTask(1, CooldownFunction)
 	inst:DoPeriodicTask(1, PeriodicFunction)
 	

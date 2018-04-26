@@ -418,10 +418,8 @@ local function BunnymanNormalRetargetFn(inst)
 	end
 	
 	local function NormalRetargetFn(inst)
-		
 		return GLOBAL.FindEntity(inst, TUNING.PIG_TARGET_DIST,
 			function(guy)
-				
 				if guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) then
 					if not guy:HasTag("realyoukai") then -- not even be targeted with meat.
 						if guy:HasTag("monster") or guy:HasTag("youkai") then return guy end
@@ -436,6 +434,60 @@ local function BunnymanNormalRetargetFn(inst)
 	end
 	inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
 end
+-- Wildbore Retarget Function
+local function WildboreNormalRetargetFn(inst)
+	local function NormalRetargetFn(inst)
+		local canttags = {"FX", "realyoukai", "NOCLICK", "INLIMBO"}
+		local musttags = {"monster"}
+		return GLOBAL.FindEntity(inst, TUNING.PIG_TARGET_DIST,
+			function(guy)
+				if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
+					if guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) then
+						return not (inst.components.follower.leader ~= nil and guy:HasTag("abigail")) or guy:HasTag("youkai")
+					end
+				end
+			end, musttags, canttags)
+	end
+end
+local function SetNormalBoreFn(inst)
+	local function SetNormalPig(inst)
+		inst:RemoveTag("werepig")
+		inst:RemoveTag("guard")
+		inst:SetBrain(brain)
+		inst:SetStateGraph("SGwildbore")
+		inst.AnimState:SetBuild(inst.build)
+		
+		inst.components.werebeast:SetOnNormalFn(SetNormalPig)
+		inst.components.sleeper:SetResistance(2)
+
+		inst.components.combat:SetDefaultDamage(TUNING.PIG_DAMAGE)
+		inst.components.combat:SetAttackPeriod(TUNING.PIG_ATTACK_PERIOD)
+		inst.components.combat:SetKeepTargetFunction(NormalKeepTargetFn)
+		inst.components.locomotor.runspeed = TUNING.PIG_RUN_SPEED
+		inst.components.locomotor.walkspeed = TUNING.PIG_WALK_SPEED
+		
+		inst.components.sleeper:SetSleepTest(NormalShouldSleep)
+		inst.components.sleeper:SetWakeTest(DefaultWakeTest)
+		
+		inst.components.lootdropper:SetLoot({})
+		inst.components.lootdropper:AddRandomLoot("meat",3)
+		inst.components.lootdropper:AddRandomLoot("pigskin",1)
+		inst.components.lootdropper.numrandomloot = 1
+
+		inst.components.health:SetMaxHealth(TUNING.PIG_HEALTH)
+		inst.components.combat:SetRetargetFunction(3, WildboreNormalRetargetFn)
+		inst.components.combat:SetTarget(nil)
+		inst:ListenForEvent("suggest_tree_target", function(inst, data)
+			if data and data.tree and inst:GetBufferedAction() ~= ACTIONS.CHOP then
+				inst.tree_target = data.tree
+			end
+		end)
+		
+		inst.components.trader:Enable()
+		inst.components.talker:StopIgnoringAll()
+	end
+	inst.components.werebeast:SetOnNormalFn(SetNormalPig)
+end
 -- Pigman Retarget Function
 local function PigmanNormalRetargetFn(inst)
 	local function NormalRetargetFn(inst)
@@ -443,13 +495,12 @@ local function PigmanNormalRetargetFn(inst)
 			function(guy)
 				if not guy:HasTag("realyoukai") then
 					if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
-						return guy:HasTag("monster") or guy:HasTag("youkai") and not guy:HasTag("realyoukai") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
+						return guy:HasTag("monster") or guy:HasTag("youkai") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
 						(inst.components.follower.leader ~= nil and guy:HasTag("abigail"))
 					end
 				end
 			end)
 	end
-	inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
 end
 local function SetNormalPigFn(inst)
 	local function SetNormalPig(inst)
@@ -859,6 +910,8 @@ AddPrefabPostInit("world", AddSchemeManager)
 AddPrefabPostInit("bunnyman", BunnymanNormalRetargetFn)
 AddPrefabPostInit("pigman", PigmanNormalRetargetFn)
 AddPrefabPostInit("pigman", SetNormalPigFn)
+AddPrefabPostInit("wildbore", WildboreNormalRetargetFn)
+AddPrefabPostInit("wildbore", SetNormalBoreFn)
 AddPrefabPostInit("bat", BatRetargetFn)
 AddPrefabPostInit("bee", BeeRetargetFn)
 AddPrefabPostInit("frog", FrogRetargetFn)

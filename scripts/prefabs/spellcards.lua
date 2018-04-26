@@ -501,20 +501,20 @@ function MakeCard(name)
 		inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 		inst.Activated = false
 		local count = 0
-		local LootTable_c = {
-			{"cutgrass", math.random(2, 4), "common"},
-			{"twigs", math.random(2, 4), "common"},
-			{"log", math.random(1, 3), "common"},
-			{"rocks", math.random(1, 3), "common"},
-			{"flint", math.random(1, 3), "common"},
-			{"silk", math.random(1, 3), "common"},
+		local LootTable_c = { -- {name, count, grade, OnSpawnfunction, IsSWOnly}
+			{"cutgrass", math.random(4), "common"},
+			{"twigs", math.random(4), "common"},
+			{"log", math.random(3), "common"},
+			{"rocks", math.random(3), "common"},
+			{"flint", math.random(3), "common"},
+			{"silk", math.random(3), "common"},
 			-- SW
-			{"sand", math.random(1, 3), "common", nil,"sw"},
-			{"palmleaf", math.random(1, 2), "common", nil, "sw"},
-			{"seashell", math.random(1, 2), "common", nil, "sw"},
-			{"fabric", math.random(1, 2), "common", nil, "sw"},
-			{"vine", math.random(1, 2), "common", nil, "sw"},
-			{"bamboo", math.random(1, 2), "common", nil, "sw"},
+			{"sand", math.random(3), "common", nil, "sw"},
+			{"palmleaf", math.random(2), "common", nil, "sw"},
+			{"seashell", math.random(2), "common", nil, "sw"},
+			{"fabric", math.random(2), "common", nil, "sw"},
+			{"vine", math.random(2), "common", nil, "sw"},
+			{"bamboo", math.random(2), "common", nil, "sw"},
 		}
 		local LootTable_g = {
 			{"footballhat", 1, "good", function(prefab) if prefab.components.armor then prefab.components.armor:SetCondition(math.random(prefab.components.armor.maxcondition * 0.66, prefab.components.armor.maxcondition)) end end},
@@ -525,13 +525,13 @@ function MakeCard(name)
 			{"goldnugget", 3, "good"},
 			{"papyrus", 3, "good"},
 			{"spidergland", 3, "good"},
-			{"livinglog", math.random(1, 2), "good"},
-			{"nightmarefuel", math.random(1, 3), "good"},
+			{"livinglog", math.random(2), "good"},
+			{"nightmarefuel", math.random(3), "good"},
 			-- SW
 			{"antivenom", 2, "good", nil, "sw"},
 			{"ice", math.random(3, 6), "good", nil, "sw"},
-			{"limestone", math.random(1, 2), "good", nil, "sw"},
-			{"dubloon", math.random(4, 8), nil, "good", "sw"},
+			{"limestone", math.random(2), "good", nil, "sw"},
+			{"dubloon", math.random(4, 8), "good", nil, "sw"},
 		}
 		local LootTable_r = {
 			{"gears", 2, "rare"},
@@ -541,7 +541,7 @@ function MakeCard(name)
 			{"yellowgem", 1, "rare"},
 			{"orangegem", 1, "rare"},
 			{"greengem", 1, "rare"},
-			{"thulecite", math.random(1, 3), "rare"},
+			{"thulecite", math.random(3), "rare"},
 			-- SW
 			{"obsidian", math.random(2,4), "rare", nil, "sw"},
 			{"purplegem", 2, "rare", nil, "sw"}, -- gives additional chance
@@ -559,24 +559,24 @@ function MakeCard(name)
 		}
 		local LootTable_h = {
 			{"killerbee", 4, "bad"},
-			{"Krampus", 1, "bad"},
+			{"krampus", math.random(3), "bad"},
 			{"tallbird", 1, "bad"},
 			{"crawlingnightmare", 1, "bad"},
 			{"nightmarebeak", 1, "bad"},
-			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(15, function() prefab:Remove(); GetSeasonManager():DoLightningStrike( TheInput:GetWorldPosition() ) end) end},
+			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(10, function() prefab:Remove(); GetSeasonManager():DoLightningStrike( TheInput:GetWorldPosition() ) end) end},
 		}
 		local function spawn() -- TODO : makes character stop while spelling
 			local Chara = GetPlayer()
-			if GetPlayer().components.kramped.threshold == nil then
-				GetPlayer().components.kramped.threshold = TUNING.KRAMPUS_THRESHOLD + math.random(TUNING.KRAMPUS_THRESHOLD_VARIANCE)
-			end -- just in case
-			local threshold = GetPlayer().components.kramped.threshold
-			local actions = GetPlayer().components.kramped.actions
-			local naughtiness = actions / threshold -- just percentage
+			if Chara.components.kramped.threshold == nil then -- just in case
+				Chara.components.kramped.threshold = TUNING.KRAMPUS_THRESHOLD + math.random(TUNING.KRAMPUS_THRESHOLD_VARIANCE)
+			end
+			local threshold = Chara.components.kramped.threshold
+			local actions = Chara.components.kramped.actions
+			local naughtiness = actions / threshold
 			local key, amount, grade, pt, name
 			local function GetPoint(pt)
 				local theta = math.random() * 2 * PI
-				local radius = 6+math.random()*6
+				local radius = 6 + math.random() * 6
 				
 				local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
 					local ground = GetWorld()
@@ -619,11 +619,11 @@ function MakeCard(name)
 						local value
 						
 						if SaveGameIndex:IsModeShipwrecked() then
-							value = math.random(table.maxn(name))
+							value = math.random(table.maxn(name)) -- selects things randomly in table
 						else
 							local valid = 0
 							for i = 1, table.maxn(name) do
-								if not name[i][5] then
+								if not name[i][5] then -- check if shipwrecked only
 									valid = valid + 1
 								end
 							end
@@ -646,9 +646,14 @@ function MakeCard(name)
 						color = {r=0,g=0,b=0,a=1}
 					end
 					for i = 1, amount do
-						local prefab = SpawnPrefab(name[key][1])
+						local prefab = SpawnPrefab(name[key][1]) -- spawn thing
 						prefab:AddTag("spawned")
-						pt = GetPoint(Vector3(GetPlayer().Transform:GetWorldPosition()))
+						if prefab.components.lootdropper then
+							prefab.components.lootdropper.numrandomloot = 0 -- Delete item drop.
+							prefab.components.lootdropper:SetLoot({})
+							prefab.components.lootdropper:SetChanceLootTable('nodrop')
+						end
+						pt = GetPoint(Vector3(Chara.Transform:GetWorldPosition()))
 						if name[key][4] then
 							name[key][4](prefab) -- problem
 						end
@@ -680,7 +685,12 @@ function MakeCard(name)
 					for i = 1, amount do
 						local prefab = SpawnPrefab(name[key][1])
 						prefab:AddTag("spawned")
-						pt = GetPoint(Vector3(GetPlayer().Transform:GetWorldPosition()))
+						if prefab.components.lootdropper then
+							prefab.components.lootdropper.numrandomloot = 0 -- Delete item drop.
+							prefab.components.lootdropper:SetLoot({})
+							prefab.components.lootdropper:SetChanceLootTable('nodrop')
+						end
+						pt = GetPoint(Vector3(Chara.Transform:GetWorldPosition()))
 						if name[key][4] then
 							name[key][4](prefab)
 						end
@@ -691,7 +701,7 @@ function MakeCard(name)
 						prefab.Transform:SetPosition(pt.x, pt.y, pt.z)
 					end
 					 
-					Chara.components.kramped:OnNaughtyAction( math.min(threshold - (actions + 1), math.random(6, 9)) )
+					Chara.components.kramped:OnNaughtyAction( math.min(threshold - (actions + 1), math.random(3, 6)) )
 					-- So Naughty points can be gained until 'threshold - 1' so that prevent spawning Krampus.
 					local x,y,z = Chara.Transform:GetWorldPosition()
 					local ents = TheSim:FindEntities(x, y, z, 14)
@@ -725,7 +735,7 @@ function MakeCard(name)
 					end
 				end
 				Chara:AddTag("notarget")
-				count = math.random(4, 6)
+				count = math.random(3, 7)
 				if Chara.components.power then
 					Chara.components.power:DoDelta(-20, false)
 				end

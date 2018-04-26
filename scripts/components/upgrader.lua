@@ -250,6 +250,7 @@ function Upgrader:SkillManager(inst)
 	
 	if skill[4][2] then
 		inst:RemoveTag("youkai")
+		inst:RemoveTag("monster")
 		inst.components.upgrader.powerbonus = 50
 		inst.components.upgrader.powergenbonus = 0.5
 		TUNING.NIGHTSWORD_USES = 140
