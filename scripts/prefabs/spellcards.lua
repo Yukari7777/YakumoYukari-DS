@@ -563,7 +563,7 @@ function MakeCard(name)
 			{"tallbird", 1, "bad"},
 			{"crawlingnightmare", 1, "bad"},
 			{"nightmarebeak", 1, "bad"},
-			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(15, function() prefab:Remove(); GetSeasonManager():DoLightningStrike(TheInput:GetWorldPosition())) end},
+			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(15, function() prefab:Remove(); GetSeasonManager():DoLightningStrike( TheInput:GetWorldPosition() ) end) end},
 		}
 		local function spawn() -- TODO : makes character stop while spelling
 			local Chara = GetPlayer()
