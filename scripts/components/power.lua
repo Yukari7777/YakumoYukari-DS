@@ -69,7 +69,7 @@ function Power:DoDelta(delta, overtime)
         self.current = self.max
     end
 	
-    self.inst:PushEvent("powerdelta", {oldpercent = old/self.max, newpercent = self.current/self.max, overtime = overtime})
+    self.inst:PushEvent("powerdelta", {oldpercent = old/self.max, newpercent = self.current/self.max, overtime=overtime})
     
 end
 

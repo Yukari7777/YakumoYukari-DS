@@ -127,7 +127,7 @@ local function OnhitEvent(inst, data)
 			RegenAmount = 1
 		end
 		
-		if target and target.components.health and not target:HasTag("chester") then -- Hopefully, Packim(SW Chester) also has "chester" tag.
+		if target and target.components.health and not target:HasTag("chester") then
 			inst.components.health:DoDelta(RegenAmount, nil, nil, true)
 			if math.random() < 0.15 then
 				inst.components.health:DoDelta(5, nil, nil, true)
@@ -138,7 +138,7 @@ local function OnhitEvent(inst, data)
 		end
 	end
 	
-	-- AOE Hit
+	-- AoE Hit
 	if inst.components.upgrader.IsAOE then
 		if math.random() < 0.4 then
 			inst.components.combat:SetAreaDamage(5, 0.6)
@@ -522,7 +522,7 @@ local fn = function(inst)
 	inst:RemoveTag("IsDamage")
 	inst.components.health:SetInvincible(false)
 
-	inst:DoPeriodicTask(1, DebugFunction)
+	--inst:DoPeriodicTask(1, DebugFunction)
 	inst:DoPeriodicTask(1, CooldownFunction)
 	inst:DoPeriodicTask(1, PeriodicFunction)
 	

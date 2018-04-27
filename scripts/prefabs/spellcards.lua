@@ -383,7 +383,7 @@ function MakeCard(name)
 		end)
 	end
 	
-	local function bait(inst) -- name : Bewitching Bait
+	local function bait(inst) -- Bewitching Bait
 		inst.components.spellcard.costpower = 1
 		inst.components.finiteuses:SetMaxUses(300)
 		inst.components.finiteuses:SetUses(300)
@@ -500,15 +500,15 @@ function MakeCard(name)
 		inst:AddComponent("stackable")
 		inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 		inst.Activated = false
+		local Chara = GetPlayer()
 		local count = 0
-		local LootTable_c = { -- {name, count, grade, OnSpawnfunction, IsSWOnly}
+		local LootTable_c = { -- {name, count, grade, OnSpawnfunction, MustThisWorld}
 			{"cutgrass", math.random(4), "common"},
 			{"twigs", math.random(4), "common"},
 			{"log", math.random(3), "common"},
 			{"rocks", math.random(3), "common"},
 			{"flint", math.random(3), "common"},
 			{"silk", math.random(3), "common"},
-			-- SW
 			{"sand", math.random(3), "common", nil, "sw"},
 			{"palmleaf", math.random(2), "common", nil, "sw"},
 			{"seashell", math.random(2), "common", nil, "sw"},
@@ -519,122 +519,134 @@ function MakeCard(name)
 		local LootTable_g = {
 			{"footballhat", 1, "good", function(prefab) if prefab.components.armor then prefab.components.armor:SetCondition(math.random(prefab.components.armor.maxcondition * 0.66, prefab.components.armor.maxcondition)) end end},
 			{"armorwood", 1 , "good", function(prefab) if prefab.components.armor then prefab.components.armor:SetCondition(math.random(prefab.components.armor.maxcondition * 0.66, prefab.components.armor.maxcondition)) end end},
-			{"petals", 2, "good"},
-			{"boneshard", 1, "good"},
-			{"nitre", 2, "good"},
-			{"goldnugget", 3, "good"},
-			{"papyrus", 3, "good"},
-			{"spidergland", 3, "good"},
+			{"boneshard", math.random(2), "good"},
+			{"nitre", math.random(2), "good"},
+			{"goldnugget", math.random(3), "good"},
+			{"papyrus", math.random(3), "good"},
+			{"spidergland", math.random(3), "good"},
 			{"livinglog", math.random(2), "good"},
 			{"nightmarefuel", math.random(3), "good"},
-			-- SW
-			{"antivenom", 2, "good", nil, "sw"},
+			{"petals", math.random(2), "good", nil, "rog"},
+			{"antivenom", math.random(2), "good", nil, "sw"},
 			{"ice", math.random(3, 6), "good", nil, "sw"},
 			{"limestone", math.random(2), "good", nil, "sw"},
 			{"dubloon", math.random(4, 8), "good", nil, "sw"},
 		}
 		local LootTable_r = {
-			{"gears", 2, "rare"},
-			{"redgem", 2, "rare"},
-			{"bluegem", 2, "rare"},
-			{"purplegem", 2, "rare"},
-			{"yellowgem", 1, "rare"},
-			{"orangegem", 1, "rare"},
-			{"greengem", 1, "rare"},
-			{"thulecite", math.random(3), "rare"},
-			-- SW
-			{"obsidian", math.random(2,4), "rare", nil, "sw"},
-			{"purplegem", 2, "rare", nil, "sw"}, -- gives additional chance
+			{"gears", math.random(2), "rare"},
+			{"redgem", math.random(4), "rare"},
+			{"bluegem", math.random(4), "rare"},
+			{"purplegem", math.random(4), "rare"},
+			{"yellowgem", math.random(2), "rare", nil, "rog"},
+			{"orangegem", math.random(2), "rare", nil, "rog"},
+			{"greengem", math.random(2), "rare", nil, "rog"},
+			{"thulecite", math.random(3), "rare", nil, "rog"},
+			{"obsidian", math.random(3), "rare", nil, "sw"},
+			{"purplegem", math.random(2), "rare", nil, "sw"}, -- gives additional chance
 		}
 		local LootTable_b = {
-			{"ash", 2, "bad"},
-			{"spoiled_food", 2, "bad"},
-			{"charcoal", 1, "bad"},
-			{"rottenegg", 1, "bad"},
-			{"monkey", 1, "bad"}, 
-			{"mosquito", 1, "bad"},
-			{"frog", 1, "bad"},
-			{"spider_hider", 1, "bad"},
-			{"spider_spitter", 1, "bad"}
+			{"ash", math.random(2), "bad", function() Chara.components.health then Chara.components.health:DoDelta(-2, nil, nil, true) end},
+			{"spoiled_food", math.random(2), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-3, nil, true) end},
+			{"rottenegg", math.random(2), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-3, nil, true) end},
+			{"charcoal", math.random(2), "bad", function() Chara.components.sanity then Chara.components.sanity:DoDelta(-2) end},
+			{"killerbee", math.random(2), "bad"},
+			{"mosquito", 1, "bad", nil, "rog"},
+			{"frog", 1, "bad", "rog"},
+			{"monkey", 1, "bad", nil, "rog"},
+			{"spider_hider", 1, "bad", nil, "rog"},
+			{"spider_spitter", 1, "bad", nil, "rog"},
+			{"mosquito_poison", 1, "bad", nil, "sw"},
+			{"primeape", 1, "bad", nil, "sw"},
+			{"spider", math.random(2), "bad", nil, "sw"},
 		}
 		local LootTable_h = {
-			{"killerbee", 4, "bad"},
-			{"krampus", math.random(3), "bad"},
-			{"tallbird", 1, "bad"},
+			{"ash", math.random(3), "bad", function() Chara.components.health then Chara.components.health:DoDelta(-3, nil, nil, true) end},
+			{"spoiled_food", math.random(3), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-5, nil, true) end},
+			{"rottenegg", math.random(3), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-5, nil, true) end},
+			{"charcoal", math.random(3), "bad", function() Chara.components.sanity then Chara.components.sanity:DoDelta(-4) end},	
 			{"crawlingnightmare", 1, "bad"},
 			{"nightmarebeak", 1, "bad"},
-			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(10, function() prefab:Remove(); GetSeasonManager():DoLightningStrike( TheInput:GetWorldPosition() ) end) end},
+			{"killerbee", math.random(4), "bad"},
+			{"krampus", math.random(3), "bad"},
+			{"deerclops", 1, "bad", function(prefab) prefab:DoTaskInTime(10, function() prefab:Remove(); GetSeasonManager():DoLightningStrike( TheInput:GetWorldPosition() ) end) end, "rog"},
+			{"mosquito", math.random(3), "bad", nil, "rog"},
+			{"tallbird", 1, "bad", nil, "rog"},
+			{"mosquito_poison", math.random(3), "bad", nil, "sw"},
 		}
-		local function spawn() -- TODO : makes character stop while spelling
-			local Chara = GetPlayer()
+		local function GetLoot(list)
+			local loot = {}
+			for i=1, #list, 1 do
+				if list[i][5] == nil then
+					table.insert(loot, list[i])
+				elseif SaveGameIndex:IsModeShipwrecked() then
+					if list[i][5] == "sw" then
+						table.insert(loot, list[i])
+					end
+				else
+					if list[i][5] == "rog" then
+						table.insert(loot, list[i])
+					end
+				end
+			end
+			return loot
+		end
+		
+		local function GetKey(list)
+			return math.random(#list)
+		end
+		
+		local function GetPoint(pt)
+			local theta = math.random() * 2 * PI
+			local radius = 6 + math.random() * 6
+			
+			local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
+				local ground = GetWorld()
+				local spawn_point = pt + offset
+				if not (ground.Map and ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) == GROUND.IMPASSABLE) then
+					return true
+				end
+				return false
+			end)
+			
+			if result_offset then
+				return pt+result_offset
+			end
+		end
+		local function spawn()
 			if Chara.components.kramped.threshold == nil then -- just in case
 				Chara.components.kramped.threshold = TUNING.KRAMPUS_THRESHOLD + math.random(TUNING.KRAMPUS_THRESHOLD_VARIANCE)
 			end
 			local threshold = Chara.components.kramped.threshold
 			local actions = Chara.components.kramped.actions
 			local naughtiness = actions / threshold
-			local key, amount, grade, pt, name
-			local function GetPoint(pt)
-				local theta = math.random() * 2 * PI
-				local radius = 6 + math.random() * 6
-				
-				local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
-					local ground = GetWorld()
-					local spawn_point = pt + offset
-					if not (ground.Map and ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) == GROUND.IMPASSABLE) then
-						return true
-					end
-					return false
-				end)
-				
-				if result_offset then
-					return pt+result_offset
-				end
-			end
+			local key, amount, grade, pt, list, loot
 			if count > 1 then
 				Chara:DoTaskInTime(0.5, function()
 					if naughtiness < 0.33 then
 						if math.random() < 0.66 then -- 66%, common stuff
-							name = LootTable_c
+							list = LootTable_c
 						elseif math.random() < 0.66 then -- 21%, good stuff
-							name = LootTable_g
+							list = LootTable_g
 						elseif math.random() < 0.66 then -- 7%, rare stuff
-							name = LootTable_r
+							list = LootTable_r
 						else							-- 6%, bad stuff
-							name = LootTable_b
+							list = LootTable_b
 						end
 					elseif naughtiness < 0.66 then
 						if math.random() < 0.33 then -- 33%, common stuff
-							name = LootTable_c
+							list = LootTable_c
 						elseif math.random() < 0.1 then -- 6%, good stuff
-							name = LootTable_g
+							list = LootTable_g
 						else							-- 60%, bad stuff
-							name = LootTable_b
+							list = LootTable_b
 						end
 					else
-						name = LootTable_b -- 100%, bad stuff
+						list = LootTable_b -- 100%, bad stuff
 					end
-					local function GetKey(name)
-					
-						local value
-						
-						if SaveGameIndex:IsModeShipwrecked() then
-							value = math.random(table.maxn(name)) -- selects things randomly in table
-						else
-							local valid = 0
-							for i = 1, table.maxn(name) do
-								if not name[i][5] then -- check if shipwrecked only
-									valid = valid + 1
-								end
-							end
-							value = math.random(valid)
-						end
-						
-						return value
-					end
-					local key = GetKey(name)
-					amount = name[key][2]
-					grade = name[key][3]
+					loot = GetLoot(list)
+					key = GetKey(loot)
+					amount = loot[key][2]
+					grade = loot[key][3]
 					local color = {}
 					if grade == "common" then
 						color = {r=0,g=0,b=0,a=0.5}
@@ -646,7 +658,7 @@ function MakeCard(name)
 						color = {r=0,g=0,b=0,a=1}
 					end
 					for i = 1, amount do
-						local prefab = SpawnPrefab(name[key][1]) -- spawn thing
+						local prefab = SpawnPrefab(loot[key][1]) -- spawn thing
 						prefab:AddTag("spawned")
 						if prefab.components.lootdropper then
 							prefab.components.lootdropper.numrandomloot = 0 -- Delete item drop.
@@ -654,8 +666,8 @@ function MakeCard(name)
 							prefab.components.lootdropper:SetChanceLootTable('nodrop')
 						end
 						pt = GetPoint(Vector3(Chara.Transform:GetWorldPosition()))
-						if name[key][4] then
-							name[key][4](prefab) -- problem
+						if loot[key][4] then
+							loot[key][4](prefab) -- problem
 						end
 						local fx = SpawnPrefab("small_puff")
 						fx.AnimState:SetMultColour(color.r, color.g, color.b, color.a)
@@ -671,19 +683,20 @@ function MakeCard(name)
 					spawn()
 				end)
 			elseif count == 1 then
-				local Speech = GetString(Chara.prefab, "ANNOUNCE_TRAP_WENT_OFF") -- "Oops"
 				Chara:DoTaskInTime(1.2, function()
+					local Speech = GetString(Chara.prefab, "ANNOUNCE_TRAP_WENT_OFF") -- "Oops"
 					if naughtiness < 0.8 then
-						name = LootTable_b 
+						list = LootTable_b 
 					else
-						name = LootTable_h
+						list = LootTable_h
 						Speech = "Oh, no"
 					end
-					local key = math.random(table.maxn(name))
-					amount = name[key][2]
-					grade = name[key][3]
+					loot = GetLoot(list)
+					key = Getkey(loot)
+					amount = loot[key][2]
+					grade = loot[key][3]
 					for i = 1, amount do
-						local prefab = SpawnPrefab(name[key][1])
+						local prefab = SpawnPrefab(loot[key][1])
 						prefab:AddTag("spawned")
 						if prefab.components.lootdropper then
 							prefab.components.lootdropper.numrandomloot = 0 -- Delete item drop.
@@ -691,8 +704,8 @@ function MakeCard(name)
 							prefab.components.lootdropper:SetChanceLootTable('nodrop')
 						end
 						pt = GetPoint(Vector3(Chara.Transform:GetWorldPosition()))
-						if name[key][4] then
-							name[key][4](prefab)
+						if loot[key][4] then
+							loot[key][4](prefab)
 						end
 						local fx = SpawnPrefab("small_puff")
 						fx.AnimState:SetMultColour(0,0,0,1)
