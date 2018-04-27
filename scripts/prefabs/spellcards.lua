@@ -545,13 +545,13 @@ function MakeCard(name)
 			{"purplegem", math.random(2), "rare", nil, "sw"}, -- gives additional chance
 		}
 		local LootTable_b = {
-			{"ash", math.random(2), "bad", function() Chara.components.health then Chara.components.health:DoDelta(-2, nil, nil, true) end},
-			{"spoiled_food", math.random(2), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-3, nil, true) end},
-			{"rottenegg", math.random(2), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-3, nil, true) end},
-			{"charcoal", math.random(2), "bad", function() Chara.components.sanity then Chara.components.sanity:DoDelta(-2) end},
+			{"ash", math.random(2), "bad", function() if Chara.components.health then Chara.components.health:DoDelta(-2, nil, nil, true) end end},
+			{"spoiled_food", math.random(2), "bad", function() if Chara.components.hunger then Chara.components.hunger:DoDelta(-3, nil, true) end end},
+			{"rottenegg", math.random(2), "bad", function() if Chara.components.hunger then Chara.components.hunger:DoDelta(-3, nil, true) end end},
+			{"charcoal", math.random(2), "bad", function() if Chara.components.sanity then Chara.components.sanity:DoDelta(-2) end end},
 			{"killerbee", math.random(2), "bad"},
 			{"mosquito", 1, "bad", nil, "rog"},
-			{"frog", 1, "bad", "rog"},
+			{"frog", 1, "bad", nil, "rog"},
 			{"monkey", 1, "bad", nil, "rog"},
 			{"spider_hider", 1, "bad", nil, "rog"},
 			{"spider_spitter", 1, "bad", nil, "rog"},
@@ -560,10 +560,10 @@ function MakeCard(name)
 			{"spider", math.random(2), "bad", nil, "sw"},
 		}
 		local LootTable_h = {
-			{"ash", math.random(3), "bad", function() Chara.components.health then Chara.components.health:DoDelta(-3, nil, nil, true) end},
-			{"spoiled_food", math.random(3), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-5, nil, true) end},
-			{"rottenegg", math.random(3), "bad", function() Chara.components.hunger then Chara.components.hunger:DoDelta(-5, nil, true) end},
-			{"charcoal", math.random(3), "bad", function() Chara.components.sanity then Chara.components.sanity:DoDelta(-4) end},	
+			{"ash", math.random(3), "bad", function() if Chara.components.health then Chara.components.health:DoDelta(-3, nil, nil, true) end end},
+			{"spoiled_food", math.random(3), "bad", function() if Chara.components.hunger then Chara.components.hunger:DoDelta(-5, nil, true) end end},
+			{"rottenegg", math.random(3), "bad", function() if Chara.components.hunger then Chara.components.hunger:DoDelta(-5, nil, true) end end},
+			{"charcoal", math.random(3), "bad", function() if Chara.components.sanity then Chara.components.sanity:DoDelta(-4) end end},	
 			{"crawlingnightmare", 1, "bad"},
 			{"nightmarebeak", 1, "bad"},
 			{"killerbee", math.random(4), "bad"},
@@ -573,48 +573,44 @@ function MakeCard(name)
 			{"tallbird", 1, "bad", nil, "rog"},
 			{"mosquito_poison", math.random(3), "bad", nil, "sw"},
 		}
-		local function GetLoot(list)
-			local loot = {}
-			for i=1, #list, 1 do
-				if list[i][5] == nil then
-					table.insert(loot, list[i])
-				elseif SaveGameIndex:IsModeShipwrecked() then
-					if list[i][5] == "sw" then
-						table.insert(loot, list[i])
-					end
-				else
-					if list[i][5] == "rog" then
-						table.insert(loot, list[i])
-					end
-				end
-			end
-			return loot
-		end
-		
-		local function GetKey(list)
-			return math.random(#list)
-		end
-		
-		local function GetPoint(pt)
-			local theta = math.random() * 2 * PI
-			local radius = 6 + math.random() * 6
-			
-			local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
-				local ground = GetWorld()
-				local spawn_point = pt + offset
-				if not (ground.Map and ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) == GROUND.IMPASSABLE) then
-					return true
-				end
-				return false
-			end)
-			
-			if result_offset then
-				return pt+result_offset
-			end
-		end
 		local function spawn()
 			if Chara.components.kramped.threshold == nil then -- just in case
-				Chara.components.kramped.threshold = TUNING.KRAMPUS_THRESHOLD + math.random(TUNING.KRAMPUS_THRESHOLD_VARIANCE)
+				Chara.components.kramped.threshold = 50
+			end
+			local function GetLoot(list)
+				local loot = {}
+				for i=1, #list, 1 do
+					if list[i][5] == nil then
+						table.insert(loot, list[i])
+					elseif SaveGameIndex:IsModeShipwrecked() then
+						if list[i][5] == "sw" then
+							table.insert(loot, list[i])
+						end
+					else
+						if list[i][5] == "rog" then
+							table.insert(loot, list[i])
+						end
+					end
+				end
+				return loot
+			end
+			
+			local function GetPoint(pt)
+				local theta = math.random() * 2 * PI
+				local radius = 6 + math.random() * 6
+				
+				local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
+					local ground = GetWorld()
+					local spawn_point = pt + offset
+					if not (ground.Map and ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) == GROUND.IMPASSABLE) then
+						return true
+					end
+					return false
+				end)
+				
+				if result_offset then
+					return pt+result_offset
+				end
 			end
 			local threshold = Chara.components.kramped.threshold
 			local actions = Chara.components.kramped.actions
@@ -644,7 +640,7 @@ function MakeCard(name)
 						list = LootTable_b -- 100%, bad stuff
 					end
 					loot = GetLoot(list)
-					key = GetKey(loot)
+					key = math.random(#loot)
 					amount = loot[key][2]
 					grade = loot[key][3]
 					local color = {}
@@ -667,7 +663,7 @@ function MakeCard(name)
 						end
 						pt = GetPoint(Vector3(Chara.Transform:GetWorldPosition()))
 						if loot[key][4] then
-							loot[key][4](prefab) -- problem
+							loot[key][4](prefab)
 						end
 						local fx = SpawnPrefab("small_puff")
 						fx.AnimState:SetMultColour(color.r, color.g, color.b, color.a)
@@ -692,7 +688,7 @@ function MakeCard(name)
 						Speech = "Oh, no"
 					end
 					loot = GetLoot(list)
-					key = Getkey(loot)
+					key = math.random(#loot)
 					amount = loot[key][2]
 					grade = loot[key][3]
 					for i = 1, amount do
@@ -714,7 +710,7 @@ function MakeCard(name)
 						prefab.Transform:SetPosition(pt.x, pt.y, pt.z)
 					end
 					 
-					Chara.components.kramped:OnNaughtyAction( math.min(threshold - (actions + 1), math.random(3, 6)) )
+					Chara.components.kramped:OnNaughtyAction( math.min(threshold - (actions + 1), math.random(10, 30)) )
 					-- So Naughty points can be gained until 'threshold - 1' so that prevent spawning Krampus.
 					local x,y,z = Chara.Transform:GetWorldPosition()
 					local ents = TheSim:FindEntities(x, y, z, 14)

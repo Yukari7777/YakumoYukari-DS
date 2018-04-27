@@ -46,10 +46,16 @@ local function GetStartInv()
 				"meat",
 				"scheme",
 				"yukariumbre",
-				"yukarihat",}
-	else return {"scheme",
+				"yukarihat",
+				"spellcard_lament",
+				"spellcard_lament",
+				"spellcard_lament",}
+	else return {"scheme",			
 				"yukariumbre",
-				"yukarihat",}
+				"yukarihat",
+				"spellcard_lament",
+				"spellcard_lament",
+				"spellcard_lament",}
 	end
 end
 
@@ -389,6 +395,7 @@ local fn = function(inst)
 	inst.components.health:SetMaxHealth(80)
 	inst.components.hunger:SetMax(150)
 	inst.components.sanity:SetMax(75)
+	inst.components.kramped.threshold = 50 -- Originally, it is random integer value between 31 ~ 50. 
 	inst.components.builder.science_bonus = 1
 	
     inst.components.combat.damagemultiplier = 1.2
