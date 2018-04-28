@@ -15,16 +15,24 @@ function MakeCard(name)
 		
 	local function test(inst)
 		inst.components.spellcard.costpower = 5
-		inst.components.finiteuses:SetMaxUses(3)
-		inst.components.finiteuses:SetUses(3)
+		inst.components.finiteuses:SetMaxUses(1)
+		inst.components.finiteuses:SetUses(1)
 		inst.components.spellcard:SetSpellFn(function()
-			if GetPlayer().components.health then
-				GetPlayer().components.health:DoDelta(20)
+			local Chara = GetPlayer()
+			local count = 50
+			local function dostorm()
+				if count >= 1 then
+					GetSeasonManager():DoLightningStrike( Vector3(Chara.Transform:GetWorldPosition()) )
+					if Chara.components.health then
+						Chara.components.health:DoDelta(10)
+					end
+					count = count - 1
+					inst:DoTaskInTime(0.2, dostorm)
+				else
+					inst:DoTaskInTime(1, function() Chara.components.talker:Say("Poor Kirito..."); inst.components.finiteuses:Use(1) end)
+				end
 			end
-			if GetPlayer().components.power then
-				GetPlayer().components.power:DoDelta(-5, false)
-			end
-			inst.components.finiteuses:Use(1)
+			inst:DoTaskInTime(3, dostorm)
 		end)
 	end
 	
