@@ -255,7 +255,7 @@ function Upgrader:SkillManager(inst)
 		inst.components.upgrader.powergenbonus = 0.5
 		TUNING.NIGHTSWORD_USES = 140
 		TUNING.ARMOR_SANITY = 1000
-	    TUNING.ICESTAFF_USES = 25 -- increased by 20~25%
+	    TUNING.ICESTAFF_USES = 25
 	    TUNING.FIRESTAFF_USES = 25
 	    TUNING.TELESTAFF_USES = 6
 		TUNING.REDAMULET_USES = 25

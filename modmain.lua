@@ -43,7 +43,7 @@ Assets = {
 
 }
 
------ GLOBAL & require list -----
+----- GLOBAL & require set -----
 local require = GLOBAL.require
 require "class"
 
@@ -57,8 +57,11 @@ local GetPlayer = GLOBAL.GetPlayer
 local GetString = GLOBAL.GetString
 local TheInput = GLOBAL.TheInput
 local IsPaused = GLOBAL.IsPaused
+local FindEntity = GLOBAL.FindEntity
+local GetSeasonManager = GLOBAL.GetSeasonManager
 local Inspect = GetModConfigData("inspect")
 local Language = GetModConfigData("language")
+local notags = {"FX", "NOCLICK", "INLIMBO", "realyoukai"}
 
 ----- Basic settings for Yukari -----
 STRINGS.CHARACTER_TITLES.yakumoyukari = "Youkai of Boundaries"
@@ -203,7 +206,7 @@ local TouchstoneReturn = function(prefab)
 		GLOBAL.scheduler:ExecuteInTime(3, function()
 			dude:Show()
 
-			GLOBAL.GetSeasonManager():DoLightningStrike(GLOBAL.Vector3(inst.Transform:GetWorldPosition()))
+			GetSeasonManager():DoLightningStrike(GLOBAL.Vector3(inst.Transform:GetWorldPosition()))
 
 
 			inst.SoundEmitter:PlaySound("dontstarve/common/resurrectionstone_break")
@@ -418,35 +421,70 @@ local function BunnymanNormalRetargetFn(inst)
 	end
 	
 	local function NormalRetargetFn(inst)
-		return GLOBAL.FindEntity(inst, TUNING.PIG_TARGET_DIST,
+		return FindEntity(inst, TUNING.PIG_TARGET_DIST,
 			function(guy)
 				if guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) then
-					if not guy:HasTag("realyoukai") then -- not even be targeted with meat.
-						if guy:HasTag("monster") or guy:HasTag("youkai") then return guy end
-						if guy:HasTag("player") 
-						and guy.components.inventory 
-						and guy:GetDistanceSqToInst(inst) < TUNING.BUNNYMAN_SEE_MEAT_DIST*TUNING.BUNNYMAN_SEE_MEAT_DIST 
-						and guy.components.inventory:FindItem(is_meat) then 
-						return guy end
-					end
+					if guy:HasTag("monster") or guy:HasTag("youkai") then return guy end
+					if guy:HasTag("player") 
+					and guy.components.inventory 
+					and guy:GetDistanceSqToInst(inst) < TUNING.BUNNYMAN_SEE_MEAT_DIST * TUNING.BUNNYMAN_SEE_MEAT_DIST 
+					and guy.components.inventory:FindItem(is_meat) then 
+					return guy end
 				end
-			end)
+			end, nil ,notags)
 	end
 	inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
+end
+-- spider retargetfn
+local function SpiderRetargetFn(inst)
+	local function NormalRetarget(inst)
+		local targetDist = TUNING.SPIDER_TARGET_DIST
+		if inst.components.knownlocations:GetLocation("investigate") then
+			targetDist = TUNING.SPIDER_INVESTIGATETARGET_DIST
+		end
+		if GetSeasonManager() and (GetSeasonManager():IsSpring() or GetSeasonManager():IsGreenSeason()) then
+			targetDist = targetDist * TUNING.SPRING_COMBAT_MOD
+		end
+		
+		return FindEntity(inst, targetDist, 
+			function(guy) 
+				if inst.components.combat:CanTarget(guy)
+				   and not (inst.components.follower and inst.components.follower.leader == guy)
+				   and not (inst.components.follower and inst.components.follower.leader == GetPlayer() and guy:HasTag("companion")) then
+					return (guy:HasTag("character") and (not guy:HasTag("monster") or guy:HasTag("youkai") ))
+				end
+		end, nil, notags)
+	end
+	inst.components.combat:SetRetargetFunction(1, NormalRetarget)
+end
+-- spider warrior retargetfn
+local function WarriorRetargetFn(inst)
+	local function WarriorRetarget(inst)
+		local targetDist = TUNING.SPIDER_WARRIOR_TARGET_DIST
+		if GetSeasonManager() and (GetSeasonManager():IsSpring() or GetSeasonManager():IsGreenSeason()) then
+			targetDist = targetDist * TUNING.SPRING_COMBAT_MOD
+		end
+		return FindEntity(inst, targetDist, function(guy)
+			return ((guy:HasTag("character") and not guy:HasTag("monster")) or guy:HasTag("pig")) or guy:HasTag("youkai")
+				   and inst.components.combat:CanTarget(guy)
+				   and not (inst.components.follower and inst.components.follower.leader == guy)
+				   and not (inst.components.follower and inst.components.follower.leader == GetPlayer() and guy:HasTag("companion"))
+		end, nil, notags)
+	end
+	inst.components.combat:SetRetargetFunction(2, WarriorRetarget)
 end
 -- Wildbore Retarget Function
 local function WildboreNormalRetargetFn(inst)
 	local function NormalRetargetFn(inst)
-		local canttags = {"FX", "realyoukai", "NOCLICK", "INLIMBO"}
 		local musttags = {"monster"}
-		return GLOBAL.FindEntity(inst, TUNING.PIG_TARGET_DIST,
+		return FindEntity(inst, TUNING.PIG_TARGET_DIST,
 			function(guy)
 				if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
 					if guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) then
 						return not (inst.components.follower.leader ~= nil and guy:HasTag("abigail")) or guy:HasTag("youkai")
 					end
 				end
-			end, musttags, canttags)
+			end, musttags, notags)
 	end
 end
 local function SetNormalBoreFn(inst)
@@ -490,16 +528,15 @@ local function SetNormalBoreFn(inst)
 end
 -- Pigman Retarget Function
 local function PigmanNormalRetargetFn(inst)
+	
 	local function NormalRetargetFn(inst)
-		return GLOBAL.FindEntity(inst, TUNING.PIG_TARGET_DIST,
+		return FindEntity(inst, TUNING.PIG_TARGET_DIST,
 			function(guy)
-				if not guy:HasTag("realyoukai") then
-					if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
-						return guy:HasTag("monster") or guy:HasTag("youkai") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
-						(inst.components.follower.leader ~= nil and guy:HasTag("abigail"))
-					end
+				if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
+					return guy:HasTag("monster") or guy:HasTag("youkai") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
+					(inst.components.follower.leader ~= nil and guy:HasTag("abigail"))
 				end
-			end)
+			end, nil, notags)
 	end
 end
 local function SetNormalPigFn(inst)
@@ -556,12 +593,12 @@ local function BatRetargetFn(inst)
 	
 	local function Retarget(inst)
 		local ta = inst.components.teamattacker
-		local newtarget = GLOBAL.FindEntity(inst, TUNING.BISHOP_TARGET_DIST, function(guy)
+		
+		local newtarget = FindEntity(inst, TUNING.BISHOP_TARGET_DIST, function(guy)
 				return (guy:HasTag("character") or guy:HasTag("monster") )
 					   and not guy:HasTag("bat")
-					   and not guy:HasTag("realyoukai")
 					   and inst.components.combat:CanTarget(guy)
-		end)
+		end, nil, notags)
 		if newtarget and not ta.inteam and not ta:SearchForTeam() then
 			NoError(inst, newtarget)
 		end
@@ -575,31 +612,39 @@ end
 -- Spring Bee Retarget Function
 local function BeeRetargetFn(inst)
 	local function SpringBeeRetarget(inst)
-		if GLOBAL.GetSeasonManager() and GLOBAL.GetSeasonManager():IsSpring() then
-			local range = 4
-			return GLOBAL.FindEntity(inst, range, function(guy)
+		if GetSeasonManager() and GetSeasonManager():IsSpring() then
+			return FindEntity(inst, 4, function(guy)
 				return (guy:HasTag("character") or guy:HasTag("animal") or guy:HasTag("monster") )
 					and not guy:HasTag("insect")
-					and not guy:HasTag("realyoukai")
 					and inst.components.combat:CanTarget(guy)
-			end)
+			end, nil, notags)
 		else
 			return false
 		end
 	end
 	inst.components.combat:SetRetargetFunction(2, SpringBeeRetarget)
 end
+-- Killer bee retarget Function
+local function KillerRetargetFn(inst)
+	local function KillerRetarget(inst)
+		return FindEntity(inst, 8, function(guy)
+			return (guy:HasTag("character") or guy:HasTag("animal") or guy:HasTag("monster") )
+				and not guy:HasTag("insect")
+				and inst.components.combat:CanTarget(guy)
+		end, nil, notags)
+	end
+	inst.components.combat:SetRetargetFunction(2, KillerRetarget)
+end
 -- frog Retarget Function
 local function FrogRetargetFn(inst)
 	local function retargetfn(inst)
 		if not inst.components.health:IsDead() and not inst.components.sleeper:IsAsleep() then
-			return GLOBAL.FindEntity(inst, TUNING.FROG_TARGET_DIST, function(guy) 
+			return FindEntity(inst, TUNING.FROG_TARGET_DIST, function(guy) 
 				if guy.components.combat and guy.components.health 
-				and not guy.components.health:IsDead() 
-				and not guy:HasTag("realyoukai") then -- stay frogyyyyyyyyyy
+				and not guy.components.health:IsDead() then
 					return guy.components.inventory ~= nil
 				end
-			end)
+			end, nil, notags)
 		end
 	end
 	inst.components.combat:SetRetargetFunction(3, retargetfn)
@@ -626,7 +671,7 @@ local function GetName(i)
 	return "armor_"..armorlist[i]
 end
 
-for i = 1, table.maxn(armorlist), 1 do
+for i = 1, #armorlist, 1 do
 	AddPrefabPostInit(GetName(i), function(inst)
 		local function Blocked(owner)
 		
@@ -787,61 +832,160 @@ TheInput:AddKeyDownHandler(110, DoDebug_3)
 -- Custom Intro
 
 local function YukariIntro(inst)
-    if GLOBAL.GetPlayer().prefab == "yakumoyukari" then
-		if Language == "chinese" then
-			inst.components.maxwelltalker.speeches.SANDBOX_1 =
-			{
-				appearsound = "dontstarve/maxwell/disappear",
-				voice = "dontstarve/maxwell/talk_LP_world5",
-				appearanim = "appear5",
-				idleanim= "idle5_loop",
-				dialogpreanim = "dialog5_pre",
-				dialoganim="dialog5_loop",
-				dialogpostanim = "dialog5_pst",
-				disappearanim = "disappear5",
-				-- these one gonna make maxwell very very mad.
+	local function TakeOff(inst)
+		local bird = SpawnPrefab("wallyintro_bird")
+		bird.Transform:SetPosition(inst:GetPosition():Get())
+		bird.Transform:SetRotation(inst.Transform:GetRotation())
+		bird.AnimState:PlayAnimation("takeoff_diagonal_pre")
+		local toplayer = (GetPlayer():GetPosition() - inst:GetPosition()):Normalize()
+
+		bird.animoverfn = function()
+			bird:RemoveEventCallback("animover", bird.animoverfn)
+
+			bird.AnimState:PlayAnimation("takeoff_diagonal_loop", true)
+
+			bird:DoTaskInTime(2, function() bird:Remove() end)
+
+			bird:DoPeriodicTask(7 * GLOBAL.FRAMES, function()
+				bird.SoundEmitter:PlaySound("dontstarve/birds/flyin")
+			end)
+
+			bird:DoPeriodicTask(0, function()
+				local currentpos = bird:GetPosition()
+				local flightspeed = 7.5
+				local posdelta = GLOBAL.Vector3(toplayer.x * flightspeed, flightspeed, toplayer.z * flightspeed) * GLOBAL.FRAMES
+				local newpos = currentpos + posdelta
+				bird.Transform:SetPosition(newpos:Get())
+			end)
+		end
+
+		bird:ListenForEvent("animover", bird.animoverfn)
+		
+		local mast = SpawnPrefab("wallyintro_shipmast")
+		mast.Transform:SetPosition(inst:GetPosition():Get())
+		mast.Transform:SetRotation(inst.Transform:GetRotation())
+		
+		inst:Remove()
+	end
+	local PlayPecks = nil
+	PlayPecks = function(inst)
+		inst:RemoveEventCallback("animover", PlayPecks)
+		local peckfn = function() 
+			if inst then 
+				inst.SoundEmitter:PlaySound("dontstarve_DLC002/creatures/parrot/peck") 
+			end
+		end
+		inst:DoTaskInTime(6*GLOBAL.FRAMES, peckfn)
+		inst:DoTaskInTime(11*GLOBAL.FRAMES, peckfn)
+	end
+    if GetPlayer().prefab == "yakumoyukari" then
+		if GLOBAL.SaveGameIndex:IsModeShipwrecked() then
+			inst.components.maxwelltalker.speeches.SHIPWRECKED_1 = {
+				voice = "dontstarve_DLC002/creatures/parrot/chirp",
+				idleanim= "idle",
+				dialoganim="speak",
+				disappearanim = TakeOff,
 				disableplayer = true,
 				skippable = true,
 				{
-					string = "哦 哦 哦 哦 哦 哦 哦 哇 啊 啊 啊 啊 哦 哦!!",
+					string = nil,
+					wait = 1,
+					anim = "idle",
+					pushanim = true,
+					sound = nil,
+				},
+				{
+					string = "Who Are You",
+					wait = 1,
+					anim = nil,
+					sound = nil,
+				},
+				{
+					string = nil,
 					wait = 3,
-					anim = nil,
+					anim = "idle_peck",
+					pushanim = true,
+					sectionfn = function(inst)
+						inst:ListenForEvent("animover", PlayPecks)
+					end,
+				},
+				{
+					string = "StranGer", 
+					wait = 1.5, 
+					anim = nil, 
 					sound = nil,
 				},
 				{
-					string = "你 是 怎 么 打 破 结 界 来 到 这 里 的?!",
-					wait = 4,
-					anim = nil,
-					sound = nil,
+					string = nil,
+					wait = 2.5,
+					anim = "idle_peck",
+					pushanim = true,
+					sectionfn = function(inst)
+						inst:ListenForEvent("animover", PlayPecks)
+					end,
 				},
 				{
-					string = "不 过 没 关 系，无 论 你 以 前 是 否 强 大,",
-					wait = 3,
-					anim = nil,
-					sound = nil,
-				},
-				{
-					string = "我 刚 让 你 变 得 一 团 糟!",
-					wait = 3,
-					anim = nil,
-					sound = nil,
-				},
-				{
-					string = "你 不 可 能 活 下 去，你 必 须 死 ！",
-					wait = 4,
-					anim = nil,
-					sound = nil,
-				},
-				{
-					string = "因 为 你 现 在 很 虚 弱!!",
-					wait = 4,
-					anim = nil,
+					string = "You Better Out", 
+					wait = 1.5, 
+					anim = nil, 
 					sound = nil,
 				},
 			}
+			if Language == "chinese" then
+				inst.components.maxwelltalker.speeches.SHIPWRECKED_1 = {
+					voice = "dontstarve_DLC002/creatures/parrot/chirp",
+					idleanim= "idle",
+					dialoganim="speak",
+					disappearanim = TakeOff,
+					disableplayer = true,
+					skippable = true,
+					{
+						string = nil,
+						wait = 1,
+						anim = "idle",
+						pushanim = true,
+						sound = nil,
+					},
+					{
+						string = "       ",
+						wait = 1,
+						anim = nil,
+						sound = nil,
+					},
+					{
+						string = nil,
+						wait = 3,
+						anim = "idle_peck",
+						pushanim = true,
+						sectionfn = function(inst)
+							inst:ListenForEvent("animover", PlayPecks)
+						end,
+					},
+					{
+						string = "          ", 
+						wait = 1.5, 
+						anim = nil, 
+						sound = nil,
+					},
+					{
+						string = nil,
+						wait = 2.5,
+						anim = "idle_peck",
+						pushanim = true,
+						sectionfn = function(inst)
+							inst:ListenForEvent("animover", PlayPecks)
+						end,
+					},
+					{
+						string = "          ", 
+						wait = 1.5, 
+						anim = nil, 
+						sound = nil,
+					},
+				}
+			end
 		else
-			inst.components.maxwelltalker.speeches.SANDBOX_1 =
-			{
+			inst.components.maxwelltalker.speeches.SANDBOX_1 = {
 				appearsound = "dontstarve/maxwell/disappear",
 				voice = "dontstarve/maxwell/talk_LP_world5",
 				appearanim = "appear5",
@@ -890,6 +1034,58 @@ local function YukariIntro(inst)
 					sound = nil,
 				},
 			}
+			if Language == "chinese" then
+				inst.components.maxwelltalker.speeches.SANDBOX_1 =
+				{
+					appearsound = "dontstarve/maxwell/disappear",
+					voice = "dontstarve/maxwell/talk_LP_world5",
+					appearanim = "appear5",
+					idleanim= "idle5_loop",
+					dialogpreanim = "dialog5_pre",
+					dialoganim="dialog5_loop",
+					dialogpostanim = "dialog5_pst",
+					disappearanim = "disappear5",
+					-- these one gonna make maxwell very very mad.
+					disableplayer = true,
+					skippable = true,
+					{
+						string = "哦 哦 哦 哦 哦 哦 哦 哇 啊 啊 啊 啊 哦 哦!!",
+						wait = 3,
+						anim = nil,
+						sound = nil,
+					},
+					{
+						string = "你 是 怎 么 打 破 结 界 来 到 这 里 的?!",
+						wait = 4,
+						anim = nil,
+						sound = nil,
+					},
+					{
+						string = "不 过 没 关 系，无 论 你 以 前 是 否 强 大,",
+						wait = 3,
+						anim = nil,
+						sound = nil,
+					},
+					{
+						string = "我 刚 让 你 变 得 一 团 糟!",
+						wait = 3,
+						anim = nil,
+						sound = nil,
+					},
+					{
+						string = "你 不 可 能 活 下 去，你 必 须 死 ！",
+						wait = 4,
+						anim = nil,
+						sound = nil,
+					},
+					{
+						string = "因 为 你 现 在 很 虚 弱!!",
+						wait = 4,
+						anim = nil,
+						sound = nil,
+					},
+				}
+			end
 		end
     end
 end
@@ -903,6 +1099,7 @@ modimport "scripts/tunings_yukari.lua"
 AddPrefabPostInit("resurrectionstone", TouchstoneReturn) -- Override function TouchstoneReturn to "prefabs/resurrectionstone.lua"
 AddPrefabPostInit("resurrectionstatue", EffigyReturn)
 AddPrefabPostInit("maxwellintro", YukariIntro)                                            
+AddPrefabPostInit("wallyintro", YukariIntro)                                            
 AddPrefabPostInit("forest", AddSchemeManager)
 AddPrefabPostInit("cave", AddSchemeManager)
 AddPrefabPostInit("flotsam", AddSchemeManager)
@@ -915,6 +1112,8 @@ AddPrefabPostInit("wildbore", SetNormalBoreFn)
 AddPrefabPostInit("bat", BatRetargetFn)
 AddPrefabPostInit("bee", BeeRetargetFn)
 AddPrefabPostInit("frog", FrogRetargetFn)
+AddPrefabPostInit("spider", SpiderRetargetFn)
+AddPrefabPostInit("spider_warrior", WarriorRetargetFn)
 AddPrefabPostInit("shadowwatcher", SetInspectable)
 AddPrefabPostInit("shadowskittish", SetInspectable)
 AddPrefabPostInit("shadowskittish_water", SetInspectable)

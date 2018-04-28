@@ -64,7 +64,7 @@ local function GetTable(inst)
 			list = Ingredients[hatlevel]
 		end
 		if list[1][2] >= 20 then
-			for i = 1, table.maxn(list), 1 do 
+			for i = 1, #list, 1 do 
 				list[i][2] = math.ceil(list[i][2] * 0.25)
 			end
 		end
@@ -108,7 +108,7 @@ local function GetStr(inst)
 	local Language = GetModConfigData("language", "YakumoYukari")
 	local text = ""
 	if inst.hatlevel < 5 then
-		for i = 1, table.maxn(list), 1 do
+		for i = 1, #list, 1 do
 			text = text.."\n"..GetIngameName(list[i][1]).." - "..CountInventoryItem(list[i][1]).." / "..list[i][2]
 		end
 	else
@@ -127,7 +127,7 @@ local function GetCondition(inst)
 	local condition = true
 	
 	if inst.hatlevel < 5 then 
-		for i = 1, table.maxn(list), 1 do 
+		for i = 1, #list, 1 do 
 			condition = condition and ( CountInventoryItem(list[i][1]) >= list[i][2] )
 		end
 	else
@@ -176,7 +176,7 @@ local function DoUpgrade(inst)
 	local list = GetTable(inst)
 	local backpack = GetBackpack()
 	
-	for i = 1, table.maxn(list), 1 do
+	for i = 1, #list, 1 do
 		local function consume(item, left_count, backpack)
 		
 			local Chara = GetPlayer()
