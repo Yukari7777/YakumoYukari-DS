@@ -1623,6 +1623,98 @@ return {
         INVENTORYMOUND = "",
 		LIMPETS_COOKED = "很 好 闻 呢",
 		RAWLING = "有 点 怪 异.",
+		
+		ENCRUSTEDBOAT = "Can this be floated?",
+        BABYOX = "That's not cute.",
+        BALLPHINHOUSE = "Ballphin's house. More like playgounds",
+        DORSALFIN = "The dorsal fin of.. carbone?",
+        NUBBIN = "A coral starter",
+        CORALLARVE = "The seed of coral.",
+        RAINBOWJELLYFISH = "This one might use most of the energy for lit.",
+        RAINBOWJELLYFISH_PLANTED = "A colorful blob of science.",
+        RAINBOWJELLYFISH_DEAD = "Was this a Self-luminous?",
+        RAINBOWJELLYFISH_COOKED = "The color never dim.",
+        RAINBOWJELLYJERKY = "What a painted jerky",
+        WALL_ENFORCEDLIMESTONE = "I hope this doesn't rot.",
+        WALL_ENFORCEDLIMESTONE_ITEM = "Won't this rot?",
+        CROCODOG = "Shipwreked version of hounds. Still aggressive.",
+        POISONCROCODOG = "A radioactive mutation.",
+        WATERCROCODOG = "OK, this looks more radioactive..",
+        QUACKENBEAK = "This one is like an obsidian with more hardness.",
+        QUACKERINGRAM = "Almost invincible!",
+		
+		CAVIAR = "Developers couldn't put this game an salmon-roe-sushi.",
+        CORMORANT = "Phalacrocorax spp. This one used to catch some fishes.",
+
+        FISH3 = "Your color looks purple but not Yukari.",
+        FISH4 = "Some tropical fishes may colored like this I think.",
+        FISH5 = "A Solid-colored Paracheirodon.",
+
+        FISH3_COOKED = "Now you don't even look like Yukari.",
+        FISH4_COOKED = "It looks like Ananas flavor.",
+        FISH5_COOKED = "Oh, It's not solid-colored inside.",
+
+        FISH_FARM = 
+        {
+            EMPTY = "I must find roe if I'm to raise captive fish.",
+            STOCKED = "I believe this should work.",
+            ONEFISH = "It works at least.",
+            TWOFISH = "It seems to be doing quite well.",
+            REDFISH = "Not quite bad.",
+            BLUEFISH  = "I need to harvest this right now.",
+        },
+
+        ROE = "With some rice would be perfect.",
+        ROE_COOKED = "All I needed to do was just put this on rice.",
+        
+        SEA_YARD = 
+        {
+            ON = "What an over-technology.",
+            OFF = "It needs tar to work again.",
+            LOWFUEL = "It needs energy source.",
+        },
+        SEA_CHIMINEA =
+        {
+            EMBERS = "It is going to be disappeared.",
+			GENERIC = "Boring.",
+			HIGH = "Much warmer.",
+			LOW = "Better put some fuels on it.",
+			NORMAL = "What's the next plan?",
+			OUT = "Well, that's over.",
+        }, 
+
+        TAR = "It looks like coal tar rather than asphalt.",
+        TAR_EXTRACTOR =
+        {
+            ON = "It's working now",
+            OFF = "I must switch it on to begin tar extraction.",
+            LOWFUEL = "I'll need to refuel it if I want more tar.",
+        },
+        TAR_POOL = "This is real natural tar seep.",
+
+        TARLAMP = "Smells bad.",
+        TARSUIT = "Argh, should I pour this on?",
+        TAR_TRAP = "Dirtiest trap ever.",
+
+        TROPICALBOUILLABAISSE = "Traditional Provençal fish stew.",
+
+        RESEARCHLAB5 = "I don't even know what I've made...",
+        WATERCHEST = "Hope this doesn't flew away.",
+        QUACKENDRILL = "I can get more tar if I used this at sea.",
+        HARPOON = "One of the most primitive fishing mechanism.",
+        MUSSEL_BED = "I should be careful setting it.",
+		
+		
+		-------------- Examinations of shadow creatures ---------------
+		CREAWLINGNIGHTMARE = "Reincarnation. Your existence is unlimited.",
+		NIGHTMAREBEAK = "Reincarnation. Your existence is unlimited.",
+		CRAWLINGHORROR = "Improbitas. Licks human of greed.",
+		TERRORBEAK = "Damnatio. Your execution style is brutal.",
+		SWIMMINGHORROR = "Sailing the Virgin Oceans. You know the way, huh?",
+		SHADOWWATCHER = "Espinaje. What are you spying?",
+		SHADOWSKITTISH = "Unexpected. You, are not intended.",
+		SHADOWSKITTISH_WATER = "Viscidus. You are the scrap.",
+		CREEPYEYES = "Superintentor. But you can't see inside.",
 	},
 	DESCRIBE_GENERIC = "我 甚 至 对 它 一 无 所 知.",
 	DESCRIBE_TOODARK = "太 黑 了!",
