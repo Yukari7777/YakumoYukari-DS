@@ -409,11 +409,7 @@ local fn = function(inst)
 	TUNING.NIGHTSWORD_USES = 110
 	TUNING.ARMOR_SANITY = 850
 	TUNING.HAMMER_DAMAGE = 10
-	STRINGS.NAMES.SHADOWWATCHER = "Watcher"
-	STRINGS.NAMES.SHADOWSKITTISH = "Shadow Creature"
-	STRINGS.NAMES.SHADOWSKITTISH_WATER = "Shadow Creature"
-	STRINGS.NAMES.CREEPYEYES = "Eyes"
-	
+
 	RECIPETABS['TOUHOU'] = {str = "TOUHOU", sort= 10, icon = "touhoutab.tex", icon_atlas = "images/inventoryimages/touhoutab.xml"}
 	
 	inst.components.eater.EatMEAT = inst.components.eater.Eat
@@ -518,16 +514,9 @@ local fn = function(inst)
 		return inst.components.eater:EatMEAT(food)
 	end
 	
-	inst.components.inventory:GuaranteeItems(important_items)
-	
 	inst:AddTag("youkai")
-	inst:AddTag("monster")
 	inst:AddTag("yakumoga")
 	inst:AddTag("yakumoyukari")
-	inst:RemoveTag("notarget")
-	inst:RemoveTag("inspell")
-	inst:RemoveTag("IsDamage")
-	inst.components.health:SetInvincible(false)
 
 	--inst:DoPeriodicTask(1, DebugFunction)
 	inst:DoPeriodicTask(1, CooldownFunction)

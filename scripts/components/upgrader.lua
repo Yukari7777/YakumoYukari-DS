@@ -1,42 +1,65 @@
-Upgrader = Class(function(self, inst) -- hmm.. This is more like upgrade manager..
+local CONST = TUNING.YUKARI
+local STATUS = TUNING.YUKARI_STATUS
+
+local Upgrader = Class(function(self, inst)
     self.inst = inst
-	
+
+	self.health_level = 0
+	self.hunger_level = 0
+	self.sanity_level = 0
+	self.power_level = 0
+	self.hatlevel = 1
+
 	self.healthbonus = 0
 	self.hungerbonus = 0
 	self.sanitybonus = 0
 	self.powerbonus = 0
-	self.hatpowerbonus = 0
-	self.powergenbonus = 0
-	self.bonusspeed = 0
-	self.hatbonusspeed = 0
+	self.fastactionlevel = 0
+	self.hatpowergain = 0.1
+	self.bonusspeedmult = 1
 	
-	self.resisttemp = 1
 	self.powerupvalue = 0
 	self.regenamount = 0
-	self.regencool = 1
-	self.curecool = 1
-	self.dtmult = 1.2
-	self.SightDistance = 0
-	self.dodgechance = 0
+	self.emergency = 0
+	self.regencool = 0
+	self.curecool = 0
+	self.hatdodgechance = 0
+	self.ResistDark = 0
+	self.hatabsorption = 0
+	self.absorbsanity = 0 
 
-	self.emergency = nil
+	self.PowerGainMultiplier = 1
+	self.hatspeedmult = 1
+	self.dodgechance = 0.1
+	self.skilltextpage = 3
+	self.schemecost = 30
 	
-	self.IsPoisonCure = false
+	self.hatequipped = false
+	self.fireimmuned = false
+	self.nohealthpenalty = false
 	self.IsDamage = false
 	self.IsVampire = false
 	self.IsAOE = false
 	self.IsEfficient = false
 	self.IsFight = false
-	self.ResistDark = false
-	self.ResistCave = false
 	self.InvincibleLearned = false
-	self.CanbeInvincible = false
-	self.WaterProofed = false
+	self.CanbeInvincibled = false
+	self.WaterProofer = false
+	self.IsGoggle = false
 	self.FireResist = false
-	self.PoisonResist = false
-	self.GodTelepoirt = false
+	self.GodTeleport = false
+	self.SpikeEater = false
+	self.RotEater = false
+	self.Ability_45 = false
+	self.NightVision = false
+	self.fastpicker = false
+	self.fastcrafter = false
+	self.fastcutter = false
+	self.fastharvester = false
+	self.fastresetter = false
 	
 	self.ability = {}
+	self.skill = {}
 	self.skillsort = 4
 	self.skilllevel = 6
 	for i = 1, self.skillsort, 1 do
@@ -44,363 +67,430 @@ Upgrader = Class(function(self, inst) -- hmm.. This is more like upgrade manager
 		for j = 1, self.skilllevel, 1 do
 			self.ability[i][j] = false
 		end
-	end -- This is a table that stores skills.
+	end
 	
 	self.hatskill = {}
 	for i = 1, 5, 1 do
 		self.hatskill[i] = false
 	end
 	
-	
-	self.old_tiny = 100/(TUNING.SEG_TIME*32)
-	self.old_small = 100/(TUNING.SEG_TIME*8)
-	self.old_med = 100/(TUNING.SEG_TIME*5)
-	self.old_large = 100/(TUNING.SEG_TIME*2)
-	self.old_huge = 100/(TUNING.SEG_TIME*0.5)
-	
-	self.old_crazysmall = TUNING.CRAZINESS_SMALL 
-	self.old_crazymed = TUNING.CRAZINESS_MED
-	
 end)
 
-function GetUpgradeCount()
-	local G = GetPlayer()
-	return {G.health_level, G.hunger_level, G.sanity_level, G.power_level}
+function Upgrader:SetFireDamageScale()
+	local shouldimmune = self.fireimmuned or (self.hatequipped and self.FireResist)
+	if self.inst.components.health then
+		self.inst.components.health.fire_damage_scale = shouldimmune and 0 or 1
+	end
 end
 
-function Upgrader:IsHatValid(inst)
-	return inst.hatequipped 
-end
-
-function Upgrader:AbilityManager(inst)
-
-	local ability = inst.components.upgrader.ability
-	local hatskill = inst.components.upgrader.hatskill
-	local level = GetUpgradeCount()
-	local point = {5, 10, 17, 25}
+function Upgrader:AbilityManager()
+	local ability = self.ability
+	local hatskill = self.hatskill
+	local unlockpoint = STATUS.UNLOCKABILITY
+	local level = {self.health_level, self.hunger_level, self.sanity_level, self.power_level}
 
 	for i = 1, 4, 1 do
 		for j = 1, 4, 1 do
-			if not ability[i][j] and level[i] >= point[j] then
+			if not ability[i][j] and level[i] >= unlockpoint[j] then
 				ability[i][j] = true
 			end
 		end
 	end
 
-	for i = 1, inst.hatlevel, 1 do
+	for i = 1, self.hatlevel, 1 do
 		hatskill[i] = true
 	end
 	
-	inst.components.upgrader:SkillManager(inst)
-	inst.components.upgrader:HatSkillManager(inst)
+	self:UpdateAbilityStatus()
 end
 
-function Upgrader:SkillManager(inst)
+function Upgrader:UpdateAbilityStatus()
+	local ability = self.ability
+	
+	if ability[1][1] then
+		self.InvincibleLearned = true
+		self.emergency = 3
+		self.healthbonus = 10
+	end
+	
+	if ability[1][2] then
+		self.healthbonus = 30
+		self.emergency = 5
+		self.regenamount = 1
+		self.regencool = 60
+	end
+	
+	if ability[1][3] then
+		self.healthbonus = 50
+		self.regenamount = 2
+		self.emergency = 10
+		self.regencool = 45
+		self.curecool = 180
+	end
+	
+	if ability[1][4] then
+		self.nohealthpenalty = true
+		self.emergency = 20
+		self.healthbonus = 95
+		self.regenamount = 2
+		self.regencool = 30
+		self.curecool = 120
+	end
+	
+	if ability[1][5] then	
+		self.IsFight = false
+		self.emergency = 40
+		self.regenamount = 4
+		self.regencool = 15
+		self.curecool = 60
+	end
+	
+	if ability[1][6] then
+		self.IsVampire = true  
+		self.healthbonus = 195
+	end
+	
+	if ability[2][1] then
+		self.hungerbonus = 25
+		self.powerupvalue = 1
+		self.inst.components.temperature.inherentinsulation = TUNING.INSULATION_TINY
+		self.inst.components.temperature.inherentsummerinsulation = TUNING.INSULATION_TINY
+	end
+	
+	if ability[2][2] then
+		self.hungerbonus = 50
+		self.powerupvalue = 2
+		self.inst.components.temperature.inherentinsulation = TUNING.INSULATION_SMALL
+		self.inst.components.temperature.inherentsummerinsulation = TUNING.INSULATION_SMALL
+	end
+	
+	if ability[2][3] then
+		self.hungerbonus = 75
+		self.powerupvalue = 3
+		self.SpikeEater = true
+		self.inst.components.eater.strongstomach = true
+		self.inst.components.temperature.inherentinsulation = TUNING.INSULATION_MED
+		self.inst.components.temperature.inherentsummerinsulation = TUNING.INSULATION_MED
+	end
+	
+	if ability[2][4] then
+		self.hungerbonus = 100
+		self.powerupvalue = 4
+		self.RotEater = true
+		self.inst.components.eater.ignoresspoilage = true
+		self.inst.components.temperature.inherentinsulation = TUNING.INSULATION_LARGE
+		self.inst.components.temperature.inherentsummerinsulation = TUNING.INSULATION_LARGE
+	end
+	
+	if ability[2][5] then
+		self.IsDamage = true
+		self.powerupvalue = 5
+	end	
+	
+	if ability[2][6] then
+		self.hungerbonus = 150
+		self.IsAOE = true
+	end
+	
+	if ability[3][1] then	
+		self.inst.components.sanity.neg_aura_mult = 0.9
+	end
+	
+	if ability[3][2] then
+		self.absorbsanity = 0.3
+		self.ResistDark = 0.05
+		self.sanitybonus = 25
+		self.inst.components.sanity.neg_aura_mult = 0.8
+	end
+	
+	if ability[3][3] then
+		self.absorbsanity = 0.6
+		self.sanitybonus = 50
+		self.ResistDark = 0.13
+		self.inst.components.sanity.neg_aura_mult = 0.7
+	end
+	
+	if ability[3][4] then
+		self.absorbsanity = 0.9
+		self.ResistDark = 0.2
+		self.sanitybonus = 75	
+		self.inst.components.sanity.neg_aura_mult = 0.66
+	end
+	
+	if ability[3][5] then
+		self.ResistDark = 0.46
+		self.NightVision = true
+	end	
+	
+	if ability[3][6] then
+		self.dodgechance = 0.2
+		self.sanitybonus = 175
+		self.inst.components.sanity.neg_aura_mult = 0.33
+	end	
+	
+	if ability[4][1] then
+		self.inst.components.moisture.baseDryingRate = 0.7
+		self.PowerGainMultiplier = 1.5
+		self.bonusspeedmult = 1.033
+	end
+	
+	if ability[4][2] then
+		self.inst:RemoveTag("youkai")
+		self.fastactionlevel = 1
+		self.fastpicker = true
+		self.powerbonus = 25
+		self.bonusspeedmult = 1.066
+		self.PowerGainMultiplier = 1.75
+	end
+	
+	if ability[4][3] then
+		self.inst:AddTag("realyoukai")
+		self.fastactionlevel = 2
+		self.fastcrafter = true
+		self.powerbonus = 50
+		self.bonusspeedmult = 1.1
+		self.PowerGainMultiplier = 2.25
+	end
+	
+	if ability[4][4] then
+		self.inst:AddTag("spiderwhisperer")
+		self.inst:RemoveTag("scarytoprey")
+		self.fastactionlevel = 3
+		self.fastresetter = true
+		self.IsEfficient = true
+		self.inst.components.locomotor:SetTriggersCreep(false)
+		self.PowerGainMultiplier = 3
+		self.powerbonus = 75
+		self.bonusspeedmult = 1.133
+	end
+	
+	if ability[4][5] then
+		self.inst:AddTag("woodcutter")
+		self.fastcutter = true
+		self.Ability_45 = true
+        self.inst.components.combat:SetRange(3)
+	end
+	
+	if ability[4][6] then
+		self.fastactionlevel = 4
+		self.fastharvester = true
+		self.bonusspeedmult = 1.2
+	end
 
-	local skill = inst.components.upgrader.ability
-	
-	if skill[1][1] then
-		inst.components.upgrader.healthbonus = 10
-		TUNING.HEALING_TINY = 2
-	    TUNING.HEALING_SMALL = 5
-	    TUNING.HEALING_MEDSMALL = 12
-	    TUNING.HEALING_MED = 30
-	    TUNING.HEALING_MEDLARGE = 35
-	    TUNING.HEALING_LARGE = 50
-	    TUNING.HEALING_HUGE = 75
-	    TUNING.HEALING_SUPERHUGE = 300
-	end
-	
-	if skill[1][2] then
-		inst.components.upgrader.healthbonus = 30
-		inst.components.upgrader.regenamount = 1
-		inst.components.upgrader.regencool = 60
-	end
-	
-	if skill[1][3] then
-		inst.components.upgrader.IsPoisonCure = true
-		inst.components.upgrader.healthbonus = 50
-		inst.components.upgrader.regenamount = 2
-		inst.components.upgrader.regencool = 60
-		inst.components.upgrader.curecool = 180
-	end
-	
-	if skill[1][4] then
-		inst.components.upgrader.healthbonus = 95
-		inst.components.upgrader.regenamount = 2
-		inst.components.upgrader.regencool = 30
-		inst.components.upgrader.curecool = 120
-	end
-	
-	if skill[1][5] then	
-		inst.components.upgrader.InvincibleLearned = true
-		inst.components.upgrader.regenamount = 4
-		inst.components.upgrader.regencool = 30
-		inst.components.upgrader.curecool = 80
-	end
-	
-	if skill[1][6] then
-		inst.components.upgrader.IsVampire = true  
-	end
-	
-	if skill[2][1] then
-		inst.components.upgrader.hungerbonus = 25
-		inst.components.upgrader.powerupvalue = 1
-		TUNING.INSULATION_TINY = 60
-		TUNING.INSULATION_SMALL = 120
-		TUNING.INSULATION_MED = 240
-		TUNING.INSULATION_LARGE = 480
-	end
-	
-	if skill[2][2] then
-		inst.components.upgrader.hungerbonus = 50
-		inst.components.upgrader.powerupvalue = 2
-		TUNING.INSULATION_TINY = 90
-		TUNING.INSULATION_SMALL = 180
-		TUNING.INSULATION_MED = 360
-		TUNING.INSULATION_LARGE = 720
-	end
-	
-	if skill[2][3] then
-		inst.components.upgrader.hungerbonus = 75
-		inst.components.upgrader.powerupvalue = 3
-		TUNING.INSULATION_TINY = 120
-		TUNING.INSULATION_SMALL = 240
-		TUNING.INSULATION_MED = 480
-		TUNING.INSULATION_LARGE = 960
-	end
-	
-	if skill[2][4] then
-		inst.components.upgrader.hungerbonus = 100
-		inst.components.upgrader.powerupvalue = 4
-		TUNING.INSULATION_TINY = 150
-		TUNING.INSULATION_SMALL = 300
-		TUNING.INSULATION_MED = 600
-		TUNING.INSULATION_LARGE = 1200
-	end
-	
-	if skill[2][5] then
-		inst.components.upgrader.IsDamage = true
-		inst.components.upgrader.powerupvalue = 5
-	end	
-	
-	if skill[2][6] then
-		inst.components.upgrader.IsAOE = true
-	end
-	
-	if skill[3][1] then	
-		TUNING.SANITYAURA_TINY = inst.components.upgrader.old_tiny * 0.7 
-		TUNING.SANITYAURA_SMALL = inst.components.upgrader.old_small * 0.75
-		TUNING.SANITYAURA_MED = inst.components.upgrader.old_med * 0.8
-		TUNING.SANITYAURA_LARGE = inst.components.upgrader.old_large * 0.9
-		TUNING.SANITYAURA_HUGE = inst.components.upgrader.old_huge * 0.95
-	end
-	
-	if skill[3][2] then
-		inst.components.upgrader.ResistDark = true
-		inst.components.upgrader.sanitybonus = 25	
-		TUNING.CRAZINESS_SMALL = inst.components.upgrader.old_crazysmall * 0.3
-		TUNING.CRAZINESS_MED = inst.components.upgrader.old_crazysmall * 0.4
-	end
-	
-	if skill[3][3] then
-		inst.components.upgrader.sanitybonus = 50
-		inst.components.upgrader.ResistCave = true		
-		TUNING.SANITYAURA_TINY = inst.components.upgrader.old_tiny * 0.2 
-		TUNING.SANITYAURA_SMALL = inst.components.upgrader.old_small * 0.3
-		TUNING.SANITYAURA_MED = inst.components.upgrader.old_med * 0.4
-		TUNING.SANITYAURA_LARGE = inst.components.upgrader.old_large * 0.65
-		TUNING.SANITYAURA_HUGE = inst.components.upgrader.old_huge * 0.8
-	end
-	
-	if skill[3][4] then
-		inst.components.upgrader.sanitybonus = 75	
-		TUNING.SANITYAURA_TINY = 0
-		TUNING.SANITYAURA_SMALL = inst.components.upgrader.old_small * 0.1
-		TUNING.SANITYAURA_MED = inst.components.upgrader.old_med * 0.2
-		TUNING.SANITYAURA_LARGE = inst.components.upgrader.old_large * 0.3
-		TUNING.SANITYAURA_HUGE = inst.components.upgrader.old_huge * 0.4
-	end
-	
-	if skill[3][5] then
-		inst.components.upgrader.NightVision = true
-	end	
-	
-	if skill[3][6] then
-		inst.components.upgrader.IsFight = true
-		TUNING.SANITYAURA_TINY = 0
-		TUNING.SANITYAURA_SMALL = 0
-		TUNING.SANITYAURA_MED = 0
-		TUNING.SANITYAURA_LARGE = 0
-		TUNING.SANITYAURA_HUGE = 0
-	end	
-	
-	if skill[4][1] then
-		inst.components.upgrader.bonusspeed = 1
-		inst.components.upgrader.powerbonus = 25
-		inst.components.upgrader.powergenbonus = 0.25
-		TUNING.ARMOR_RUINSHAT_DMG_AS_SANITY = 0.025
-		TUNING.ARMOR_SANITY_DMG_AS_SANITY = 0.05
-		if IsDLCEnabled(CAPY_DLC) then
-			TUNING.ARMORMARBLE_SLOW = -0.1
-		else
-			TUNING.ARMORMARBLE_SLOW = 0.9
-		end
-	end
-	
-	if skill[4][2] then
-		inst:RemoveTag("youkai")
-		inst:RemoveTag("monster")
-		inst.components.upgrader.powerbonus = 50
-		inst.components.upgrader.powergenbonus = 0.5
-		TUNING.NIGHTSWORD_USES = 140
-		TUNING.ARMOR_SANITY = 1000
-	    TUNING.ICESTAFF_USES = 25
-	    TUNING.FIRESTAFF_USES = 25
-	    TUNING.TELESTAFF_USES = 6
-		TUNING.REDAMULET_USES = 25
-		TUNING.YELLOWSTAFF_USES = 25
-		TUNING.ORANGESTAFF_USES = 25
-		TUNING.GREENAMULET_USES = 6
-		TUNING.GREENSTAFF_USES = 6
-		TUNING.PANFLUTE_USES = 12
-		TUNING.HORN_USES = 12
-	end
-	
-	if skill[4][3] then
-		inst.components.upgrader.powerbonus = 75
-		inst.components.upgrader.bonusspeed = 2
-		inst.components.upgrader.powergenbonus = 1
-	end
-	
-	if skill[4][4] then
-		inst:AddTag("realyoukai")
-		inst.components.upgrader.powerbonus = 175
-		inst.components.upgrader.bonusspeed = 3
-	end
-	
-	if skill[4][5] then
-		inst.components.combat:SetAttackPeriod(0)
-        inst.components.combat:SetRange(3.2)
-	end
-	
-	if skill[4][6] then
-		inst.components.upgrader.IsEfficient = true
-		inst.components.upgrader.bonusspeed = 4
-		GetPlayer().components.moisture.baseDryingRate = 0.5
-	end
-	
+	self.inst.yukari_classified.fastaction:set(self.fastactionlevel)
 end
 
-function Upgrader:HatSkillManager(inst)
-
-	local IsValid = inst.components.upgrader:IsHatValid(inst)
-
-	if IsValid then
-		local skill = inst.components.upgrader.hatskill
+function Upgrader:ApplyHatAbility(hat)	
+	if self.hatequipped then
+		local skill = self.hatskill
 		
+		self.hatabsorption = 0.2
+		self.hatpowergain = CONST.HAT_BASE_POWER_GAIN_RATE
+
 		if skill[2] then
-			inst.components.upgrader.SightDistance = 1
-			inst.components.upgrader.hatdodgechance = 0.1
+			self.hatdodgechance = 0.05
+			self.hatabsorption = 0.3
+			self.hatspeedmult = 1.05
+			self.hatpowergain = CONST.HAT_BASE_POWER_GAIN_RATE + 0.01
 		end
 		
 		if skill[3] then
-			inst.components.upgrader.WaterProofed = true
-			inst.components.upgrader.hatpowerbonus = 20
-			inst.components.upgrader.hatdodgechance = 0.2
-			inst.components.upgrader.dtmult = 1.5
+			self.IsGoggle = true
+			self.WaterProofer = true
+			self.hatdodgechance = 0.1
+			self.hatabsorption = 0.5
+			self.hatspeedmult = 1.1
+			self.hatpowergain = CONST.HAT_BASE_POWER_GAIN_RATE + 0.03
 		end
 		
 		if skill[4] then
-			inst.components.upgrader.FireResist = true
-			inst.components.upgrader.PoisonResist = true
-			inst.components.upgrader.SightDistance = 2
-			inst.components.upgrader.hatpowerbonus = 50
-			inst.components.upgrader.hatbonusspeed = 1
-			inst.components.upgrader.hatdodgechance = 0.3
-			inst.components.upgrader.dtmult = 1.7
+			self.FireResist = true
+			self.hatdodgechance = 0.15
+			self.hatabsorption = 0.7
+			self.hatspeedmult = 1.15
+			self.hatpowergain = CONST.HAT_BASE_POWER_GAIN_RATE + 0.05
 		end
 		
 		if skill[5] then
-			inst.components.upgrader.hatpowerbonus = 100
-			inst.components.upgrader.dtmult = 2.5
-			inst.components.upgrader.hatdodgechance = 0.4
-			inst.components.upgrader.GodTelepoirt = true
+			self.GodTeleport = true
+			self.hatdodgechance = 0.2
+			self.hatabsorption = 0.8
+			self.hatspeedmult = 1.2
+			self.hatpowergain = CONST.HAT_BASE_POWER_GAIN_RATE + 0.1
 		end
-		
 	else
-		inst.components.upgrader.WaterProofed = false
-		inst.components.upgrader.FireResist = false
-		inst.components.upgrader.PoisonResist = false
-		inst.components.upgrader.GodTelepoirt = false
-		inst.components.upgrader.SightDistance = 0
-		inst.components.upgrader.hatpowerbonus = 0
-		inst.components.upgrader.hatdodgechance = 0
-		inst.components.upgrader.dtmult = 1.2
+		self.WaterProofer = false
+		self.FireResist = false
+		self.GodTeleport = false
+		self.IsGoggle = false
+		self.hatpowergain = 0
+		self.hatdodgechance = 0
+		self.hatabsorption = CONST.HAT_NO_DAMAGE_REDUCTION
+		self.hatspeedmult = 1
+	end
+	
+	if hat ~= nil then
+		hat:SetSpeedMult(self.hatspeedmult)
+		hat:SetAbsorbPercent(self.hatabsorption)
+		hat:SetWaterProofness(self.WaterProofer)
+		hat:SetGoggle(self.IsGoggle)
+		self:SetFireDamageScale()
+	end
+
+	self.inst.components.power:SetModifier("hatrate", self.hatpowergain)
+end
+
+function Upgrader:UpdateSkillStatus()
+	local skill = self.skill
+
+	if self.powerupvalue ~= 0 then
+		skill.dmgmult = "Damage multiplier : "..string.format("%.2f", self.inst.components.combat.damagemultiplier).." (max : "..TUNING.YUKARI.DAMAGE_MULTIPLIER + 0.2 * self.powerupvalue..")"
+	end
+
+	if self.ResistDark ~= 0 then
+		skill.insulation = "Reduces sanity decrement from darkness by "..(self.ResistDark * 100).."%" 
+	end	
+
+	local winter, summer = self.inst.components.temperature:GetInsulation()
+	if winter ~= 0 and summer ~= 0 then
+		skill.insulation =  "Total insulation : "..summer.."(summer), "..winter.."(winter)"
+	end
+
+	if self.bonusspeedmult ~= 1 and self.hatspeedmult ~= 1 then
+		skill.speed = "Speed Bonus : "..self.bonusspeedmult * (self.hatequipped and self.hatspeedmult or 1)
+	end	
+
+	if self.hatdodgechance ~= 0 then
+		skill.graze = "Graze(Evasion) chance : "..((self.dodgechance + (self.hatequipped and self.hatdodgechance or 0)) * 100).."%"
+	end
+
+	if self.PowerGainMultiplier ~= 1 then
+		skill.powermult = "Gain more power by "..((self.PowerGainMultiplier - 1) * 100).."%"
+	end
+
+	if self.IsVampire then
+		skill.lifeleech = "Heals "..(self.IsAOE and 2 or 1).." every hit"
+	end
+
+	local friendlylevel = 0 + (self.inst:HasTag("youkai") and 0 or 1) + (self.inst:HasTag("realyoukai") and 1 or 0) + (self.inst:HasTag("spiderwhisperer") and 1 or 0)
+	if friendlylevel ~= 0 then
+		skill.friendlylevel = "Friendly Level : "..friendlylevel
+	end
+
+	if self.absorbsanity ~= 0 then
+		skill.absorbsanity = "Reduces sanity penalty from armor by "..(self.absorbsanity * 100).."%"
+	end
+
+	if self.inst.components.sanity.neg_aura_mult ~= 1 then
+		skill.insanityresist = "Insanity Aura resist : "..((1 - self.inst.components.sanity.neg_aura_mult) * 100).."%"
+	end
+
+	if self.regenamount ~= 0 and self.regencool ~= 0 then
+		skill.healthregen = "Heals "..self.regenamount.." every "..self.regencool.." seconds"
+	end
+
+	if self.curecool ~= 0 then
+		skill.cure = "Cure poison every "..self.curecool.." seconds"
+	end
+
+	if self.InvincibleLearned and skill.invincibility == nil then
+		local invincibility
+		if self.IsInvincible then
+			invincibility = STRINGS.INVINCIBILITY.." : "..STRINGS.ACTIVATED
+		elseif self.inst.invin_cool > 0 then
+			invincibility = STRINGS.INVINCIBILITY.." : "..self.inst.invin_cool..STRINGS.SECONDS
+		else
+			invincibility = STRINGS.INVINCIBILITY.." : "..STRINGS.READY
+		end
+
+		skill.invincibility = invincibility
+	end
+
+	if self.inst.components.moisture.baseDryingRate ~= 0 and skill.dry == nil then
+		skill.dry = "Additional drying speed by "..self.inst.components.moisture.baseDryingRate
+	end
+
+	if self.nohealthpenalty and skill.nohealthpenalty == nil then
+		skill.nohealthpenalty = "No health penalty after reviving"
+	end
+
+	if self.fastpicker and skill.picker == nil then
+		skill.picker = "Picks faster"
+	end
+
+	if self.fastcrafter and skill.crafter == nil then
+		skill.crafter = "Crafts faster"
+	end
+
+	if self.fastharvester and skill.harvester == nil then
+		skill.harvester = "Harvests faster"
+	end
+
+	if self.fastresetter and skill.resetter == nil then
+		skill.resetter = "Reset mines faster"
+	end
+
+	if self.fastcutter and skill.woodie == nil then
+		skill.woodie = "Chops faster"
+	end
+
+	if self.IsAOE and skill.AOE == nil then
+		skill.AOE = "40% chance to do area-of-effect with the damage amount of 60% in range 3"
+	end
+
+	if self.NightVision and skill.nightvision == nil then
+		skill.nightvision = "Enables nightvision when sanity is over 80%"
+	end
+
+	if self.IsFight and skill.isfight == nil then
+		skill.isfight = "Absorbs incoming damage by 30%"
+	end
+
+	if self.Ability_45 and skill.longattack == nil then
+		skill.longattack = "Inscreased attack range"
+	end
+
+	if self.Ability_45 and skill.realgraze == nil then
+		skill.realgraze = "Grazing grants invincibility for a short time"
+	end
+
+	if self.IsEfficient and skill.efficient == nil then
+		skill.efficient = "Uses tool more effectively"
+	end
+
+	if self.SpikeEater and skill.spikeeater == nil then
+		skill.spikeeater = "Can eat monster meat."
+	end
+
+	if self.RotEater and skill.roteater == nil then
+		self.roteater = "Not a picky eater."
 	end
 end
 
-function Upgrader:DoUpgrade(inst, stat) 
+function Upgrader:ApplyStatus()
+	local inst = self.inst
 	local hunger_percent = inst.components.hunger:GetPercent()
 	local health_percent = inst.components.health:GetPercent()
 	local sanity_percent = inst.components.sanity:GetPercent()
 	local power_percent = inst.components.power:GetPercent()
+	local ignoresanity = inst.components.sanity.ignore
+    inst.components.sanity.ignore = false
 	
-	local difficulty = GetModConfigData("difficulty", "YakumoYukari")
-	local STATUS = TUNING.STATUS_DEFAULT
-	if difficulty == "easy" then
-		STATUS = TUNING.STATUS_EASY
-	elseif difficulty == "hard" then
-		STATUS = TUNING.STATUS_HARD
-	end
+	self:AbilityManager()
+	inst.components.combat:SetAttackPeriod(self.Ability_45 and 0 or TUNING.WILSON_ATTACK_PERIOD)
+	inst.components.health.maxhealth = STATUS.DEFAULT_HP + self.health_level * STATUS.HP_RATE + self.healthbonus + math.max(0, (self.health_level - 30) * 7.5)
+	inst.components.health:SetAbsorptionAmount(1 - (self.IsDamage and 0.7 or 1) * (inst.yukari_classified ~= nil and inst.yukari_classified.inspellbait:value() and 0.5 or 1) )
+	inst.components.hunger.hungerrate = math.max( 0, (STATUS.DEFAULT_HR - self.hunger_level * STATUS.HR_RATE - math.max(0, (self.hunger_level - 30) * 0.025 )) ) * TUNING.WILSON_HUNGER_RATE 
+	inst.components.hunger.max = STATUS.DEFAULT_HU + self.hungerbonus
+	inst.components.sanity.max = STATUS.DEFAULT_SN + self.sanity_level * STATUS.SN_RATE + self.sanitybonus + math.max(0, (self.sanity_level - 30) * 5)
+	inst.components.power.max = STATUS.DEFAULT_PW + self.power_level * STATUS.PO_RATE + self.powerbonus + math.max(0, (self.power_level - 30) * 5)
+	inst.components.locomotor:SetExternalSpeedMultiplier(inst, "dreadful", self.bonusspeedmult)
 	
-	if stat then
-		if stat == 1 then
-			inst.health_level = inst.health_level + 1
-			inst.HUD.controls.status.heart:PulseGreen()
-			inst.HUD.controls.status.heart:ScaleTo(1.3,1,.7)
-			inst.components.health.maxhealth = STATUS.DEFAULT_HP + inst.health_level * STATUS.HP_RATE + self.healthbonus + math.max(0, (inst.health_level - 30) * 7.5)
-			inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_UPGRADE_HEALTH")) -- will add random more talk
-		elseif stat == 2 then
-			inst.hunger_level = inst.hunger_level + 1
-			inst.HUD.controls.status.stomach:PulseGreen()
-			inst.HUD.controls.status.stomach:ScaleTo(1.3,1,.7)
-			inst.components.hunger.hungerrate = math.max( 0, (STATUS.DEFAULT_HR - inst.hunger_level * STATUS.HR_RATE - math.max(0, (inst.hunger_level - 30) * 0.025 )) * TUNING.WILSON_HUNGER_RATE )
-			inst.components.hunger.max = STATUS.DEFAULT_HU + self.hungerbonus
-			inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_UPGRADE_HUNGER"))
-		elseif stat == 3 then
-			inst.sanity_level = inst.sanity_level + 1
-			inst.HUD.controls.status.brain:PulseGreen()
-			inst.HUD.controls.status.brain:ScaleTo(1.3,1,.7)
-			inst.components.sanity.max = STATUS.DEFAULT_SN + inst.sanity_level * STATUS.SN_RATE + self.sanitybonus + math.max(0, (inst.sanity_level - 30) * 5)
-			inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_UPGRADE_SANITY"))
-		elseif stat == 4 then
-			inst.power_level = inst.power_level + 1
-			inst.HUD.controls.status.power:PulseGreen()
-			inst.HUD.controls.status.power:ScaleTo(1.3,1,.7)
-			inst.components.power.max = STATUS.DEFAULT_PW + inst.power_level * STATUS.PO_RATE + self.powerbonus + self.hatpowerbonus + math.max(0, (inst.power_level - 30) * 5)
-			inst.components.power.regenrate = STATUS.DEFAULT_PR + inst.power_level * STATUS.PR_RATE + self.powergenbonus
-			inst.components.locomotor.walkspeed = 4 + self.bonusspeed + self.hatbonusspeed
-			inst.components.locomotor.runspeed = 6 + self.bonusspeed + self.hatbonusspeed
-			inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_UPGRADE_POWER"))	
-		end	
-	else 
-		inst.components.health.maxhealth = STATUS.DEFAULT_HP + inst.health_level * STATUS.HP_RATE + self.healthbonus + math.max(0, (inst.health_level - 30) * 7.5)
-		inst.components.hunger.hungerrate = math.max( 0, (STATUS.DEFAULT_HR - inst.hunger_level * STATUS.HR_RATE - math.max(0, (inst.hunger_level - 30) * 0.025 )) ) * TUNING.WILSON_HUNGER_RATE 
-		inst.components.hunger.max = STATUS.DEFAULT_HU + self.hungerbonus
-		inst.components.sanity.max = STATUS.DEFAULT_SN + inst.sanity_level * STATUS.SN_RATE + self.sanitybonus + math.max(0, (inst.sanity_level - 30) * 5)
-		inst.components.power.max = STATUS.DEFAULT_PW + inst.power_level * STATUS.PO_RATE + self.powerbonus + self.hatpowerbonus + math.max(0, (inst.power_level - 30) * 5)
-		inst.components.power.regenrate = STATUS.DEFAULT_PR + inst.power_level * STATUS.PR_RATE + self.powergenbonus
-		inst.components.locomotor.walkspeed = 4 + self.bonusspeed + self.hatbonusspeed
-		inst.components.locomotor.runspeed = 6 + self.bonusspeed + self.hatbonusspeed
-	end
-	
-	inst.components.upgrader:AbilityManager(inst)
 	inst.components.health:SetPercent(health_percent)
 	inst.components.hunger:SetPercent(hunger_percent)
 	inst.components.sanity:SetPercent(sanity_percent)
 	inst.components.power:SetPercent(power_percent)
-	
+	inst.components.sanity.ignore = ignoresanity
 end
 
 return Upgrader

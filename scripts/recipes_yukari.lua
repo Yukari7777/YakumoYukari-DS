@@ -1,17 +1,25 @@
-local Recipe = GLOBAL.Recipe
-local RECIPETABS = GLOBAL.RECIPETABS
-local RECIPE_GAME_TYPE = GLOBAL.RECIPE_GAME_TYPE
-local TECH = GLOBAL.TECH
-local IsDLCEnabled = GLOBAL.IsDLCEnabled
+local difficulty = _G.YUKARI_DIFFICULTY 
 
-AddClassPostConstruct("widgets/crafttabs", function(inst)
-    if inst.prefab == "yakumoyukari" then
-	GLOBAL.RECIPETABS['TOUHOU'] = {str = "TOUHOU", sort = 10, icon = "touhoutab.tex", icon_atlas = "images/inventoryimages/touhoutab.xml"}
-    end
-end)
+local Recipes = {}
+
+local function AddRecipe(name, ingredients, level, game_type)
+	if IsDLCEnabled(GLOBAL.CAPY_DLC) or IsDLCEnabled(GLOBAL.PORKLAND_DLC) then
+		recipe = Recipe(name, ingredients, RECIPETABS.TOUHOU, level, game_type)
+	elseif game_type ~= RECIPE_GAME_TYPE.SHIPWRECKED or game_type ~= RECIPE_GAME_TYPE.PORKLAND then
+		recipe = Recipe(name, ingredients, RECIPETABS.TOUHOU, level)
+	end
+	
+	if recipe ~= nil then
+		recipe.atlas = "images/inventoryimages/"..name..".xml"
+	end
+
+	Recipes[name] = recipe
+end
 
 local function RecipePostInit(yakumoyukari)
 	
+	AddRecipe("healthpanel", {Ingredient("spidergland", 2), Ingredient("honey", 1)}, {SCIENCE = 1})
+
 	if IsDLCEnabled(GLOBAL.CAPY_DLC) then
 		if Difficulty == "easy" then
 			local healthpanelrecipe = Recipe( ("healthpanel"), {Ingredient("spidergland", 2), Ingredient("honey", 1)}, RECIPETABS.TOUHOU, {SCIENCE = 1} )
@@ -147,4 +155,10 @@ local function RecipePostInit(yakumoyukari)
 	end
 end
 
-AddPrefabPostInit("yakumoyukari", RecipePostInit)
+return {
+	RECIPETAB = {str = "TOUHOU", sort = 10, icon = "touhoutab.tex", icon_atlas = "images/inventoryimages/touhoutab.xml"},
+
+	EASY = {
+		
+	}
+}

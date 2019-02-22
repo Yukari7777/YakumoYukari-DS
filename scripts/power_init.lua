@@ -1,53 +1,67 @@
 local require = GLOBAL.require
-local TUNING = GLOBAL.TUNING
-local GetPlayer = GLOBAL.GetPlayer
+local KnownModIndex = GLOBAL.KnownModIndex
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local NUMBERFONT = GLOBAL.NUMBERFONT
 
-local YokaiBadge = require "widgets/yokaibadge"
-
-table.insert(Assets, Asset("ANIM", "anim/power.zip"))
-
-local function CombindIsModEnabled(name)
-	for _, moddir in ipairs(GLOBAL.KnownModIndex:GetModsToLoad()) do
-		if GLOBAL.KnownModIndex:GetModInfo(moddir).name == "Combined Status"  then
-			return true
+local function GetModName(modname) -- modinfo's modname and internal modname is different.
+	for _, knownmodname in ipairs(KnownModIndex:GetModsToLoad()) do
+		if KnownModIndex:GetModInfo(knownmodname).name == modname  then
+			return knownmodname
 		end
 	end
-	return false
 end
 
-local function StatusDisplaysInit(class)
-
-	if GetPlayer().components.power then
-	 
-		class.power = class:AddChild(YokaiBadge(class.owner))
-		-- /////// TEMP Support, only works with default settings. ///////
-		if CombindIsModEnabled("Combined Status") then
-			class.brain:SetPosition(0, 35, 0)
-			class.stomach:SetPosition(-62, 35, 0)
-			class.heart:SetPosition(62, 35, 0)
-			class.power:SetScale(.9,.9,.9)
-			class.power:SetPosition(-62, -50, 0)
-		else
-			if class.moisturemeter then -- it also checks dlc
-				class.power:SetPosition(-40, -50,0)
-				class.brain:SetPosition(40, -50, 0)
-				class.stomach:SetPosition(-40,17,0) -- default by (-40, 20, 0). Because my youkaibadge's height is little shorter than other badges.
-			elseif not class.moisturemeter.moisture then
-				class.power:SetPosition(0,-105,0) -- where the moisture widget was.
-			end
+local function GetModOptionValue(knownmodname, known_option_name)
+	local modinfo = KnownModIndex:GetModInfo(knownmodname)
+	for _,option in pairs(modinfo.configuration_options) do
+		if option.name == known_option_name then
+			return option.saved
 		end
-
-		
-		class.power.anim:GetAnimState():SetBank("health")
-		class.power.anim:GetAnimState():SetBuild("sprint")
-		class.power:SetPercent(class.owner.components.power:GetPercent(), class.owner.components.power.max)
-			
-		class.inst:ListenForEvent("powerdelta", function(inst, data) 
-			class.power:SetPercent(data.newpercent, class.owner.components.power.max)
-		end, class.owner)
-			
 	end
-	
+end
+
+local function StatusDisplaysInit(self)
+	if self.owner:HasTag("yakumoyukari") then
+		local YokaiBadge = require "widgets/yokaibadge"
+
+		self.combinedmod = GetModName("Combined Status")
+
+		self.power = self:AddChild(YokaiBadge(self.owner))
+		if self.combinedmod ~= nil then
+			self.brain:SetPosition(0, 35, 0)
+			self.stomach:SetPosition(-62, 35, 0)
+			self.heart:SetPosition(62, 35, 0)
+
+			self.power:SetScale(.9,.9,.9)
+			self.power:SetPosition(-62, -50, 0)
+			self.power.combinedmod = true
+			self.power.showmaxonnumbers = GetModOptionValue(self.combinedmod, "SHOWMAXONNUMBERS")
+
+			self.power.bg = self.power:AddChild(Image("images/status_bgs.xml", "status_bgs.tex"))
+			self.power.bg:SetScale(.4,.43,0)
+			self.power.bg:SetPosition(-.5, -40, 0)
+		
+			self.power.num:SetFont(NUMBERFONT)
+			self.power.num:SetSize(28)
+			self.power.num:SetPosition(3.5, -40.5, 0)
+			self.power.num:SetScale(1,.78,1)
+
+			self.power.num:MoveToFront()
+			self.power.num:Show()
+
+			self.power.maxnum = self.power:AddChild(Text(NUMBERFONT, self.power.showmaxonnumbers and 25 or 33))
+			self.power.maxnum:SetPosition(6, 0, 0)
+			self.power.maxnum:MoveToFront()
+			self.power.maxnum:Hide()
+		else
+			self.power:SetPosition(-40, -50,0)
+			self.brain:SetPosition(40, -50, 0)
+			self.stomach:SetPosition(-40,17,0)
+		end
+		
+		self.inst:ListenForEvent("powerdelta", function(inst, data) self.power:SetPercent(data.newpercent, self.owner.components.power.max) end, self.owner)
+	end
 end
 
 AddClassPostConstruct("widgets/statusdisplays", StatusDisplaysInit)

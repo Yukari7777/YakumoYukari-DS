@@ -8,7 +8,8 @@ local assets=
 prefabs = {}
 
 local function UpdateSound(inst)
-    local soundShouldPlay = (GetSeasonManager():IsRaining() and inst.components.equippable:IsEquipped() and inst.upgraded)
+	local equipper = inst.components.equippable:IsEquipped() and inst.components.equippable.equipper
+    local soundShouldPlay = GetSeasonManager():IsRaining() and equipper and not equipper.sg:HasStateTag("rowing")
     if soundShouldPlay ~= inst.SoundEmitter:PlayingSound("umbrellarainsound") then
         if soundShouldPlay then
 		    inst.SoundEmitter:PlaySound("dontstarve/rain/rain_on_umbrella", "umbrellarainsound") 
@@ -18,72 +19,90 @@ local function UpdateSound(inst)
     end
 end  
 
-local function firedmg(amount)
-	if GetPlayer().fireimmuned == false and GetPlayer().components.health then
-		GetPlayer().components.health.fire_damage_scale = amount
+local function GetPercentTweak(self)
+	if self.condition == 1 then
+		return 0 
 	end
+	return self.condition / self.maxcondition
 end
 
-local function Ability(inst, owner)
+local function MakeIndestructible(inst)
+	inst.components.armor.SetCondition = function() return end
+	inst.components.armor.GetPercent = GetPercentTweak
+	inst.components.armor.condition = 1
+end
 
-	if owner.components.upgrader:IsHatValid(owner) then
-		if owner.hatlevel >= 3 then
-			inst.components.dapperness.mitigates_rain = true
-			inst.components.waterproofer:SetEffectiveness(1)
-		end
-		
-		if owner.hatlevel >= 4 then
-			inst.components.equippable.poisonblocker = true
-			inst.components.equippable.poisongasblocker = true
-			if not owner.fireimmuned and owner.components.health then
-				owner.components.health.fire_damage_scale = 0
-			end
-		end
-	else
-		inst.components.dapperness.mitigates_rain = false
-		inst.components.waterproofer:SetEffectiveness(0)
-		inst.components.equippable.poisonblocker = false
-		inst.components.equippable.poisongasblocker = false
-		if not owner.fireimmuned == false and owner.components.health then
-			owner.components.health.fire_damage_scale = 1
-		end
-	end
-	
+local function SetAbsorbPercent(inst, percent)
+	inst.components.armor.absorb_percent = percent
+	inst.components.armor.condition = percent * 100
+	inst:PushEvent("percentusedchange", { percent = percent })
+end
+
+local function SetSpeedMult(inst, mult)
+	inst.components.equippable.walkspeedmult = mult
+end
+
+local function SetWaterProofness(inst, val)
+	inst.components.waterproofer:SetEffectiveness(val and 1 or 0)
+	if val then inst:AddTag("waterproofer") else inst:RemoveTag("waterproofer") end
+end
+
+local function SetGasBlocker(inst, val)
+	inst.components.equippable.poisonblocker = val	
+	inst.components.equippable.poisongasblocker = val
+end
+
+local function Initialize(inst)
+	inst:RemoveTag("shadowdominance")
+	inst:SetWaterProofness(false)
+	inst:SetAbsorbPercent(.01)
+	inst:SetSpeedMult(1)
+	inst:SetGasBlocker(false)
+end
+
+local function onequiphat(inst, owner)
+    owner.AnimState:OverrideSymbol("swap_hat", "yukarihat_swap", "swap_hat")
+    owner.AnimState:Show("HAT")
+    owner.AnimState:Show("HAT_HAIR")
+    owner.AnimState:Hide("HAIR_NOHAT")
+    owner.AnimState:Hide("HAIR") 
+	owner:PushEvent("hatequipped", {isequipped = true, inst = inst})
+	UpdateSound(inst)
+end
+
+local function onunequiphat(inst, owner)
+    owner.AnimState:Hide("HAT")
+    owner.AnimState:Hide("HAT_HAIR")
+    owner.AnimState:Show("HAIR_NOHAT")
+    owner.AnimState:Show("HAIR") 
+	owner:PushEvent("hatequipped", {isequipped = false, inst = inst})
+	Initialize(inst)
+	UpdateSound(inst)
 end
 
 local function fn()  
-	
-	local function onequiphat(inst, owner)
-        owner.AnimState:OverrideSymbol("swap_hat", "yukarihat_swap", "swap_hat")
-        owner.AnimState:Show("HAT")
-        owner.AnimState:Show("HAT_HAIR")
-        owner.AnimState:Hide("HAIR_NOHAT")
-        owner.AnimState:Hide("HAIR") 
-    end
-
-    local function onunequiphat(inst, owner)
-        owner.AnimState:Hide("HAT")
-        owner.AnimState:Hide("HAT_HAIR")
-        owner.AnimState:Show("HAIR_NOHAT")
-        owner.AnimState:Show("HAIR") 
-    end
 
 	local inst = CreateEntity()    
-	local trans = inst.entity:AddTransform()    
-	local anim = inst.entity:AddAnimState()    
-	local sound = inst.entity:AddSoundEmitter()   
-	
+
+	inst.entity:AddTransform()    
+	inst.entity:AddAnimState()    
+	inst.entity:AddSoundEmitter()   
+	inst.entity:AddMiniMapEntity()
+
+    inst.MiniMapEntity:SetIcon("yukarihat.tex")
+
 	MakeInventoryPhysics(inst)    
 	if IsDLCEnabled(CAPY_DLC) then    
 		MakeInventoryFloatable(inst, "idle", "idle")
 	end	
 		
-	anim:SetBank("yukarihat")    
-	anim:SetBuild("yukarihat")    
-	anim:PlayAnimation("idle")    
+	inst.AnimState:SetBank("yukarihat")
+	inst.AnimState:SetBuild("yukarihat")
+	inst.AnimState:PlayAnimation("idle")   
 
 	inst:AddTag("hat")
-	inst:AddTag("irreplaceable")
+	inst:AddTag("yukarihat")
+
 	inst:AddComponent("inspectable")        
 	
 	inst:AddComponent("inventoryitem")   
@@ -91,12 +110,9 @@ local function fn()
 	
 	inst:AddComponent("waterproofer")
 	inst.components.waterproofer:SetEffectiveness(0)
-	
-	inst:AddComponent("dapperness")
-    inst.components.dapperness.mitigates_rain = false	
-	
-	inst.entity:AddMiniMapEntity()
-    inst.MiniMapEntity:SetIcon("yukarihat.tex")
+
+	inst:AddComponent("armor")
+	MakeIndestructible(inst)
 	
 	inst:AddComponent("equippable")    
 	inst.components.equippable.equipslot = EQUIPSLOTS.HEAD
@@ -104,17 +120,12 @@ local function fn()
     inst.components.equippable:SetOnUnequip( onunequiphat )
 	inst.components.equippable.poisonblocker = false	
 	inst.components.equippable.poisongasblocker = false
-	
-	inst:AddComponent("characterspecific")
-    inst.components.characterspecific:SetOwner("yakumoyukari")
-	
-	local function CallFn()
-		Ability(inst, GetPlayer()) 
-	end
-	
-	inst:DoTaskInTime(0, CallFn)
-	GetPlayer():ListenForEvent( "equip", CallFn )
-	GetPlayer():ListenForEvent( "unequip", CallFn )
+
+	inst.Initialize = Initialize
+	inst.SetWaterProofness = SetWaterProofness
+	inst.SetAbsorbPercent = SetAbsorbPercent
+	inst.SetSpeedMult = SetSpeedMult
+	inst.SetGasBlocker = SetGasBlocker
 	
 	return inst
 end
