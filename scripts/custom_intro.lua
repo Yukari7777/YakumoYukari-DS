@@ -62,7 +62,7 @@
 					sound = nil,
 				},
 				{
-					string = "Who Are You",
+					string = "Who R You",
 					wait = 1,
 					anim = nil,
 					sound = nil,

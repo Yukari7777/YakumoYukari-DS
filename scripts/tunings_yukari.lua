@@ -34,6 +34,34 @@ TUNING.YUKARI = { -- constants
 	SPELLLAMENT_POWERCOST = 60,
 	SPELLMATTER_POWERCOST = 150,
 	SPELLMATTER_SANITYCOST = 100,
+
+	UPGRADEPANEL_INGREDIENT = {
+		{"honey", "healingsalve", "bandage"},
+		{"berries", "meatballs", "bonestew"},
+		{"petals", "nightmarefuel", "purplegem"},
+		{"goldnugget", "livinglog", "thulecite"}
+	},
+
+	UPGRADEPANEL_INGREDIENT_SW = {
+		{"spidergland", "healingsalve", "bandage"},
+		{"berries", "fishsticks", "surfnturf"},
+		{"petals", "taffy", "livinglog"},
+		{"goldnugget", "nightmarefuel", "obsidian"}
+	},
+
+	SCHEME_INGREDIENT = {
+		{{"rocks", 80}, {"log", 80}, {"rope", 20}},
+		{{"silk", 30}, {"pigskin", 20}, {"tentaclespots", 10}, {"deserthat", 1}},
+		{{"monstermeat", 60}, {"nightmarefuel", 50}, {"livinglog", 20}, {"armordragonfly", 1}},
+		{{"thulecite", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_laplace", 2}, {"spellcard_necro", 1}}
+	},
+	
+	SCHEME_INGREDIENT_SW = {
+		{{"rocks", 30}, {"log", 30}, {"bamboo", 10}, {"vine", 10}},
+		{{"tar", 30}, {"silk", 20}, {"pigskin", 10}, {"limestone", 10}, {"strawhat", 1}},
+		{{"monstermeat", 30}, {"fish", 30}, {"antivenom", 10}, {"quackenbeak", 1}, {"shark_gills", 1}},
+		{{"obsidian", 40}, {"dragoonheart", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
+	},
 }
 
 TUNING.YUKARI_STATUS = {

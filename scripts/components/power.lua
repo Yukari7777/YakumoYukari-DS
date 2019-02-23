@@ -1,15 +1,3 @@
-local function onmax(self, max)
-    self.inst.replica.power:SetMaxPower(max)
-end
-
-local function oncurrent(self, current)
-    self.inst.replica.power:SetCurrent(current)
-end
-
-local function onratescale(self, ratescale)
-    self.inst.replica.power:SetRateScale(ratescale)
-end
-
 local Power = Class(function(self, inst)
     self.inst = inst
     self.max = 75
@@ -21,11 +9,7 @@ local Power = Class(function(self, inst)
 	self.inst:ListenForEvent("respawn", function(inst) self:OnRespawn() end)
 	self.inst:StartUpdatingComponent(self)
 	
-end, nil, {
-	max = onmax,
-    current = oncurrent,
-    ratescale = onratescale,
-})
+end)
 
 function Power:SetModifier(key, value)
     if value == nil or value == 0 then

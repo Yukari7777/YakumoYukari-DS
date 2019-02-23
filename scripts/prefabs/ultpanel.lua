@@ -1,57 +1,45 @@
-function MakeUltimate(name, value)
+local IsSWEnabled = IsDLCEnabled(CAPY_DLC)
 
-	local fname = name.."ult"
-	
-	local assets=
+function MakeUltimate(id)
+	if not IsSWEnabled and id > 4 then return end
+
+	local index = id % 4 + 1
+	local fname = statname..(id > 4 and "ultsw" or "ult")
+	local statname = _G.YUKARISTATINDEX[index]
+
+	local assets =
 	{   
-		Asset("ANIM", "anim/spell.zip"),   
+		Asset("ANIM", "anim/spell_none.zip"),   
 		Asset("ATLAS", "images/inventoryimages/"..fname..".xml"),    
 		Asset("IMAGE", "images/inventoryimages/"..fname..".tex"),
 	}
 
-	local function DoUpgrade(inst)
-		
-		local caster = inst.components.inventoryitem.owner
+	local function DoUpgrade(inst, caster)
 		local spellcard = inst.components.spellcard
 		local index = spellcard.index
 		local name = spellcard.name
-		local level = spellcard:GetLevel(caster, index)
-		local difficulty = GetModConfigData("difficulty", "YakumoYukari")
-		local language = GetModConfigData("language", "YakumoYukari")
-		local ultreq = 25
-		if difficulty == "easy" then ultreq = 20
-		elseif difficulty == "hard" then ultreq = 30 end
-		
-		local str = {}
-			str[1] = "I can now evade from death.."
-			str[2] = "Now I have the World's power."
-			str[3] = "The world is beginning to show with new sights."
-			str[4] = "Yes... this is my power I had."
-		if language == "chinese" then
-			str[1] = "现 在 我 可 以 避 开 死 亡.."
-			str[2] = "现 在 我 有 了 世 界 之 力."
-			str[3] = "世 界 开 始 以 新 的 视 角 展 现."
-			str[4] = "是 的... 这 是 我 的 力 量."
-		end
+		local level = caster.components.upgrader[_G.YUKARISTATINDEX[index].."_level"]
+
+		local issw = name:find("sw") ~= nil
+		local abilityindex = issw and 6 or 5
+
+		local difficulty = _G.YUKARI_DIFFICULTY
+		local ultreq = difficulty == "EASY" and 20 or difficulty == "HARD" and 30 or 25
 		
 		if level >= ultreq then
-			if not caster.components.upgrader.ability[index][5] then
-				caster.components.talker:Say(str[index])
-				caster.components.upgrader.ability[index][5] = true
-				caster.components.upgrader:DoUpgrade(caster)
+			if not caster.components.upgrader.ability[index][abilityindex] then
+				caster.components.talker:Say(STRINGS.CHARACTERS.YAKUMOYUKARI["ONULTIMATE"..(issw and "SW" or "")][index])
+				caster.components.upgrader.ability[index][abilityindex] = true
+				caster.components.upgrader:ApplyStatus()
 				inst:Remove()
 			else
-				if caster.components.talker then
+				if caster.components.talker ~= nil then
 					caster.components.talker:Say(GetString(caster.prefab, "DESCRIBE_ABILITY_ALREADY"))
 				end
 			end
 		else
-			if caster.components.talker then
-				if difficulty == "chinese" then
-					caster.components.talker:Say("我 必 须 要 把 "..name.." 升 级 到 "..ultreq.."之 上")
-				else
-					caster.components.talker:Say("I must do "..name.." upgrade over "..ultreq)
-				end
+			if caster.components.talker ~= nil then
+				caster.components.talker:Say(string.format(STRINGS.CHARACTERS.YAKUMOYUKARI.DESCRIBE_LOWLEVEL, _G.YUKARISTATINDEX[index], ultreq))
 			end
 		end
 	end
@@ -59,41 +47,33 @@ function MakeUltimate(name, value)
 	local function fn()  
 		
 		local inst = CreateEntity()    
-		local trans = inst.entity:AddTransform()    
-		local anim = inst.entity:AddAnimState()   
+	
+		inst.entity:AddTransform()    
+		inst.entity:AddAnimState()    
+		inst.entity:AddSoundEmitter()  
 		
 		MakeInventoryPhysics(inst)   
-		if IsDLCEnabled(CAPY_DLC) then    
+		if IsSWEnabled then    
 			MakeInventoryFloatable(inst, "idle", "idle")
 		end	
 		
-		local function IsHanded()
-			local hands = GetPlayer().components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS) == nil
-			if hands then return false else return true end
-		end
-		
-		local function CallFn()
-			inst.components.spellcard:SetCondition( IsHanded() )
-		end
-		
-		anim:SetBank("spell")    
-		anim:SetBuild("spell")    
-		anim:PlayAnimation("idle")    
-		
+		inst.AnimState:SetBank("spell_none")    
+		inst.AnimState:SetBuild("spell_none")    
+		inst.AnimState:PlayAnimation("idle")   
+
+		inst.canspell = true
+
 		inst:AddComponent("inspectable")        
 		
 		inst:AddComponent("inventoryitem") 
 		inst.components.inventoryitem.imagename = fname    
 		inst.components.inventoryitem.atlasname = "images/inventoryimages/"..fname..".xml"    
-		
+
 		inst:AddComponent("spellcard")
-		inst.components.spellcard.index = value
+		inst.components.spellcard.index = index
 		inst.components.spellcard.name = fname
+		inst.components.spellcard.action = ACTIONS.CASTTOHOH
 		inst.components.spellcard:SetSpellFn( DoUpgrade )
-		inst.components.spellcard:SetCondition( IsHanded() )
-		
-		GetPlayer():ListenForEvent("equip", CallFn )
-		GetPlayer():ListenForEvent("unequip", CallFn )
 		
 		return inst
 	end
@@ -101,7 +81,9 @@ function MakeUltimate(name, value)
 	return Prefab("common/inventory/"..fname, fn, assets)
 end
 
-return MakeUltimate("health", 1),
-       MakeUltimate("hunger", 2),
-       MakeUltimate("sanity", 3),
-       MakeUltimate("power", 4)
+local spells = {}
+for i = 1, 8 do
+    table.insert(spells, MakeUltimate(i))
+end
+
+return unpack(spells)

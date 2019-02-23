@@ -42,6 +42,7 @@ local Upgrader = Class(function(self, inst)
 	self.IsAOE = false
 	self.IsEfficient = false
 	self.IsFight = false
+	self.IsPoisonCure = false
 	self.InvincibleLearned = false
 	self.CanbeInvincibled = false
 	self.WaterProofer = false
@@ -277,7 +278,7 @@ function Upgrader:UpdateAbilityStatus()
 		self.bonusspeedmult = 1.2
 	end
 
-	self.inst.yukari_classified.fastaction:set(self.fastactionlevel)
+	self.inst.fastactionlevel = self.fastactionlevel
 end
 
 function Upgrader:ApplyHatAbility(hat)	
@@ -465,6 +466,36 @@ function Upgrader:UpdateSkillStatus()
 	if self.RotEater and skill.roteater == nil then
 		self.roteater = "Not a picky eater."
 	end
+end
+
+function Upgrader:ApplyScale(source, scale)
+	-- copy of ApplyScale() in DST
+	local inst = self.inst
+	if scale ~= 1 and scale ~= nil then
+        if inst._scalesource == nil then
+            inst._scalesource = { [source] = scale }
+            inst.Transform:SetScale(scale, scale, scale)
+        elseif inst._scalesource[source] ~= scale then
+            inst._scalesource[source] = scale
+            local scale = 1
+            for k, v in pairs(inst._scalesource) do
+                scale = scale * v
+            end
+            inst.Transform:SetScale(scale, scale, scale)
+        end
+    elseif inst._scalesource ~= nil and inst._scalesource[source] ~= nil then
+        inst._scalesource[source] = nil
+        if next(inst._scalesource) == nil then
+            inst._scalesource = nil
+            inst.Transform:SetScale(1, 1, 1)
+        else
+            local scale = 1
+            for k, v in pairs(inst._scalesource) do
+                scale = scale * v
+            end
+            inst.Transform:SetScale(scale, scale, scale)
+        end
+    end
 end
 
 function Upgrader:ApplyStatus()

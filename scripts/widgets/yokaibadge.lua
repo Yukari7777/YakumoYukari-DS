@@ -63,7 +63,7 @@ function yokaibadge:OnUpdate(dt)
 
 			self.maxnum:SetString(maxtxt..tostring(math.floor(maxpower)))
 		end
-		self:SetPercent(self.owner.replica.power:GetPercent(), maxpower)
+		self:SetPercent(self.owner.components.power:GetPercent(), maxpower)
 	end
 end
 

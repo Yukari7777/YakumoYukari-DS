@@ -1,4 +1,4 @@
-local assets=
+local assets =
 {   
 	Asset("ANIM", "anim/spell.zip"),    
 	Asset("ATLAS", "images/inventoryimages/scheme.xml"),    
@@ -6,55 +6,16 @@ local assets=
 
 prefabs = {}
 
-local Ingredients = {
-	{{"rocks", 60}, {"log", 60}},
-	{{"silk", 30}, {"pigskin", 20}, {"tentaclespots", 10}, {"strawhat", 1}},
-	{{"monstermeat", 50}, {"nightmarefuel", 30}, {"livinglog", 20}, {"purplegem", 10}, {"dragon_scales", 1}},
-	{{"thulecite", 40}, {"orangegem", 5}, {"greengem", 5}, {"yellowgem", 5}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
-}
-
-local Ingredients_sw = {
-	{{"rocks", 30}, {"log", 30}, {"bamboo", 10}, {"vine", 10}},
-	{{"tar", 30}, {"silk", 20}, {"pigskin", 10}, {"limestone", 10}, {"strawhat", 1}},
-	{{"monstermeat", 30}, {"fish", 30}, {"antivenom", 10}, {"quackenbeak", 1}, {"shark_gills", 1}},
-	{{"obsidian", 40}, {"dragoonheart", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
-}
+local Ingredients = TUNING.YUKARI.SCHEME_INGREDIENT
+local Ingredients_sw = TUNING.YUKARI.SCHEME_INGREDIENT_SW
 
 local function GetIngameName(prefab)
 	return STRINGS.NAMES[string.upper(prefab)]
 end
 
-local function onsave(inst, data)
-	GetPlayer().hatlevel = inst.hatlevel
-end
-
-local function onpreload(inst, data)
-	inst.hatlevel = GetPlayer().hatlevel
-	if data and data.hatlevel then
-		inst.hatlevel = data.hatlevel
-		data.hatlevel = nil
-	end
-end
-
-local function GetBackpack()
-	local backpack
-	local Chara = GetPlayer()
-	
-	if EQUIPSLOTS.BACK and Chara.components.inventory:GetEquippedItem(EQUIPSLOTS.BACK) then -- check if backpack slot mod is enabled.
-		backpack = Chara.components.inventory:GetEquippedItem(EQUIPSLOTS.BACK)
-	elseif Chara.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY) 
-	and Chara.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY).components.container then
-		backpack = Chara.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
-	end
-	
-	if backpack and backpack.components.container then 
-		return backpack.components.container 
-	end
-end
-
-local function GetTable(inst)
-	local difficulty = GetModConfigData("difficulty", "YakumoYukari")
-	local hatlevel = inst.hatlevel
+local function GetTable(owner)
+	--local difficulty = _G.YUKARI_DIFFICULTY
+	local hatlevel = owner.components.upgrader.hatlevel
 	local list = {}
 	
 	if hatlevel < 5 then
@@ -63,38 +24,35 @@ local function GetTable(inst)
 		else
 			list = Ingredients[hatlevel]
 		end
-		if list[1][2] >= 20 then
-			for i = 1, #list, 1 do 
-				list[i][2] = math.ceil(list[i][2] * 0.25)
-			end
-		end
 	end
 	
 	return list
 end
 
-local function CountInventoryItem(prefab)
-	local inventory = GetPlayer().components.inventory
-	local backpack = GetBackpack()
+local function CountInventoryItem(owner, item)
+	local inventory = owner.components.inventory
 	local count = 0
+
+	local function countitem(item, count)
+		if item.components.stackable ~= nil then
+			count = count + item.components.stackable.stacksize
+		else 
+			count = count + 1
+		end
+		return count
+	end
 	
 	for k,v in pairs(inventory.itemslots) do
-		if v.prefab == prefab then
-			if v.components.stackable then
-				count = count + v.components.stackable.stacksize
-			else 
-				count = count + 1
-			end
+		if v.prefab == item then
+			count = countitem(v, count)
 		end
 	end
 	
-	if backpack then
-		for k,v in pairs(backpack.slots) do
-			if v.prefab == prefab then
-				if v.components.stackable then
-					count = count + v.components.stackable.stacksize
-				else 
-					count = count + 1
+	for k,v in pairs(inventory.equipslots) do
+		if type(v) == "table" and v.components.container then
+			for k, v2 in pairs(v.components.container.slots) do
+				if v2.prefab == item then
+					count = countitem(v2, count)
 				end
 			end
 		end
@@ -103,32 +61,28 @@ local function CountInventoryItem(prefab)
 	return count
 end
 
-local function GetStr(inst)
-	local list = GetTable(inst)
-	local Language = GetModConfigData("language", "YakumoYukari")
+local function GetStr(owner)
+	local list = GetTable(owner)
 	local text = ""
-	if inst.hatlevel < 5 then
+
+	if owner.components.upgrader.hatlevel < 5 then
 		for i = 1, #list, 1 do
-			text = text.."\n"..GetIngameName(list[i][1]).." - "..CountInventoryItem(list[i][1]).." / "..list[i][2]
+			text = text.."\n"..GetIngameName(list[i][1]).." - "..CountInventoryItem(owner, list[i][1]).." / "..list[i][2]
 		end
 	else
-		if Language == "chinese" then
-			text = "\n升 级 完 成"
-		else
-			text = "\nUpgrade Finished"
-		end
+		text = "\n"..STRINGS.YUKARI_UPGRADE_FINISHED
 	end
 	
 	return text
 end
 
-local function GetCondition(inst)
-	local list = GetTable(inst)
+local function GetCanpell(owner)
+	local list = GetTable(owner)
 	local condition = true
-	
-	if inst.hatlevel < 5 then 
+
+	if owner.components.upgrader.hatlevel < 5 then 
 		for i = 1, #list, 1 do 
-			condition = condition and ( CountInventoryItem(list[i][1]) >= list[i][2] )
+			condition = condition and ( CountInventoryItem(owner, list[i][1]) >= list[i][2] )
 		end
 	else
 		condition = false
@@ -137,152 +91,120 @@ local function GetCondition(inst)
 	return condition
 end
 
-local function SetDesc(inst)
-	local CurrentLevel = inst.hatlevel
-	local condition = GetCondition(inst)
-	local Language = GetModConfigData("language", "YakumoYukari")
-		
-	local function IsHanded()
-		local hands = GetPlayer().components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS) == nil
-		if hands and condition then
-			if Language == "chinese" then
-				return "\n我 手 里 必 须 拿 点 东 西."
-			else
-				return "\nI should bring something on my hand."
+local function SetCanspell(inst, data)
+	local owner = data.owner or data
+	local var = GetCanpell(owner)
+	inst.components.spellcard:SetCondition(var)
+	inst.canspell = var
+end
+
+local function GetDesc(inst, viewer)
+	if viewer:HasTag("yakumoyukari") then
+		local var = GetCanpell(viewer)
+		SetCanspell(inst, viewer)
+		return string.format( STRINGS.YUKARI_CURRENT_LEVEL.." - "..viewer.components.upgrader.hatlevel..GetStr(viewer)..(var and "\nI can spell." or "") )
+	end
+
+	return ""
+end
+
+local function DoUpgrade(inst, owner)
+	local inventory = owner.components.inventory
+	local list = GetTable(owner)
+
+	if not GetCanpell(owner) then
+		inst.components.spellcard:SetCondition(false)
+		inst.canspell:set(false)
+		owner.components.talker:Say(GetString(owner.prefab, "DESCRIBE_INGREDIENTS"))
+		return false
+	end
+	
+	local function remove(item, left_count)
+		if left_count > 0 then
+			if item.components.stackable then
+				if item.components.stackable.stacksize >= left_count then
+					item.components.stackable:Get(left_count):Remove()
+					return 0
+				else 
+					left_count = left_count - item.components.stackable.stacksize
+					item:Remove()
+				end
+			else 
+				left_count = left_count - 1
+				item:Remove()
 			end
-		else
-			return ""
 		end
+		return left_count
 	end
-	
-	local str = "Current Level - "..CurrentLevel..GetStr(inst)..IsHanded()
-	if Language == "chinese" then 
-		str = "目 前 的 等 级 - "..CurrentLevel..GetStr(inst)..IsHanded()
-	end
-	
-	STRINGS.CHARACTERS.GENERIC.DESCRIBE.SCHEME = str
-end
 
-local function SetCondition(inst)
-	local condition = GetCondition(inst)
-	local hands = GetPlayer().components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS) == nil
-	inst.components.spellcard:SetCondition( condition )
-	SetDesc(inst)
-end
+	for i = 1, #list, 1 do -- I won't use RemoveItem function in inventory components because it doesn't get items in custom backpack slot. 
+		local left_count = list[i][2]
 
-local function DoUpgrade(inst)
-
-	local Chara = GetPlayer()
-	local list = GetTable(inst)
-	local backpack = GetBackpack()
-	
-	for i = 1, #list, 1 do
-		local function consume(item, left_count, backpack)
-		
-			local Chara = GetPlayer()
-			local Inventory = Chara.components.inventory
-			for k,v in pairs(Inventory.itemslots) do
-				if v.prefab == item then
-					if v.components.stackable then
-						if v.components.stackable.stacksize >= left_count then
-							v.components.stackable:Get(left_count):Remove()
-							left_count = 0
-						else 
-							v:Remove()
-							left_count = left_count - v.components.stackable.stacksize
-						end
-					else 
-						v:Remove()
-						left_count = left_count - 1
-					end
+		while left_count > 0 do
+			for k,v in pairs(inventory.itemslots) do
+				if v.prefab == list[i][1] then
+					left_count = remove(v, left_count)
 				end
 			end
 			
-			if backpack then
-				for k,v in pairs(backpack.slots) do
-					if v.prefab == item then
-						if v.components.stackable then
-							if v.components.stackable.stacksize >= left_count then
-								v.components.stackable:Get(left_count):Remove()
-								left_count = 0
-							else 
-								v:Remove()
-								left_count = left_count - v.components.stackable.stacksize
-							end
-						else 
-							v:Remove()
-							left_count = left_count - 1
+			for k,v in pairs(inventory.equipslots) do
+				if type(v) == "table" and v.components.container then
+					for k, v2 in pairs(v.components.container.slots) do
+						if v2.prefab == list[i][1] then
+							left_count = remove(v2, left_count)
 						end
 					end
 				end
 			end
-			if left_count >= 1 then consume(item, left_count, backpack) end
-			
 		end
-		consume(list[i][1], list[i][2], backpack)
 	end
-	
+
+	owner.components.upgrader.hatlevel = owner.components.upgrader.hatlevel + 1
+	owner.components.talker:Say(GetString(owner.prefab, "DESCRIBE_HATUPGRADE"))
 end
 
-local function OnFinish(inst)
-	local Chara = GetPlayer()
-	inst.hatlevel = inst.hatlevel + 1
-	Chara.hatlevel = inst.hatlevel
-	SetCondition(inst)
-	Chara.components.upgrader:AbilityManager(Chara)
-	Chara.components.upgrader:DoUpgrade(Chara)
-	Chara.components.talker:Say(GetString(Chara.prefab, "DESCRIBE_HATUPGRADE"))
+local function OnFinish(inst, owner)
+	inst.canspell = false
+	inst.components.spellcard:SetCondition(false)
+	owner.components.upgrader:ApplyHatAbility(owner:GetYukariHat())
+	owner.components.upgrader:ApplyStatus()
 end
 
 local function fn()  
+	local inst = CreateEntity() 
+	
+	inst.entity:AddTransform()
+	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
+	inst.entity:AddMiniMapEntity()
 
-	local inst = CreateEntity()    
-	local trans = inst.entity:AddTransform()    
-	local anim = inst.entity:AddAnimState()    
-	local sound = inst.entity:AddSoundEmitter()   
+    inst.MiniMapEntity:SetIcon("scheme.tex")
 
-	MakeInventoryPhysics(inst)    
+	MakeInventoryPhysics(inst)
 	if IsDLCEnabled(CAPY_DLC) then    
 		MakeInventoryFloatable(inst, "idle", "idle")
 	end	
-	
-	anim:SetBank("spell")    
-	anim:SetBuild("spell")    
-	anim:PlayAnimation("idle")    
 
-	inst:AddTag("irreplaceable")
-	inst:AddTag("spellcard")
+	inst.AnimState:SetBank("spell_none")    
+	inst.AnimState:SetBuild("spell_none")    
+	inst.AnimState:PlayAnimation("idle")    
+
+	inst:AddTag("scheme")
+	inst.canspell = false
+
 	inst:AddComponent("inspectable")    
+	inst.components.inspectable.description = GetDesc
 	
 	inst:AddComponent("inventoryitem")   
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/scheme.xml"  
-	
-	inst.entity:AddMiniMapEntity()
-    inst.MiniMapEntity:SetIcon("scheme.tex") 
+	inst.components.inventoryitem.atlasname = "images/inventoryimages/scheme.xml" 
 	
 	inst:AddComponent("spellcard")
 	inst.components.spellcard.name = "scheme"
 	inst.components.spellcard:SetSpellFn( DoUpgrade )
 	inst.components.spellcard:SetOnFinish( OnFinish )
 	inst.components.spellcard:SetCondition( false )
-	inst.hatlevel = GetPlayer().hatlevel
-	
-	inst:AddComponent("characterspecific")
-    inst.components.characterspecific:SetOwner("yakumoyukari")
-	
-	local function callfn()
-		SetCondition(inst)
-	end
-	
-	inst.OnSave = onsave
-	inst.OnPreLoad = onpreload
-	SetCondition(inst)
-	
-	GetPlayer():ListenForEvent("equip", callfn )
-	GetPlayer():ListenForEvent("unequip", callfn )
-	inst:DoPeriodicTask(1, callfn)
 	
 	return inst
 end
-	
-return Prefab("common/inventory/scheme", fn, assets, prefabs)
+
+return Prefab("common/inventory/scheme", fn, assets)

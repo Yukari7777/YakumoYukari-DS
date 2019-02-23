@@ -1,44 +1,20 @@
 local MakePlayerCharacter = require "prefabs/player_common"
+local STATUS = TUNING.YUKARI_STATUS
+local YCONST = TUNING.YUKARI
+
 
 local assets = {
-
-        Asset( "ANIM", "anim/player_basic.zip" ),
-        Asset( "ANIM", "anim/player_idles_shiver.zip" ),
-        Asset( "ANIM", "anim/player_actions.zip" ),
-        Asset( "ANIM", "anim/player_actions_axe.zip" ),
-        Asset( "ANIM", "anim/player_actions_pickaxe.zip" ),
-        Asset( "ANIM", "anim/player_actions_shovel.zip" ),
-        Asset( "ANIM", "anim/player_actions_blowdart.zip" ),
-        Asset( "ANIM", "anim/player_actions_eat.zip" ),
-        Asset( "ANIM", "anim/player_actions_item.zip" ),
-        Asset( "ANIM", "anim/player_actions_uniqueitem.zip" ),
-        Asset( "ANIM", "anim/player_actions_bugnet.zip" ),
-        Asset( "ANIM", "anim/player_actions_fishing.zip" ),
-        Asset( "ANIM", "anim/player_actions_boomerang.zip" ),
-        Asset( "ANIM", "anim/player_bush_hat.zip" ),
-        Asset( "ANIM", "anim/player_attacks.zip" ),
-        Asset( "ANIM", "anim/player_idles.zip" ),
-        Asset( "ANIM", "anim/player_rebirth.zip" ),
-        Asset( "ANIM", "anim/player_jump.zip" ),
-        Asset( "ANIM", "anim/player_amulet_resurrect.zip" ),
-        Asset( "ANIM", "anim/player_teleport.zip" ),
-        Asset( "ANIM", "anim/wilson_fx.zip" ),
-        Asset( "ANIM", "anim/player_one_man_band.zip" ),
-        Asset( "ANIM", "anim/shadow_hands.zip" ),
-        Asset( "ANIM", "anim/beard.zip" ),
-		Asset( "SOUND", "sound/sfx.fsb" ),
-        Asset( "SOUND", "sound/wilson.fsb" ),
-
-        Asset( "ANIM", "anim/yakumoyukari.zip" ),
+	Asset("SCRIPT", "scripts/prefabs/player_common.lua"),
+	Asset("SOUND", "sound/willow.fsb"),
+	Asset("IMAGE", "images/colour_cubes/beaver_vision_cc.tex"),
 }
-local prefabs = {
-	"scheme"
-}
+
+local prefabs = { }
 
 -- Custom starting items
 local function GetStartInv()
-	local difficulty = GetModConfigData("difficulty", "YakumoYukari")
-	if difficulty == "easy" then
+	local difficulty = _G.YUKARI_DIFFICULTY
+	if difficulty == "EASY" then
 		return {"meat",
 				"meat",
 				"meat",
@@ -46,16 +22,10 @@ local function GetStartInv()
 				"meat",
 				"scheme",
 				"yukariumbre",
-				"yukarihat",
-				"spellcard_lament",
-				"spellcard_lament",
-				"spellcard_lament",}
-	else return {"scheme",			
+				"yukarihat"}
+	else return {"scheme",
 				"yukariumbre",
-				"yukarihat",
-				"spellcard_lament",
-				"spellcard_lament",
-				"spellcard_lament",}
+				"yukarihat"}
 	end
 end
 
@@ -68,163 +38,92 @@ local important_items = {
 }
 
 local function onsave(inst, data)
-	data.health_level = inst.health_level
-	data.hunger_level = inst.hunger_level
-	data.sanity_level = inst.sanity_level
-	data.power_level = inst.power_level
 	data.regen_cool = inst.regen_cool
 	data.poison_cool = inst.poison_cool
 	data.invin_cool = inst.invin_cool
-	data.graze = inst.graze
+	data.grazecnt = inst.grazecnt
+	data.naughtiness = inst.naughtiness
+	data.health_level = inst.components.upgrader.health_level
+	data.hunger_level = inst.components.upgrader.hunger_level
+	data.sanity_level = inst.components.upgrader.sanity_level
+	data.power_level = inst.components.upgrader.power_level
 	data.skilltree = inst.components.upgrader.ability
-	data.hatskill = inst.components.upgrader.hatskill
-	data.hatlevel = inst.hatlevel
+	data.hatlevel = inst.components.upgrader.hatlevel
 end
 
 local function onpreload(inst, data)
-	
 	if data then
 		if inst.components.power then
-		
-			inst.health_level = data.health_level or 0 
-			inst.hunger_level = data.hunger_level or 0
-			inst.sanity_level = data.sanity_level or 0 
-			inst.power_level = data.power_level or 0	
 			inst.regen_cool = data.regen_cool or 0 
 			inst.poison_cool = data.poison_cool or 0 
 			inst.invin_cool = data.invin_cool or 0 
-			inst.graze = data.graze or 0
-			inst.hatlevel = data.hatlevel or 1
-		
-			if data.skilltree then
-				inst.components.upgrader.ability = data.skilltree
-			end
-			if data.hatskill then
-				inst.components.upgrader.hatskill = data.hatskill
-			end
+			inst.grazecnt = data.grazecnt or 0
+			inst.components.upgrader.health_level = data.health_level or 0 
+			inst.components.upgrader.hunger_level = data.hunger_level or 0
+			inst.components.upgrader.sanity_level = data.sanity_level or 0 
+			inst.components.upgrader.power_level = data.power_level or 0	
+			inst.components.upgrader.hatlevel = data.hatlevel or 1
+			inst.components.upgrader.ability = data.skilltree
+			inst.components.upgrader:ApplyStatus()
+
 			--re-set these from the save data, because of load-order clipping issues
-			if data.health and data.health.health then inst.components.health.currenthealth = data.health.health end
-			if data.hunger and data.hunger.hunger then inst.components.hunger.current = data.hunger.hunger end
-			if data.sanity and data.sanity.current then inst.components.sanity.current = data.sanity.current end
-			if data.power and data.power.current then inst.components.power.current = data.power.current end
-			
+			if data.health ~= nil and data.health.health ~= nil then inst.components.health.currenthealth = data.health.health end
+			if data.hunger ~= nil and data.hunger.hunger ~= nil then inst.components.hunger.current = data.hunger.hunger end
+			if data.sanity ~= nil and data.sanity.current ~= nil then inst.components.sanity.current = data.sanity.current end
+			if data.power ~= nil and data.power.current ~= nil then inst.components.power.current = data.power.current end
 			inst.components.health:DoDelta(0)
 			inst.components.hunger:DoDelta(0)
 			inst.components.sanity:DoDelta(0)
 			inst.components.power:DoDelta(0)
-			
-			inst.components.upgrader:DoUpgrade(inst)
 		end
 	end
-	
 end
 
-local function OnhitEvent(inst, data)
+local function OnWorldLoaded(inst)
+	local yukarihat = inst:GetYukariHat()
+	if yukarihat ~= nil then
+		inst.components.upgrader:ApplyHatAbility(yukarihat)
+	end
+end
 
+local function GetEquippedYukariHat(inst)
+	return inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD) ~= nil and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD).prefab == "yukarihat" and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD) or nil
+end
+
+local function IsPreemitive(ent)
+	return ent.components.combat ~= nil and ent.components.combat.target ~= nil
+end
+
+local function OnAttackOther(inst, data)
 	local target = data.target
-	local RegenAmount = 0
-	
-	-- Life Leech
+	if target == nil then return end
+	local CanAOE = inst.components.upgrader.IsAOE and math.random() < 0.4
+
 	if inst.components.upgrader.IsVampire then
-	
-		if inst.components.upgrader.IsAOE then
-			RegenAmount = 2
-		else
-			RegenAmount = 1
-		end
-		
-		if target and target.components.health and not target:HasTag("chester") then
-			inst.components.health:DoDelta(RegenAmount, nil, nil, true)
-			if math.random() < 0.15 then
-				inst.components.health:DoDelta(5, nil, nil, true)
-				if inst.components.poisonable and inst.components.upgrader.IsPoisonCure then
-					inst.components.poisonable:Cure(inst)
-				end
+		if target.components.health ~= nil and not target:HasTag("chester") and not target:HasTag("wall") and not target:HasTag("companion") then
+			inst.components.health:DoDelta(1, nil, nil, true)
+			if CanAOE then
+				inst.components.health:DoDelta(1, nil, nil, true)
 			end
 		end
 	end
-	
-	-- AoE Hit
-	if inst.components.upgrader.IsAOE then
-		if math.random() < 0.4 then
-			inst.components.combat:SetAreaDamage(5, 0.6)
-		else
-			inst.components.combat:SetAreaDamage(0, 0)
-		end
-	end
-	
-end
 
-local function OnAttackedEvent(attacked, data)
-	if GetPlayer().components.health and GetPlayer().components.upgrader.IsFight then
-		if not GetPlayer().components.health.invincible then -- Check another invinciblity.
-			GetPlayer().components.health:SetInvincible(true)
-			scheduler:ExecuteInTime(1, GetPlayer().components.health:SetInvincible(false))
-		end
+	if CanAOE and (data.weapon == nil or data.weapon.components.projectile == nil) then	
+		inst.components.combat:DoAreaAttack(target, YCONST.AOE_RADIUS, data.weapon, IsPreemitive, data.stimuli, { "INLIMBO", "companion", "wall" })
 	end
 end
 
-local function TelePortDelay()
-	GetPlayer():DoTaskInTime(0.5, function()
-		GetPlayer().istelevalid = true 
+local function TelePortDelay(inst)
+	inst:DoTaskInTime(0.5, function()
+		inst.istelevalid = true 
 	end)
 end
 
 local function DoPowerRestore(inst, amount)
-	inst.components.power:DoDelta(amount, false)
-	inst.HUD.controls.status.power:PulseGreen() 
-	inst.HUD.controls.status.power:ScaleTo(1.3,1,.7)
-end
-	
-function DoHungerUp(inst, data)
-	if GetPlayer():HasTag("inspell") then 
-		return
-	end
-	local Hunger = inst.components.hunger
-	
-	if Hunger then
-	
-		if inst.components.upgrader.powerupvalue == 1 then
-			inst.components.combat.damagemultiplier = 1.2 + math.max(Hunger:GetPercent() - 0.8, 0)
-		elseif inst.components.upgrader.powerupvalue == 2 then	
-			inst.components.combat.damagemultiplier = 1.2 + math.max(Hunger:GetPercent() - 0.6, 0)
-		elseif inst.components.upgrader.powerupvalue == 3 then
-			inst.components.combat.damagemultiplier = 1.2 + math.max(Hunger:GetPercent() - 0.4, 0)
-		elseif inst.components.upgrader.powerupvalue == 4 then
-			inst.components.combat.damagemultiplier = 1.2 + math.max(Hunger:GetPercent() - 0.2, 0)
-		elseif inst.components.upgrader.powerupvalue == 5 then
-			inst.components.combat.damagemultiplier = 1.2 + Hunger:GetPercent()
-		end
-		
-		if IsDLCEnabled(CAPY_DLC) then
-			if inst.components.upgrader.powerupvalue == 1 then
-				inst.components.combat:AddDamageModifier("yukari_bonus", math.max(Hunger:GetPercent() - 0.8, 0)) 
-			elseif inst.components.upgrader.powerupvalue == 2 then	
-				inst.components.combat:AddDamageModifier("yukari_bonus", math.max(Hunger:GetPercent() - 0.6, 0)) 
-			elseif inst.components.upgrader.powerupvalue == 3 then
-				inst.components.combat:AddDamageModifier("yukari_bonus", math.max(Hunger:GetPercent() - 0.4, 0)) 
-			elseif inst.components.upgrader.powerupvalue == 4 then
-			inst.components.combat:AddDamageModifier("yukari_bonus", math.max(Hunger:GetPercent() - 0.2, 0)) 
-			elseif inst.components.upgrader.powerupvalue == 5 then
-				inst.components.combat:AddDamageModifier("yukari_bonus", Hunger:GetPercent() ) 
-			end
-		end
-		
-	end
-end
-
-local function HealthRegen(inst)
-	if inst.components.health then
-		local amount = inst.components.upgrader.regenamount
-		inst.components.health:DoDelta(amount)
-	end
-end
-
-local function InvincibleRegen(inst)
-	if inst.components.health and inst.components.upgrader.emergency then
-		local emergency = inst.components.upgrader.emergency
-		inst.components.health:DoDelta(emergency, nil, nil, true)
-	end
+	local delta = amount * inst.components.upgrader.PowerGainMultiplier
+	inst.components.power:DoDelta(delta)
+	--inst.HUD.controls.status.power:PulseGreen() 
+	--inst.HUD.controls.status.power:ScaleTo(1.3,1,.7)
 end
 
 local function CurePoison(inst)
@@ -233,23 +132,73 @@ local function CurePoison(inst)
 	end
 end
 
-function GoInvincible(inst)
-	if  inst.components.health 
-	and inst.components.health.currenthealth <= 50 
-	and inst.components.upgrader.InvincibleLearned
-	and inst.components.upgrader.CanbeInvincible then
-		inst.components.health:SetInvincible(true)
-		inst.invin_cool = 1450
-		inst.components.upgrader.CanbeInvincible = false
-		inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_INVINCIBILITY_ACTIVE"))
-		inst.components.upgrader.emergency = 4
-		inst.IsInvincible = true
-		scheduler:ExecuteInTime(10, function() -- Execute after 10 seconds.
-			inst.components.upgrader.emergency = 0
-			inst.IsInvincible = false
-			inst.components.health:SetInvincible(false)
-			inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_INVINCIBILITY_DONE"))
-		end)
+local function MakeInvincible(inst)
+	inst.components.upgrader.CanbeInvincibled = false
+	inst.invin_cool = STATUS.INVINCIBLE_COOLTIME
+	inst.IsInvincible = true
+	inst.components.health:SetInvincible(true)
+	inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_INVINCIBILITY_ACTIVATE"), nil, nil, true, nil, {1,0,0,1})
+	inst:DoTaskInTime(10, function()
+		inst.IsInvincible = false
+		inst.components.health:SetInvincible(false)
+		inst.components.talker:Say(GetString(inst.prefab, "DESCRIBE_INVINCIBILITY_DONE"))
+	end)
+end
+
+local function OnHealthDelta(inst, data)
+	if inst.components.upgrader.InvincibleLearned 
+	and inst.components.upgrader.CanbeInvincibled
+	and inst.components.health.currenthealth <= math.max(30, inst.components.health:GetMaxWithPenalty() * 0.15) then
+		MakeInvincible(inst)
+	end
+end
+
+local function HealthRegen(inst)
+	if inst.components.health ~= nil then
+		inst.components.health:DoDelta(inst.components.upgrader.regenamount)
+	end
+end
+
+local function InvincibleRegen(inst)
+	if inst.components.health ~= nil and inst.IsInvincible then
+		inst.components.health:DoDelta(inst.components.upgrader.emergency, nil, nil, true)
+	end
+end
+
+function OnHungerDelta(inst, data)
+	if inst.yukari_classified ~= nil and inst.yukari_classified.inspellcurse:value() or inst.yukari_classified == nil then
+		return
+	end
+
+	if inst.components.combat ~= nil then
+		local dmgmult = TUNING.YUKARI.DAMAGE_MULTIPLIER + math.max(data.newpercent - (1 - inst.components.upgrader.powerupvalue * 0.2), 0)
+		local scale = 0.95 + (dmgmult - TUNING.YUKARI.DAMAGE_MULTIPLIER) * 0.15
+		inst.components.combat.damagemultiplier = dmgmult
+
+		inst:ApplyScale("dreadful", scale)
+	end
+end
+
+local function SetLight(inst, var)
+	if var then
+		local gappercent = math.min((var - 0.9) * 100, 1)
+		local powerpercent = inst.components.power ~= nil and inst.components.power:GetPercent() or 0
+		inst.Light:SetRadius((1 + powerpercent * 3) * gappercent);inst.Light:SetFalloff((.9 - powerpercent * 0.25) * gappercent);inst.Light:SetIntensity(0.3);inst.Light:SetColour((127 + powerpercent * 128) * gappercent/255,0,(127 + powerpercent * 128)/255 * gappercent);inst.Light:Enable(true)
+	else
+		inst.Light:SetRadius(0);inst.Light:Enable(false)
+	end
+end
+
+local function OnSanityDelta(inst, data)
+	if inst.components.upgrader.NightVision and (TheWorld.state.phase == "night" or TheWorld:HasTag("cave")) and inst.sleepingbag == nil then
+		local sanitypercent = data.newpercent
+		if sanitypercent > 0.9 then
+			inst:SetLight(sanitypercent)
+		else
+			inst:SetLight(false)
+		end
+	else
+		inst:SetLight(false)
 	end
 end
 
@@ -272,50 +221,19 @@ local function GetPoint(pt)
 end
 
 local function PeriodicFunction(inst, data)
+	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.hatequipped and 0.2 or 0)
 
-	local old_sanity_1 = -100/(TUNING.SEG_TIME * GetClock().nightsegs * 20)
-	local old_sanity_2 = -100/(TUNING.SEG_TIME * GetClock().nightsegs * 2)
-	local old_sanity_3 = -100/(TUNING.SEG_TIME * GetClock().nightsegs * 20)
-	local Light = inst.entity:AddLight()
-	
-	if inst.components.upgrader.ResistDark then
-		if inst.components.upgrader.ResistCave then
-			TUNING.SANITY_NIGHT_MID = 0
-			TUNING.SANITY_NIGHT_DARK = 0
-			TUNING.SANITY_NIGHT_LIGHT = 0
-		elseif not GetWorld():IsCave() then
-			TUNING.SANITY_NIGHT_MID = 0
-			TUNING.SANITY_NIGHT_DARK = 0
-			TUNING.SANITY_NIGHT_LIGHT = 0
+	if inst.components.health ~= nil then
+		if inst.IsInvincible then
+			InvincibleRegen(inst)
 		end
-	else
-		if inst.hatequipped then
-			TUNING.SANITY_NIGHT_MID = old_sanity_1 * 0.5
-			TUNING.SANITY_NIGHT_DARK = old_sanity_2 * 0.5
-			TUNING.SANITY_NIGHT_LIGHT = old_sanity_3 * 0.5
-		end
-		TUNING.SANITY_NIGHT_MID = old_sanity_1
-		TUNING.SANITY_NIGHT_DARK = old_sanity_2
-		TUNING.SANITY_NIGHT_LIGHT = old_sanity_3
-	end
-	
-	if inst.components.upgrader.NightVision then
-		if GetClock():IsNight() or GetWorld():IsCave() then
-			if inst.components.sanity and inst.components.sanity:GetPercent() >= 0.8 and inst.components.sanity:GetPercent() < 0.98 then
-				inst.Light:SetRadius(1);inst.Light:SetFalloff(.9);inst.Light:SetIntensity(0.3);inst.Light:SetColour(128/255,0,217/255);inst.Light:Enable(true)
-			elseif inst.components.sanity and inst.components.sanity:GetPercent() >= 0.98 then
-				inst.Light:SetRadius(3);inst.Light:SetFalloff(.5);inst.Light:SetIntensity(0.3);inst.Light:SetColour(128/255,0,217/255);inst.Light:Enable(true)
-			else
-				Light:SetRadius(0);Light:SetFalloff(0);Light:SetIntensity(0);Light:SetColour(0,0,0);Light:Enable(false)
-			end
-		else
-			Light:SetRadius(0);Light:SetFalloff(0);Light:SetIntensity(0);Light:SetColour(0,0,0);Light:Enable(false)
+
+		if inst.components.upgrader.nohealthpenalty then
+			inst.components.health:SetPenalty(0)
 		end
 	end
-	
-	if inst.components.health and inst.IsInvincible then
-		InvincibleRegen(inst)
-	end
+
+	Cooldown(inst)
 	
 	if inst.components.upgrader.SightDistance and inst.components.upgrader.SightDistance > 0 then
 		local dis = inst.components.upgrader.SightDistance
@@ -325,234 +243,270 @@ local function PeriodicFunction(inst, data)
 	end
 end
 
-local function CooldownFunction(inst)
-	
+local function Cooldown(inst)
 	if inst.components.upgrader.ability[1][2] then
 		if inst.regen_cool > 0 then
 			inst.regen_cool = inst.regen_cool - 1
 		elseif inst.regen_cool == 0 
-		and inst.components.health 
+		and inst.components.health ~= nil 
 		and inst.components.health:IsHurt() 
-		and inst.components.hunger:GetPercent() > 0.8 then
+		and inst.components.hunger:GetPercent() > 0.5 then
 			HealthRegen(inst)
 			inst.regen_cool = inst.components.upgrader.regencool
 		end
 	end
-	
-	if inst.components.upgrader.IsPoisonCure and inst.components.poisonable --[[Checks SW DLC]] then
-		if inst.poison_cool > 0 then
-			inst.poison_cool = inst.poison_cool - 1
-		elseif inst.poison_cool == 0 and inst.components.poisonable:IsPoisoned() then
-			CurePoison(inst)
-			inst.poison_cool = inst.components.upgrader.curecool
-		end
-	end
-	
+
 	if inst.invin_cool > 0 then
 		inst.invin_cool = inst.invin_cool - 1
 	elseif inst.invin_cool == 0 then
-		inst.components.upgrader.CanbeInvincible = true
+		inst.components.upgrader.CanbeInvincibled = true
+	end
+
+	if inst.naughtiness > 0 then
+		inst.naughtiness = inst.naughtiness - 1
+	end
+end
+
+local function Graze(inst)
+	if inst.components.upgrader.Ability_45 and not inst.IsGrazing then
+		inst.IsGrazing = true
+		inst:DoTaskInTime(0.75, function(inst)
+			inst.IsGrazing = false
+		end)
+	end
+	local pt = Vector3(inst.Transform:GetWorldPosition())
+	for i = 1, math.random(3, 10) do
+		local fx = SpawnPrefab("graze_fx")
+		fx.Transform:SetPosition(pt.x + math.random() / 2, pt.y + 0.7 + math.random() / 2 , pt.z + math.random() / 2 )
+	end
+	inst.grazecnt = inst.grazecnt + 1
+	DoPowerRestore(inst, math.random(0, 2))
+end
+
+local powertable = {
+	-- Rule : 10 per meat value 1, reduced by 25% when cooked or dried.
+	P300 = {"minotaurhorn", "deerclops_eyeball", "tigereye"},
+	P100 = {"humanmeat"},
+	P80 = {"humanmeat_cooked", "humanmeat_dried"},
+	P40 = {"surfnturf"},
+	P30 = {"bonestew", "dragoonheart", "trunk_winter"},
+	P25 = {"baconeggs"},
+	P20 = {"honeyham", "tallbirdegg", "trunk_summer", "turkeydinner", "monsterlasagna"},
+	P15 = {"tallbirdegg_cooked", "trunk_cooked", "honeynuggets", "hotchili"},
+	P10 = {"meat", "plantmeat", "shark_fin", "fish", "fish_med", "perogies", "guacamole", "monstermeat"},
+	P8 = {"meat_dried", "plantmeat_cooked", "fish_med_cooked"},
+	P5 = {"smallmeat", "eel", "kabobs", "tropical_fish", "batwing", "froglegs", "bird_egg", "fish_raw_small", "meatballs", "frogglebunwich", "unagi", "drumstick" , "doydoyegg"},
+	P4 = {"monstermeat_dried", "cookedsmallmeat","froglegs_cooked","batwing_cooked", "fish_raw_small_cooked", "cookedmonstermeat", "smallmeat_dried", "eel_cooked", "doydoyegg_cooked", "drumstick_cooked", "bird_egg_cooked"}
+}
+
+local function oneat(inst, food)
+	local key
+
+	for k, v in pairs(powertable) do
+		for k2, v2 in pairs(v) do 
+			if food.prefab == v2 then
+				key = k
+				local delta = tonumber(string.sub(key, 2))
+				if food.components.perishable ~= nil then
+					delta = delta - delta * ( (1 - food.components.perishable:GetPercent()) * STATUS.POWER_RESTORE_PERISH_MULT )
+				end 
+
+				DoPowerRestore(inst, delta)
+				break
+			end
+		end
+	end
+end
+
+local function MakeSaneOnEatMeat(inst)
+	inst.components.eater.eatmeat = inst.components.eater.Eat
+	function inst.components.eater:Eat(food)
+		if self:CanEat(food) then
+			if food.components.edible.foodtype == FOODTYPE.MEAT and food.components.edible.sanityvalue < 0 then
+				food.components.edible.sanityvalue = 0
+			end
+			if food.prefab == "humanmeat" or food.prefab == "humanmeat_cooked" or food.prefab == "humanmeat_dried" then
+				food.components.edible.sanityvalue = TUNING.SANITY_LARGE
+				food.components.edible.healthvalue = TUNING.HEALING_MED
+				inst:PushEvent("makefriend") -- Just for sound effect
+				inst:DoTaskInTime(math.random() * 0.5, function()
+					inst.components.talker:Say(GetString(inst.prefab, "ONEATHUMAN"))
+				end)
+			end
+		end
+		return inst.components.eater:eatmeat(food)
+	end
+end
+
+local function MakeToolEfficient(item)
+	item.components.tool.NewEffectiveness = item.components.tool.GetEffectiveness
+	function item.components.tool:GetEffectiveness(action)
+		local owner = item.components.inventoryitem ~= nil and item.components.inventoryitem.owner
+		if owner ~= nil and owner.components.upgrader ~= nil and owner.components.upgrader.IsEfficient and action ~= ACTIONS.HAMMER then
+			return self.actions[action] * 1.5 or 0
+		end
+		return self.actions[action] or 0
+	end
+end
+
+local function OnEquipHat(inst, data)
+	inst.components.upgrader.hatequipped = data.isequipped
+end
+
+local ShouldApplyStatus = {
+	"armordragonfly", "armorobsidian", "yukarihat"
+}
+
+local function OnEquip(inst, data) 
+	local item = data ~= nil and data.item ~= nil and data.item or nil
+	if item == nil then return end
+
+	if inst.components.upgrader ~= nil and inst.components.upgrader.IsEfficient and data.eslot == EQUIPSLOTS.HANDS and item.components.tool ~= nil then
+		MakeToolEfficient(item)
 	end
 	
-end
-
-local function OnGraze(inst)
-	inst.graze = inst.graze + 1
-	inst.components.power:DoDelta(math.random(0, 2), false)
-end
-
-local function DebugFunction()
-	if GetPlayer().components.power then
-		GetPlayer().components.power.max = 300
-		GetPlayer().components.power.current = 300
+	local ShouldApply = false
+	for k, v in pairs(ShouldApplyStatus) do
+		if item.prefab == v then
+			ShouldApply = true
+			break
+		end
 	end
+
+	if ShouldApply then
+		-- I don't like how Klei sets the fire_damage_scale.
+		inst.components.upgrader.fireimmuned = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY) ~= nil and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY).prefab == "armordragonfly"
+
+		if item.prefab == "yukarihat" then
+			inst.components.upgrader:ApplyHatAbility(item)
+		end
+		inst.components.upgrader:ApplyStatus()
+	end
+end
+
+
+local function MakeGrazeable(inst)
+	inst.components.inventory.NewTakeDamage = inst.components.inventory.ApplyDamage
+	function inst.components.inventory:ApplyDamage(damage, attacker, weapon, ...)
+		local totaldodge = (inst.components.upgrader.dodgechance + inst.components.upgrader.hatdodgechance) * (inst.sg:HasStateTag("moving") and 2 or 1) -- double when is moving
+		local candodge = inst.IsGrazing or math.random() < totaldodge and inst.components.freezeable == nil and not inst.components.health:IsInvincible() and (attacker ~= nil and attacker.components ~= nil and attacker.components.combat ~= nil)
+
+		if candodge then
+			inst:PushEvent("graze")
+			return 0
+		end
+		return inst.components.inventory:NewTakeDamage(damage, attacker, weapon, ...)
+	end
+end
+
+local function MakeDapperOnEquipItem(inst)
+	inst.components.sanity.PreRecalc = inst.components.sanity.Recalc
+	function inst.components.sanity.Recalc(self, dt)
+		local NumBeforeCalc = 0
+		for k, v in pairs(self.inst.components.inventory.equipslots) do
+			if v.components.equippable ~= nil then
+				local itemdap = v.components.equippable:GetDapperness(self.inst)
+				NumBeforeCalc = itemdap < 0 and NumBeforeCalc + itemdap * self.inst.components.upgrader.absorbsanity or NumBeforeCalc
+			end
+		end
+		self.dapperness = NumBeforeCalc ~= 0 and -NumBeforeCalc or 0
+		return inst.components.sanity:PreRecalc(dt)
+	end
+end
+
+local function OnSetLaplace(inst, val)
+	if not GetClock() and GetWorld() and GetWorld().components.colourcubemanager then return end
+
+	if val then
+		GetClock():SetNightVision(true)
+		GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/purple_moon_cc.tex", .5)
+	else
+		GetClock():SetNightVision(false)
+		GetWorld().components.colourcubemanager:SetOverrideColourCube(nil, .5)
+	end
+end
+
+local function SetSpellActive(inst, key, val)
+	inst._spellsactive[key] = val
+
+	if key == "laplace" then
+		OnSetLaplace(inst, val)
+	end
+end
+
+local function IsSpellActive(inst, key)
+	return inst._spellsactive[key] == true -- return false if false or nil.
+end
+
+local function DebugFunction(inst)
+	inst:DoPeriodicTask(1, function()
+		if inst.components.power ~= nil and inst.infpower then
+			inst.components.power.max = 300
+			inst.components.power.current = 300
+		end
+		inst.components.hunger.current = 250
+		--inst.components.hunger:Pause(true)
+		--inst.components.health:SetInvincible(true)
+	end)
 end	
 
 local fn = function(inst)
-	
-	inst:AddComponent("upgrader")
-	
-	inst.health_level = 0
-	inst.hunger_level = 0 
-	inst.sanity_level = 0
-	inst.power_level = 0
-	inst.hatlevel = 1
-	
-	inst.regen_cool = 0
-	inst.poison_cool = 0
-	inst.invin_cool = 0
-	inst.graze = 0
-	
-	inst.dodgechance = 0.2
-	
-	inst.istelevalid = true
-	inst.fireimmuned = false
-	inst.hatequipped = false
-	
-	inst.soundsname = "willow"
-	inst.MiniMapEntity:SetIcon( "yakumoyukari.tex" )
-	
-	inst.components.health:SetMaxHealth(80)
-	inst.components.hunger:SetMax(150)
-	inst.components.sanity:SetMax(75)
-	inst.components.kramped.threshold = 50 -- Originally, it is random integer value between 31 ~ 50. 
-	inst.components.builder.science_bonus = 1
-	
-    inst.components.combat.damagemultiplier = 1.2
-	if IsDLCEnabled(CAPY_DLC) then
-		inst.components.combat:AddDamageModifier("yukari_bonus", 0.2)
-	end
-	
-	local day_time = TUNING.SEG_TIME * TUNING.DAY_SEGS_DEFAULT
-	inst.components.hunger.hungerrate = 1.5 * TUNING.WILSON_HUNGER_RATE
-	TUNING.MOISTURE_SANITY_PENALTY_MAX = -100/(day_time*2) -- default * 3
-	TUNING.NIGHTSWORD_USES = 110
-	TUNING.ARMOR_SANITY = 850
-	TUNING.HAMMER_DAMAGE = 10
+	inst.entity:AddLight()
 
-	RECIPETABS['TOUHOU'] = {str = "TOUHOU", sort= 10, icon = "touhoutab.tex", icon_atlas = "images/inventoryimages/touhoutab.xml"}
-	
-	inst.components.eater.EatMEAT = inst.components.eater.Eat
-	function inst.components.eater:Eat( food )
-		if self:CanEat(food) then
-		
-			if food.prefab == "minotaurhorn"
-			or food.prefab == "deerclops_eyeball"
-			or food.prefab == "tigereye" then
-				DoPowerRestore(inst, 300)
-				
-			elseif food.prefab == "trunk_winter"
-			or food.prefab == "tallbirdegg"
-			or food.prefab == "tallbirdegg_cracked" then
-				food.components.edible.sanityvalue = 0
-				DoPowerRestore(inst, 70)
-			
-			elseif food.prefab == "baconeggs" 
-			or food.prefab == "surfnturf" then
-				DoPowerRestore(inst, 60)
-			
-			elseif food.prefab == "trunk_summer"
-			or food.prefab == "tallbirdegg_cooked"
-			or food.prefab == "dragoonheart" then
-				food.components.edible.sanityvalue = 0
-				DoPowerRestore(inst, 50)
-				
-			elseif food.prefab == "turkeydinner" 
-			or food.prefab == "bonestew" then
-				DoPowerRestore(inst, 45)
-		
-			elseif food.prefab == "honeyham" then
-				DoPowerRestore(inst, 30)
-			
-			elseif food.prefab == "meat"
-			or food.prefab == "plantmeat" 
-			or food.prefab == "bird_egg"
-			or food.prefab == "shark_fin"
-			or food.prefab == "doydoyegg"
-			or food.prefab == "eel"
-			or food.prefab == "trunk_cooked"
-			or food.prefab == "fish_raw"
-			or food.prefab == "fish_med"
-			or food.prefab == "hotchili"
-			or food.prefab == "perogies"
-			or food.prefab == "guacamole"
-			or food.prefab == "monstermeat" then
-				food.components.edible.sanityvalue = 0
-				DoPowerRestore(inst, 20)
-				
-			elseif food.prefab == "meat_dried"
-			or food.prefab == "monstermeat_dried" then
-				DoPowerRestore(inst, 20)
-				
-			elseif food.prefab == "drumstick" 
-			or food.prefab == "drumstick_cooked" then
-				food.components.edible.sanityvalue = 0
-				DoPowerRestore(inst, 16)
-				
-			elseif food.prefab == "doydoyegg_cooked" 
-			or food.prefab == "bird_egg_cooked"
-			or food.prefab == "cookedmonstermeat"
-			or food.prefab == "bird_egg_cooked"
-			or food.prefab == "fish_med_cooked"			
-			or food.prefab == "plantmeat_cooked"
-			or food.prefab == "unagi"
-			or food.prefab == "eel_cooked" then
-				DoPowerRestore(inst, 15)
-				
-			elseif food.prefab == "smallmeat" 
-			or food.prefab == "tropical_fish"
-			or food.prefab == "batwing" 
-			or food.prefab == "froglegs" 
-			or food.prefab == "fish_raw_small"
-			or food.prefab == "frogglebunwich" then
-				food.components.edible.sanityvalue = 0
-				DoPowerRestore(inst, 10)
-				
-			elseif food.prefab == "smallmeat_dried" then
-				DoPowerRestore(inst, 10)
-				
-			elseif food.prefab == "cookedsmallmeat"
-			or food.prefab == "froglegs_cooked"
-			or food.prefab == "batwing_cooked"
-			or food.prefab == "honeynuggets"
-			or food.prefab == "kabobs"
-			or food.prefab == "frogglebunwich"
-			or food.prefab == "fish_raw_small_cooked" then
-				DoPowerRestore(inst, 8)
-			end
-			
-			if food.prefab == "monstermeat" 
-			or food.prefab == "monsterlasagna" then
-				food.components.edible.healthvalue = -20			
-				
-			elseif food.prefab == "monstermeat_dried"
-			or food.prefab == "cookedmonstermeat" then
-				food.components.edible.healthvalue = -3
-			end
-			
-		end
-		return inst.components.eater:EatMEAT(food)
-	end
-	
 	inst:AddTag("youkai")
 	inst:AddTag("yakumoga")
 	inst:AddTag("yakumoyukari")
 
-	--inst:DoPeriodicTask(1, DebugFunction)
-	inst:DoPeriodicTask(1, CooldownFunction)
-	inst:DoPeriodicTask(1, PeriodicFunction)
+	inst.MiniMapEntity:SetIcon( "yakumoyukari.tex" )
+
+	inst:AddComponent("upgrader")
+	inst:AddComponent("power")
 	
+	inst.IsInvincible = false
+	inst.IsGrazing = false
+	inst.naughtiness = 0
+	inst.regen_cool = 0
+	inst.poison_cool = 0
+	inst.invin_cool = 0
+	inst.grazecnt = 0
+	inst.infopage = 0
+	inst._spellsactive = {}
+	
+	inst.soundsname = "willow"
+	
+	inst.components.sanity:SetMax(75)
+	inst.components.health:SetMaxHealth(80)
+	inst.components.hunger:SetMax(150)
+	inst.components.hunger.hungerrate = 1.5 * TUNING.WILSON_HUNGER_RATE
+	inst.components.combat.damagemultiplier = TUNING.YUKARI.DAMAGE_MULTIPLIER
+	if IsDLCEnabled(CAPY_DLC) then
+		inst.components.combat:AddDamageModifier("yukari_bonus", TUNING.YUKARI.DAMAGE_MULTIPLIER - 1)
+	end
+	inst.components.combat.areahitdamagepercent = TUNING.YUKARI.AOE_DAMAGE_PERCENT
+	inst.components.builder.science_bonus = 1
+	inst.components.eater:SetOnEatFn(oneat)
+	MakeSaneOnEatMeat(inst)
+	MakeGrazeable(inst)
+	MakeDapperOnEquipItem(inst)
+
 	inst.OnSave = onsave
 	inst.OnPreLoad = onpreload
-	local function EquippingEvent()
-		if inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD) then
-			inst.hatequipped = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD).prefab == "yukarihat"
-		else
-			inst.hatequipped = false
-		end
-		
-		if inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY) then
-			inst.fireimmuned = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY).prefab == ("armordragonfly" or "armorobsidian")
-		else
-			inst.fireimmuned = false
-		end
-		
-		inst.components.upgrader:DoUpgrade(inst)
-	end
+	inst.GetYukariHat = GetEquippedYukariHat
+	inst.SetLight = SetLight
+	inst.SetSpellActive = SetSpellActive
+	inst.IsSpellActive = IsSpellActive
 	
-	inst:ListenForEvent( "debugmode", DebugFunction)
-	inst:ListenForEvent( "hungerdelta", DoHungerUp )
-	inst:ListenForEvent( "healthdelta", GoInvincible )
-	inst:ListenForEvent( "onhitother", OnhitEvent )
-	inst:ListenForEvent( "attacked", OnAttackedEvent, inst )
-	inst:ListenForEvent( "teleported", TelePortDelay )
-	inst:ListenForEvent( "equip", EquippingEvent )
-	inst:ListenForEvent( "unequip", EquippingEvent )
-	inst:ListenForEvent( "grazed", OnGraze )
-	
-	inst:DoTaskInTime(0, function() 
-		EquippingEvent()
-	end)
+	inst:DoPeriodicTask(1, PeriodicFunction)
+	--inst:DoTaskInTime(1, OnWorldLoaded)
+	inst:ListenForEvent("healthdelta", OnHealthDelta )
+	inst:ListenForEvent("hungerdelta", OnHungerDelta )
+	inst:ListenForEvent("sanitydelta", OnSanityDelta )
+	inst:ListenForEvent("onattackother", OnAttackOther )
+	inst:ListenForEvent("hatequipped", OnEquipHat )
+	inst:ListenForEvent("equip", OnEquip )
+	inst:ListenForEvent("unequip", OnEquip )
+	inst:ListenForEvent("graze", Graze )
+	inst:ListenForEvent("debugmode", DebugFunction, inst)
 end
 
 return MakePlayerCharacter("yakumoyukari", prefabs, assets, fn, start_inv)

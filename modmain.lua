@@ -89,8 +89,8 @@ modimport "scripts/tunings_yukari.lua"
 TUNING.YUKARI_STATUS = TUNING["YUKARI_STATUS"..(GLOBAL.YUKARI_DIFFICULTY or "")]
 
 modimport "scripts/power_init.lua"
-modimport "scripts/custom_intro.lua"
 modimport "scripts/strings_yukari.lua"
+modimport "scripts/custom_intro.lua"
 modimport "scripts/actions_yukari.lua" -- actions must be loaded before stategraph loads
 modimport "scripts/stategraph_yukari.lua"
 
