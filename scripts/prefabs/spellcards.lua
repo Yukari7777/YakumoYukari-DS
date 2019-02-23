@@ -129,7 +129,7 @@ local function curse(inst)
 			YukariHat:AddTag("shadowdominance")
 		end
 		owner.components.hunger.hungerrate = 0
-		owner:SetSpellsActive("curse", true)
+		owner:SetSpellActive("curse", true)
 	end)
 	inst.components.spellcard:SetTaskFn(function(inst, owner)
 		local mult = math.max(3 * (1 - owner.components.sanity:GetPercent()), inst.olddmg)
@@ -151,7 +151,7 @@ local function curse(inst)
 			YukariHat:RemoveTag("shadowdominance")
 		end
 		owner.components.upgrader:ApplyStatus()
-		owner:SetSpellsActive("curse", false)
+		owner:SetSpellActive("curse", false)
 	end)
 	inst.components.finiteuses:SetOnFinished(function()
 		inst:Remove()
@@ -209,7 +209,7 @@ local function laplace(inst)
 	MakeBuffSpellCommon(inst, TUNING.SPELLLAPLACE_USES, 0.5)
 	inst.components.spellcard.saydonespeech = true
 	inst.components.spellcard:SetSpellFn(function(inst, owner)
-		owner:SetSpellsActive("laplace", true)
+		owner:SetSpellActive("laplace", true)
 		owner.components.talker:Say(GetString(owner.prefab, "NEWSIGHT"))
 		owner.components.sanity:DoDelta(-TUNING.SPELLLAPLACE_SANITYCOST)
 	end)
@@ -220,12 +220,12 @@ local function laplace(inst)
 		if IsWearGoggle then
 			owner.components.talker:Say(GetString(owner.prefab, "DESCRIBE_EYEHURT"))
 			owner.components.combat:GetAttacked(inst, 1)
-			owner:SetSpellsActive("laplace", false)
+			owner:SetSpellActive("laplace", false)
 			return inst.components.spellcard:ClearTask(owner)
 		end
 	end)
 	inst.components.spellcard:SetOnRemoveTask(function(inst, owner)
-		owner:SetSpellsActive("laplace", false)
+		owner:SetSpellActive("laplace", false)
 	end)
 	inst.components.finiteuses:SetOnFinished(function()
 		inst:Remove()
@@ -274,7 +274,7 @@ local function bait(inst)
 		return fx
 	end
 	inst.components.spellcard:SetSpellFn(function(inst, owner)
-		owner:SetSpellsActive("bait", true)
+		owner:SetSpellActive("bait", true)
 		owner.components.upgrader:ApplyStatus()
 		owner.components.talker:Say(GetString(owner.prefab, "TAUNT"))
 		inst.fx = barrier(inst, owner)
@@ -292,7 +292,7 @@ local function bait(inst)
 		inst.components.finiteuses:Use(1)
 	end)
 	inst.components.spellcard:SetOnRemoveTask(function(inst, owner)
-		owner:SetSpellsActive("bait", false)
+		owner:SetSpellActive("bait", false)
 		owner.components.upgrader:ApplyStatus()
 		inst.fx:kill_fx()
 		inst.fx = nil
@@ -613,13 +613,13 @@ local function lament(inst) -- TODO : Recode with StartThread()
 					owner:DoTaskInTime(0.8, function(owner) owner.components.talker:Say(speech) end)
 					LeftSpawnCount = 0
 					inst.Activated = false
-					owner:SetSpellsActive("common", false)
+					owner:SetSpellActive("common", false)
 				end
 			end)
 		end
 
 		inst.Activated = true
-		owner:SetSpellsActive("common", true)
+		owner:SetSpellActive("common", true)
 		local x,y,z = owner.Transform:GetWorldPosition()
 		local ents = TheSim:FindEntities(x, y, z, 100)
 		if owner.components.playercontroller ~= nil then
