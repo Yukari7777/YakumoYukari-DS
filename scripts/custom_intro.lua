@@ -1,4 +1,8 @@
-﻿local function YukariIntro(inst)
+﻿local STRINGS = GLOBAL.STRINGS
+local FRAMES = GLOBAL.FRAMES
+local SaveGameIndex = GLOBAL.SaveGameIndex
+
+local function YukariIntro(inst)
 	local function TakeOff(inst)
 		local bird = SpawnPrefab("wallyintro_bird")
 		bird.Transform:SetPosition(inst:GetPosition():Get())
@@ -13,14 +17,14 @@
 
 			bird:DoTaskInTime(2, function() bird:Remove() end)
 
-			bird:DoPeriodicTask(7 * GLOBAL.FRAMES, function()
+			bird:DoPeriodicTask(7 * FRAMES, function()
 				bird.SoundEmitter:PlaySound("dontstarve/birds/flyin")
 			end)
 
 			bird:DoPeriodicTask(0, function()
 				local currentpos = bird:GetPosition()
 				local flightspeed = 7.5
-				local posdelta = GLOBAL.Vector3(toplayer.x * flightspeed, flightspeed, toplayer.z * flightspeed) * GLOBAL.FRAMES
+				local posdelta = GLOBAL.Vector3(toplayer.x * flightspeed, flightspeed, toplayer.z * flightspeed) * FRAMES
 				local newpos = currentpos + posdelta
 				bird.Transform:SetPosition(newpos:Get())
 			end)
@@ -34,6 +38,7 @@
 		
 		inst:Remove()
 	end
+
 	local PlayPecks = nil
 	PlayPecks = function(inst)
 		inst:RemoveEventCallback("animover", PlayPecks)
@@ -42,15 +47,17 @@
 				inst.SoundEmitter:PlaySound("dontstarve_DLC002/creatures/parrot/peck") 
 			end
 		end
-		inst:DoTaskInTime(6*GLOBAL.FRAMES, peckfn)
-		inst:DoTaskInTime(11*GLOBAL.FRAMES, peckfn)
+		inst:DoTaskInTime(6*FRAMES, peckfn)
+		inst:DoTaskInTime(11*FRAMES, peckfn)
 	end
-    if GetPlayer().prefab == "yakumoyukari" then
-		if GLOBAL.SaveGameIndex:IsModeShipwrecked() then
+
+    if GetPlayer():HasTag("yakumoyukari")  then
+		local SPEECH = STRINGS.YUKARI.CUSTOM_INTRO_SW
+		if SaveGameIndex:IsModeShipwrecked() then
 			inst.components.maxwelltalker.speeches.SHIPWRECKED_1 = {
 				voice = "dontstarve_DLC002/creatures/parrot/chirp",
-				idleanim= "idle",
-				dialoganim="speak",
+				idleanim = "idle",
+				dialoganim = "speak",
 				disappearanim = TakeOff,
 				disableplayer = true,
 				skippable = true,
@@ -62,7 +69,7 @@
 					sound = nil,
 				},
 				{
-					string = "Who R You",
+					string = SPEECH[1],
 					wait = 1,
 					anim = nil,
 					sound = nil,
@@ -77,7 +84,7 @@
 					end,
 				},
 				{
-					string = "StranGer", 
+					string = SPEECH[2],
 					wait = 1.5, 
 					anim = nil, 
 					sound = nil,
@@ -92,66 +99,14 @@
 					end,
 				},
 				{
-					string = "You Better Out", 
+					string = SPEECH[3],
 					wait = 1.5, 
 					anim = nil, 
 					sound = nil,
 				},
 			}
-			if Language == "chinese" then
-				inst.components.maxwelltalker.speeches.SHIPWRECKED_1 = {
-					voice = "dontstarve_DLC002/creatures/parrot/chirp",
-					idleanim= "idle",
-					dialoganim="speak",
-					disappearanim = TakeOff,
-					disableplayer = true,
-					skippable = true,
-					{
-						string = nil,
-						wait = 1,
-						anim = "idle",
-						pushanim = true,
-						sound = nil,
-					},
-					{
-						string = "       ",
-						wait = 1,
-						anim = nil,
-						sound = nil,
-					},
-					{
-						string = nil,
-						wait = 3,
-						anim = "idle_peck",
-						pushanim = true,
-						sectionfn = function(inst)
-							inst:ListenForEvent("animover", PlayPecks)
-						end,
-					},
-					{
-						string = "          ", 
-						wait = 1.5, 
-						anim = nil, 
-						sound = nil,
-					},
-					{
-						string = nil,
-						wait = 2.5,
-						anim = "idle_peck",
-						pushanim = true,
-						sectionfn = function(inst)
-							inst:ListenForEvent("animover", PlayPecks)
-						end,
-					},
-					{
-						string = "          ", 
-						wait = 1.5, 
-						anim = nil, 
-						sound = nil,
-					},
-				}
-			end
 		else
+			local SPEECH = STRINGS.YUKARI.CUSTOM_INTRO
 			inst.components.maxwelltalker.speeches.SANDBOX_1 = {
 				appearsound = "dontstarve/maxwell/disappear",
 				voice = "dontstarve/maxwell/talk_LP_world5",
@@ -165,94 +120,42 @@
 				disableplayer = true,
 				skippable = true,
 				{
-					string = "OWWWWWWAAAAAAWWWW!!!!!",
+					string = SPEECH[1],
 					wait = 3,
 					anim = nil,
 					sound = nil,
 				},
 				{
-					string = "HOW THE HECK CAN YOU JUST PASS THROUGH OUR BOUNDARIES?!",
+					string = SPEECH[2],
 					wait = 4,
 					anim = nil,
 					sound = nil,
 				},
 				{
-					string = "Well, whatever you were strong or not,",
+					string = SPEECH[3],
 					wait = 3,
 					anim = nil,
 					sound = nil,
 				},
 				{
-					string = "I just MESSED you up!",
+					string = SPEECH[4],
 					wait = 3,
 					anim = nil,
 					sound = nil,
 				},
 				{
-					string = "YOU MUST DIE. YOU MUST NOT SURVIVE,",
+					string = SPEECH[5],
 					wait = 4,
 					anim = nil,
 					sound = nil,
 				},
 				{
-					string = "BECAUSE OF YOUR GODDAMN WEAKNESS!!",
+					string = SPEECH[6],
 					wait = 4,
 					anim = nil,
 					sound = nil,
 				},
 			}
-			if Language == "chinese" then
-				inst.components.maxwelltalker.speeches.SANDBOX_1 =
-				{
-					appearsound = "dontstarve/maxwell/disappear",
-					voice = "dontstarve/maxwell/talk_LP_world5",
-					appearanim = "appear5",
-					idleanim= "idle5_loop",
-					dialogpreanim = "dialog5_pre",
-					dialoganim="dialog5_loop",
-					dialogpostanim = "dialog5_pst",
-					disappearanim = "disappear5",
-					-- these one gonna make maxwell very very mad.
-					disableplayer = true,
-					skippable = true,
-					{
-						string = "哦 哦 哦 哦 哦 哦 哦 哇 啊 啊 啊 啊 哦 哦!!",
-						wait = 3,
-						anim = nil,
-						sound = nil,
-					},
-					{
-						string = "你 是 怎 么 打 破 结 界 来 到 这 里 的?!",
-						wait = 4,
-						anim = nil,
-						sound = nil,
-					},
-					{
-						string = "不 过 没 关 系，无 论 你 以 前 是 否 强 大,",
-						wait = 3,
-						anim = nil,
-						sound = nil,
-					},
-					{
-						string = "我 刚 让 你 变 得 一 团 糟!",
-						wait = 3,
-						anim = nil,
-						sound = nil,
-					},
-					{
-						string = "你 不 可 能 活 下 去，你 必 须 死 ！",
-						wait = 4,
-						anim = nil,
-						sound = nil,
-					},
-					{
-						string = "因 为 你 现 在 很 虚 弱!!",
-						wait = 4,
-						anim = nil,
-						sound = nil,
-					},
-				}
-			end
 		end
     end
 end

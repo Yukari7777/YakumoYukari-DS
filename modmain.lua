@@ -65,6 +65,8 @@ local GetSeasonManager = GLOBAL.GetSeasonManager
 
 GLOBAL.YAKUMOYUKARI_MODNAME = KnownModIndex:GetModActualName("Yakumo Yukari")
 GLOBAL.YUKARI_DIFFICULTY = GetModConfigData("diff")
+GLOBAL.DLC_ENABLED_FLAG = 0 + (IsDLCEnabled(GLOBAL.REIGN_OF_GIANTS) and 1 or 0) + (IsDLCEnabled(GLOBAL.CAPY_DLC) and 2 or 0) + (IsDLCEnabled(GLOBAL.PORKLAND_DLC) and 4 or 0)
+-- ROG = 1, SW = 2, HL = 4 
 
 local Language = GetModConfigData("language")
 GLOBAL.YUKARI_LANGUAGE = "en"

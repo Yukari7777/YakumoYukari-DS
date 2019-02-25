@@ -106,6 +106,21 @@ STRINGS.ACTIVATED = "activated"
 STRINGS.READY = "ready"
 STRINGS.SECONDS = "s"
 
+STRINGS.CUSTOM_INTRO = {
+	"OWWWWWWAAAAAAWWWW!!!!!",
+	"HOW THE HECK CAN YOU JUST PASS THROUGH OUR BOUNDARIES?!",
+	"Well, whatever you were strong or not,",
+	"I will never use your own power!",
+	"YOU WILL SUFFER, DEATH WILL FOUND YOU.",
+	"BECAUSE OF YOUR GODDAMN WEAKNESS!!"
+}
+
+STRINGS.CUSTOM_INTRO_SW = {
+	"Who R You",
+	"Who R You StranGer", 
+	"You Better Out", 
+}
+
 if Language == "ch" then
 
 STRINGS.CHARACTER_TITLES.yakumoyukari = "境界的妖怪"
@@ -213,5 +228,20 @@ ACTIONS.UTELEPORT.str = "눈 箇"
 ACTIONS.SPAWNG.str = " 냥"
 ACTIONS.CASTTOHO.str = "嘉 랬"
 ACTIONS.CASTTOHOH.str = "嘉 랬"
+
+STRINGS.CUSTOM_INTRO = {
+	"哦 哦 哦 哦 哦 哦 哦 哇 啊 啊 啊 啊 哦 哦!!",
+	"你 是 怎 么 打 破 结 界 来 到 这 里 的?!",
+	"不 过 没 关 系，无 论 你 以 前 是 否 强 大,",
+	"我 刚 让 你 变 得 一 团 糟!",
+	"你 不 可 能 活 下 去，你 必 须 死 ！",
+	"因 为 你 现 在 很 虚 弱!!",
+}
+
+STRINGS.CUSTOM_INTRO_SW = {
+	"Who R You",
+	"Who R You StranGer", 
+	"You Better Out", 
+}
 
 end

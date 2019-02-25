@@ -92,7 +92,7 @@ local function fn()
     inst.MiniMapEntity:SetIcon("yukarihat.tex")
 
 	MakeInventoryPhysics(inst)    
-	if IsDLCEnabled(CAPY_DLC) then    
+	if _G.DLC_ENABLED_FLAG % 4 >= 2 then    
 		MakeInventoryFloatable(inst, "idle", "idle")
 	end	
 		

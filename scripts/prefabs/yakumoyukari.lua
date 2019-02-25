@@ -1,7 +1,7 @@
 local MakePlayerCharacter = require "prefabs/player_common"
+local RECIPES = require "recipes_yukari"
 local STATUS = TUNING.YUKARI_STATUS
 local YCONST = TUNING.YUKARI
-
 
 local assets = {
 	Asset("SCRIPT", "scripts/prefabs/player_common.lua"),
@@ -78,6 +78,12 @@ local function onpreload(inst, data)
 		end
 	end
 end
+
+local function DLCCompatiblePatch(inst)
+	if _G.DLC_ENABLED_FLAG == 0 then
+		inst.components.health.SetAbsorptionAmount = inst.components.health.SetAbsorbAmount
+	end
+end	
 
 local function OnWorldLoaded(inst)
 	local yukarihat = inst:GetYukariHat()
@@ -175,7 +181,7 @@ function OnHungerDelta(inst, data)
 		local scale = 0.95 + (dmgmult - TUNING.YUKARI.DAMAGE_MULTIPLIER) * 0.15
 		inst.components.combat.damagemultiplier = dmgmult
 
-		inst:ApplyScale("dreadful", scale)
+		inst.components.upgrader:ApplyScale("dreadful", scale)
 	end
 end
 
@@ -319,7 +325,7 @@ local function oneat(inst, food)
 end
 
 local function MakeSaneOnEatMeat(inst)
-	inst.components.eater.eatmeat = inst.components.eater.Eat
+	local _Eat = inst.components.eater.Eat
 	function inst.components.eater:Eat(food)
 		if self:CanEat(food) then
 			if food.components.edible.foodtype == FOODTYPE.MEAT and food.components.edible.sanityvalue < 0 then
@@ -334,18 +340,46 @@ local function MakeSaneOnEatMeat(inst)
 				end)
 			end
 		end
-		return inst.components.eater:eatmeat(food)
+		return _Eat(food)
 	end
 end
 
 local function MakeToolEfficient(item)
-	item.components.tool.NewEffectiveness = item.components.tool.GetEffectiveness
 	function item.components.tool:GetEffectiveness(action)
 		local owner = item.components.inventoryitem ~= nil and item.components.inventoryitem.owner
 		if owner ~= nil and owner.components.upgrader ~= nil and owner.components.upgrader.IsEfficient and action ~= ACTIONS.HAMMER then
 			return self.actions[action] * 1.5 or 0
 		end
 		return self.actions[action] or 0
+	end
+end
+
+local function MakeGrazeable(inst)
+	local _ApplyDamage = inst.components.inventory.ApplyDamage
+	function inst.components.inventory:ApplyDamage(damage, attacker, weapon)
+		local totaldodge = (inst.components.upgrader.dodgechance + inst.components.upgrader.hatdodgechance) * (inst.sg:HasStateTag("moving") and 2 or 1) -- double when is moving
+		local candodge = inst.IsGrazing or math.random() < totaldodge and inst.components.freezeable == nil and not inst.components.health:IsInvincible() and (attacker ~= nil and attacker.components ~= nil and attacker.components.combat ~= nil)
+
+		if candodge then
+			inst:PushEvent("graze")
+			return 0
+		end
+		return _ApplyDamage(damage, attacker, weapon)
+	end
+end
+
+local function MakeDapperOnEquipItem(inst)
+	local _Recalc = inst.components.sanity.Recalc
+	function inst.components.sanity.Recalc(self, dt)
+		local NumBeforeCalc = 0
+		for k, v in pairs(self.inst.components.inventory.equipslots) do
+			if v.components.equippable ~= nil then
+				local itemdap = v.components.equippable:GetDapperness(self.inst)
+				NumBeforeCalc = itemdap < 0 and NumBeforeCalc + itemdap * self.inst.components.upgrader.absorbsanity or NumBeforeCalc
+			end
+		end
+		self.dapperness = NumBeforeCalc ~= 0 and -NumBeforeCalc or 0
+		return _Recalc(self, dt)
 	end
 end
 
@@ -381,36 +415,6 @@ local function OnEquip(inst, data)
 			inst.components.upgrader:ApplyHatAbility(item)
 		end
 		inst.components.upgrader:ApplyStatus()
-	end
-end
-
-
-local function MakeGrazeable(inst)
-	inst.components.inventory.NewTakeDamage = inst.components.inventory.ApplyDamage
-	function inst.components.inventory:ApplyDamage(damage, attacker, weapon, ...)
-		local totaldodge = (inst.components.upgrader.dodgechance + inst.components.upgrader.hatdodgechance) * (inst.sg:HasStateTag("moving") and 2 or 1) -- double when is moving
-		local candodge = inst.IsGrazing or math.random() < totaldodge and inst.components.freezeable == nil and not inst.components.health:IsInvincible() and (attacker ~= nil and attacker.components ~= nil and attacker.components.combat ~= nil)
-
-		if candodge then
-			inst:PushEvent("graze")
-			return 0
-		end
-		return inst.components.inventory:NewTakeDamage(damage, attacker, weapon, ...)
-	end
-end
-
-local function MakeDapperOnEquipItem(inst)
-	inst.components.sanity.PreRecalc = inst.components.sanity.Recalc
-	function inst.components.sanity.Recalc(self, dt)
-		local NumBeforeCalc = 0
-		for k, v in pairs(self.inst.components.inventory.equipslots) do
-			if v.components.equippable ~= nil then
-				local itemdap = v.components.equippable:GetDapperness(self.inst)
-				NumBeforeCalc = itemdap < 0 and NumBeforeCalc + itemdap * self.inst.components.upgrader.absorbsanity or NumBeforeCalc
-			end
-		end
-		self.dapperness = NumBeforeCalc ~= 0 and -NumBeforeCalc or 0
-		return inst.components.sanity:PreRecalc(dt)
 	end
 end
 
@@ -451,6 +455,7 @@ local function DebugFunction(inst)
 end	
 
 local fn = function(inst)
+	DLCCompatiblePatch(inst)
 	inst.entity:AddLight()
 
 	inst:AddTag("youkai")
@@ -479,11 +484,12 @@ local fn = function(inst)
 	inst.components.hunger:SetMax(150)
 	inst.components.hunger.hungerrate = 1.5 * TUNING.WILSON_HUNGER_RATE
 	inst.components.combat.damagemultiplier = TUNING.YUKARI.DAMAGE_MULTIPLIER
-	if IsDLCEnabled(CAPY_DLC) then
-		inst.components.combat:AddDamageModifier("yukari_bonus", TUNING.YUKARI.DAMAGE_MULTIPLIER - 1)
+	if _G.DLC_ENABLED_FLAG % 4 >= 2 then
+		inst.components.combat:AddDamageModifier("dreadful", TUNING.YUKARI.DAMAGE_MULTIPLIER - 1)
 	end
 	inst.components.combat.areahitdamagepercent = TUNING.YUKARI.AOE_DAMAGE_PERCENT
 	inst.components.builder.science_bonus = 1
+	inst.components.builder:AddRecipeTab(RECIPES.RECIPETAB)
 	inst.components.eater:SetOnEatFn(oneat)
 	MakeSaneOnEatMeat(inst)
 	MakeGrazeable(inst)

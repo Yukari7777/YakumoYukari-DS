@@ -230,7 +230,9 @@ function Upgrader:UpdateAbilityStatus()
 	end	
 	
 	if ability[4][1] then
-		self.inst.components.moisture.baseDryingRate = 0.7
+		if self.inst.components.moisture ~= nil then
+			self.inst.components.moisture.baseDryingRate = 0.7
+		end
 		self.PowerGainMultiplier = 1.5
 		self.bonusspeedmult = 1.033
 	end
@@ -407,7 +409,7 @@ function Upgrader:UpdateSkillStatus()
 		skill.invincibility = invincibility
 	end
 
-	if self.inst.components.moisture.baseDryingRate ~= 0 and skill.dry == nil then
+	if self.inst.components.moisture and self.inst.components.moisture.baseDryingRate ~= 0 and skill.dry == nil then
 		skill.dry = "Additional drying speed by "..self.inst.components.moisture.baseDryingRate
 	end
 
@@ -510,12 +512,18 @@ function Upgrader:ApplyStatus()
 	self:AbilityManager()
 	inst.components.combat:SetAttackPeriod(self.Ability_45 and 0 or TUNING.WILSON_ATTACK_PERIOD)
 	inst.components.health.maxhealth = STATUS.DEFAULT_HP + self.health_level * STATUS.HP_RATE + self.healthbonus + math.max(0, (self.health_level - 30) * 7.5)
-	inst.components.health:SetAbsorptionAmount(1 - (self.IsDamage and 0.7 or 1) * (inst.yukari_classified ~= nil and inst.yukari_classified.inspellbait:value() and 0.5 or 1) )
+	inst.components.health:SetAbsorptionAmount(1 - (self.IsDamage and 0.7 or 1) * (inst:IsSpellActive("bait") and 0.5 or 1) )
 	inst.components.hunger.hungerrate = math.max( 0, (STATUS.DEFAULT_HR - self.hunger_level * STATUS.HR_RATE - math.max(0, (self.hunger_level - 30) * 0.025 )) ) * TUNING.WILSON_HUNGER_RATE 
 	inst.components.hunger.max = STATUS.DEFAULT_HU + self.hungerbonus
 	inst.components.sanity.max = STATUS.DEFAULT_SN + self.sanity_level * STATUS.SN_RATE + self.sanitybonus + math.max(0, (self.sanity_level - 30) * 5)
 	inst.components.power.max = STATUS.DEFAULT_PW + self.power_level * STATUS.PO_RATE + self.powerbonus + math.max(0, (self.power_level - 30) * 5)
-	inst.components.locomotor:SetExternalSpeedMultiplier(inst, "dreadful", self.bonusspeedmult)
+	if _G.DLC_ENABLED_FLAG % 4 >= 2 or _G.DLC_ENABLED_FLAG % 8 >= 4 then
+		inst.components.locomotor:AddSpeedModifier_Additive("dreadful", self.bonusspeedmult)
+	else
+		local speedmod = (self.bonusspeedmult - 1) * 30
+		inst.components.locomotor.runspeed = 6 + speedmod
+		inst.components.locomotor.walkspeed = 4 + speedmod
+	end
 	
 	inst.components.health:SetPercent(health_percent)
 	inst.components.hunger:SetPercent(hunger_percent)

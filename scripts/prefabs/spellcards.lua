@@ -132,16 +132,18 @@ local function curse(inst)
 		owner:SetSpellActive("curse", true)
 	end)
 	inst.components.spellcard:SetTaskFn(function(inst, owner)
-		local mult = math.max(3 * (1 - owner.components.sanity:GetPercent()), inst.olddmg)
+		local mod = math.max(3 * (1 - owner.components.sanity:GetPercent()), inst.olddmg)
 		owner.components.hunger.hungerrate = 0
 		owner.components.sanity:DoDelta(- owner.components.sanity:GetMaxWithPenalty() * 0.025)
 		owner.components.power:DoDelta(-TUNING.SPELL_POWERCOST_NORMAL * 1.5)
-		owner.components.combat.damagemultiplier = 1 + mult * 0.5
+		owner.components.combat.damagemultiplier = 1 + mod * 0.5
 		owner.components.combat:SetAttackPeriod(0)
-		owner.components.locomotor.walkspeed = 4 + mult
-		owner.components.locomotor.runspeed = 6 + mult
-		owner.components.locomotor:SetExternalSpeedMultiplier(inst, "dreadful", 1)
-		owner.components.upgrader:ApplyScale("dreadful", 1 + mult * 0.083)
+		owner.components.locomotor.walkspeed = 4 + mod
+		owner.components.locomotor.runspeed = 6 + mod
+		if _G.DLC_ENABLED_FLAG % 4 >= 2 or _G.DLC_ENABLED_FLAG % 8 >= 4 then
+			owner.components.locomotor:RemoveSpeedModifier_Additive("dreadful")
+		end
+		owner.components.upgrader:ApplyScale("dreadful", 1 + mod * 0.083)
 		inst.components.finiteuses:Use(1)
 	end, 0.5)
 	inst.components.spellcard:SetDoneSpeech("DESCRIBE_NOREINFORCE")
@@ -718,7 +720,7 @@ local function MakeCard(name)
 		inst.entity:AddAnimState()   
 		
 		MakeInventoryPhysics(inst)  
-		if IsSWEnabled then    
+		if _G.DLC_ENABLED_FLAG % 4 >= 2 then    
 			MakeInventoryFloatable(inst, "idle", "idle")
 		end	
 		
