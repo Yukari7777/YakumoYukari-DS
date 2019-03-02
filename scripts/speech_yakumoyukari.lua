@@ -1717,30 +1717,92 @@ return {
 		CREEPYEYES = "Superintentor. But you can't see inside.",
 	},
 	DESCRIBE_GENERIC = "I don't even know about this.",
-	DESCRIBE_TOODARK = "It's #000000!",
+	DESCRIBE_TOODARK = "It's BLACK!",
 	DESCRIBE_SMOLDERING = "That thing is about to catch fire.",
-		
 	DESCRIBE_LOWPOWER = "I don't have enough power!",
 	DESCRIBE_NOSKILL = "I have no skills.",
-	DESCRIBE_INVINCIBILITY_DURATION = "Invisible duration is increased.",
+	DESCRIBE_INVINCIBILITY_DURATION = "Invisible duration has been increased.",
 	DESCRIBE_CLOAKING = "They don't know where I am.",
 	DESCRIBE_DECLOAKING = "I'm not invisible anymore!",
 	DESCRIBE_CANNOTRESIST = "I can't resist more if I do this.",
-	DESCRIBE_NOREINFORCE = "I'm no longer reinforced!",
+	DESCRIBE_NOREINFORCE = "I'm not reinforced anymore!",
 	DESCRIBE_EYEHURT = "Ouch! My eyes!",
-	DESCRIBE_NEWSIGHT = "Let's see this.",
-	DESCRIBE_DONEEFFCT = "It's done.",
+	DESCRIBE_DONEEFFCT = "The effect has over.",
 	DESCRIBE_NOSPAWN = "I can't spawn.",
 	DESCRIBE_TOOMANYBUTTER = "I think It's enough..?",
 	DESCRIBE_ABILITY_ALREADY = "I already have this ability.",
 	DESCRIBE_HATUPGRADE = "Hat Upgraded",
 	DESCRIBE_NOHANDED = "I should bring something on my hand.",
 	DESCRIBE_DONEUPGRADE = "\nUpgrade Finished",
-	DESCRIBE_INVINCIBILITY_ACTIVE = "Invincibility Activated",
+	DESCRIBE_INVINCIBILITY_ACTIVATE = "INVINCIBILITY Activated",
 	DESCRIBE_INVINCIBILITY_DONE = "I'm no longer invincible.",
 	DESCRIBE_UPGRADE_FREE = "\nFree to Upgrade",
 	DESCRIBE_UPGRADE_HEALTH = "My heart is mighter.",
-	DESCRIBE_UPGRADE_HUNGER = "Maybe I got less starvation.",
+	DESCRIBE_UPGRADE_HUNGER = "My Stomach is tougher",
 	DESCRIBE_UPGRADE_SANITY = "Things are getting.. fresh!",
-	DESCRIBE_UPGRADE_POWER = "I can feel my insdie power is grown.",
+	DESCRIBE_UPGRADE_POWER = "I can feel my inner power is getting grown.",
+	DESCRIBE_INGREDIENTS = "I don't have enough Ingredients.",
+	DESCRIBE_LOWLEVEL = "I must reach %s level to %s",
+
+	ONULTIMATE = {
+		"I can now evade death..",
+		"Now I have power of TheWorld.",
+		"The world is beginning to show with new sights.",
+		"Yes... this is my power I had."
+	},
+
+	ONULTIMATESW = {
+		"I changed my destiny myself...",
+		"Everythings are... DESTROYABLE.",
+		"This, is the power who my friend had...",
+		"Yes... this is my power I had."
+	},
+
+	ONEATHUMAN = {
+		"...Youkai's basic instinct.",
+		"...This is really.. fresh",
+		"...Really delicious",
+	},
+
+	NECRO = {
+		"美しく残酷にこの大地から往ね！",
+		"You were nothing but a piece of paper...",
+		"Go rest in the void..",
+		"You were just nothing..",
+	},
+
+	LAMENT_B = {
+		"Oops",
+		"Oh, this is not good.",
+		"What is this?!",
+		"What? wait,"
+	},
+
+	LAMENT_H = {
+		"I'll never do this again!",
+		"What the f..",
+		"What the,",
+		"Oh, no.",
+		"Ahh!!",
+	},
+
+	TAUNT = {
+		"I'll set you free, if you win.",
+		"Hey! You wanna go?",
+		"Get taunted, mortals!",
+	},
+
+	NEWSIGHT = {
+		"No one can hide from my sight.",
+		"Knowing everything on the present.",
+		"You shall not hit me, the darkness.",
+	},
+
+	NODANGERSCHEME = "I can't concentrate right now!",
+
+	UNPAUSED = {
+		"Why do you make me wait?",
+		"Did you finish what you have done?",
+		"Don't let me wait."
+	},
 }

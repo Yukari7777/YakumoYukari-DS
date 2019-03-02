@@ -120,9 +120,9 @@ local function ToolEfficientFn(self)
 end
 
 function GodTelePort()
-	if GetPlayer() and GetPlayer().prefab == "yakumoyukari" then
-		if GetPlayer().components.upgrader.GodTelepoirt and GetPlayer().istelevalid and not IsPaused() then
-			local Chara = GetPlayer()
+	local Chara = GetPlayer()
+	if Chara and Chara:HasTag("yakumoyukari") then
+		if Chara.components.upgrader.GodTelepoirt and Chara.istelevalid and not IsPaused() then
 			if Chara.components.power and Chara.components.power.current >= 20 then
 				local function isvalid(x,y,z)
 					local ground = GLOBAL.GetWorld()
@@ -136,7 +136,7 @@ function GodTelePort()
 				if isvalid(x,y,z) then Chara.Transform:SetPosition(x,y,z) else return false end
 				Chara.SoundEmitter:PlaySound("soundpack/spell/teleport")
 				Chara:Hide()
-				GetPlayer():DoTaskInTime(0.2, function() Chara:Show() end)
+				Chara:DoTaskInTime(0.2, function() Chara:Show() end)
 				Chara.components.power:DoDelta(-20, false)
 			else
 				Chara.components.talker:Say(GetString(Chara.prefab, "DESCRIBE_LOWPOWER"))
@@ -325,7 +325,7 @@ AddPrefabPostInit("spider", SpiderRetargetFn)
 AddPrefabPostInit("spider_warrior", WarriorRetargetFn)
 AddPrefabPostInit("spiderqueen", SpiderqueenRetargetFn)
 
-if IsDLCEnabled(GLOBAL.CAPY_DLC) or IsDLCEnabled(GLOBAL.PORKLAND_DLC) then
+if GLOBAL.DLC_ENABLED_FLAG % 4 >= 2 or GLOBAL.DLC_ENABLED_FLAG % 8 >= 4 then
 	AddPrefabPostInit("mosquito_poison", MosquitoRetargetFn)
 end
 

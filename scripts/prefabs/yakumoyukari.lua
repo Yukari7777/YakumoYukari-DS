@@ -419,8 +419,6 @@ local function OnEquip(inst, data)
 end
 
 local function OnSetLaplace(inst, val)
-	if not GetClock() and GetWorld() and GetWorld().components.colourcubemanager then return end
-
 	if val then
 		GetClock():SetNightVision(true)
 		GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/purple_moon_cc.tex", .5)
@@ -440,6 +438,12 @@ end
 
 local function IsSpellActive(inst, key)
 	return inst._spellsactive[key] == true -- return false if false or nil.
+end
+
+local function OnContinue()
+	if math.random() < 0.15 then
+		GetPlayer().components.talker:Say(GetString(GetPlayer(), "UNPAUSED"))
+	end
 end
 
 local function DebugFunction(inst)
@@ -513,6 +517,7 @@ local fn = function(inst)
 	inst:ListenForEvent("unequip", OnEquip )
 	inst:ListenForEvent("graze", Graze )
 	inst:ListenForEvent("debugmode", DebugFunction, inst)
+	inst:ListenForEvent("continuefrompause", OnContinue, GetWorld())
 end
 
 return MakePlayerCharacter("yakumoyukari", prefabs, assets, fn, start_inv)
