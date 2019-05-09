@@ -1,5 +1,6 @@
 local STRINGS = GLOBAL.STRINGS
 local FRAMES = GLOBAL.FRAMES
+GLOBAL.require "constants_yukari"
 
 local function YukariIntro(inst)
 	local function TakeOff(inst)
@@ -7,7 +8,7 @@ local function YukariIntro(inst)
 		bird.Transform:SetPosition(inst:GetPosition():Get())
 		bird.Transform:SetRotation(inst.Transform:GetRotation())
 		bird.AnimState:PlayAnimation("takeoff_diagonal_pre")
-		local toplayer = (GetPlayer():GetPosition() - inst:GetPosition()):Normalize()
+		local toplayer = (GLOBAL.GetPlayer():GetPosition() - inst:GetPosition()):Normalize()
 
 		bird.animoverfn = function()
 			bird:RemoveEventCallback("animover", bird.animoverfn)
@@ -50,8 +51,8 @@ local function YukariIntro(inst)
 		inst:DoTaskInTime(11*FRAMES, peckfn)
 	end
 
-    if GetPlayer():HasTag("yakumoyukari")  then
-		local SPEECH = STRINGS.YUKARI.CUSTOM_INTRO_SW
+    if GLOBAL.GetPlayer():HasTag("yakumoyukari")  then
+		local SPEECH = STRINGS.YUKARI_CUSTOM_INTRO_SW
 		if GLOBAL.SaveGameIndex:IsModeShipwrecked() then
 			inst.components.maxwelltalker.speeches.SHIPWRECKED_1 = {
 				voice = "dontstarve_DLC002/creatures/parrot/chirp",
@@ -105,7 +106,7 @@ local function YukariIntro(inst)
 				},
 			}
 		else
-			local SPEECH = STRINGS.YUKARI.CUSTOM_INTRO
+			local SPEECH = STRINGS.YUKARI_CUSTOM_INTRO
 			inst.components.maxwelltalker.speeches.SANDBOX_1 = {
 				appearsound = "dontstarve/maxwell/disappear",
 				voice = "dontstarve/maxwell/talk_LP_world5",

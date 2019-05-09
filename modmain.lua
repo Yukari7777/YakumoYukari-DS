@@ -1,13 +1,13 @@
 PrefabFiles = {
 	"yakumoyukari",
-	"yukariumbre",
-	"yukarihat",
-	"upgradepanel",
-	"ultpanel",
-	"spellcards",
-	"barrierfield_fx",
-	"graze_fx",
-	"scheme",
+--	"yukariumbre",
+--	"yukarihat",
+--	"upgradepanel",
+--	"ultpanel",
+--	"spellcards",
+--	"barrierfield_fx",
+--	"graze_fx",
+--	"scheme",
 }
 
 Assets = {
@@ -33,7 +33,7 @@ Assets = {
 	
 	Asset( "IMAGE", "images/inventoryimages/touhoutab.tex" ),
 	Asset( "ATLAS", "images/inventoryimages/touhoutab.xml" ),
-	Asset( "ANIM" , "anim/power.zip"),
+	Asset( "ANIM" , "anim/ypower.zip"),
 	
 	Asset("SOUNDPACKAGE", "sound/soundpack.fev"),
 	Asset("SOUND", "sound/spell.fsb"),

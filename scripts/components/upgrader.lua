@@ -1,3 +1,4 @@
+require "constants_yukari"
 local CONST = TUNING.YUKARI
 local STATUS = TUNING.YUKARI_STATUS
 
@@ -59,6 +60,10 @@ local Upgrader = Class(function(self, inst)
 	self.fastharvester = false
 	self.fastresetter = false
 	
+	self:InitializeList()
+end)
+
+function Upgrader:InitializeList()
 	self.ability = {}
 	self.skill = {}
 	self.skillsort = 4
@@ -74,8 +79,7 @@ local Upgrader = Class(function(self, inst)
 	for i = 1, 5, 1 do
 		self.hatskill[i] = false
 	end
-	
-end)
+end
 
 function Upgrader:SetFireDamageScale()
 	local shouldimmune = self.fireimmuned or (self.hatequipped and self.FireResist)
@@ -85,16 +89,17 @@ function Upgrader:SetFireDamageScale()
 end
 
 function Upgrader:AbilityManager()
+	if #self.ability == 0 then self:InitializeList() end
+
 	local ability = self.ability
 	local hatskill = self.hatskill
 	local unlockpoint = STATUS.UNLOCKABILITY
-	local level = {self.health_level, self.hunger_level, self.sanity_level, self.power_level}
 
 	for i = 1, 4, 1 do
-		for j = 1, 4, 1 do
-			if not ability[i][j] and level[i] >= unlockpoint[j] then
+		for j = 1, 6, 1 do
+			--if not ability[i][j] and self[YUKARISTATINDEX[i].."_level"] >= unlockpoint[j] then
 				ability[i][j] = true
-			end
+			--end
 		end
 	end
 

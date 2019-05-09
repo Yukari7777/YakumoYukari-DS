@@ -237,7 +237,7 @@ end
 local function butter(inst)
 	MakeStackableCommon(inst, TUNING.SPELLNECRO_POWERCOST)
 	inst.components.spellcard:SetSpellFn(function(inst, owner)
-		if not (TheWorld.components.butterflyspawner ~= nil and TheWorld.components.birdspawner ~= nil) then
+		if not GetWorld().components.birdspawner ~= nil then
 			owner.components.talker:Say(GetString(owner.prefab, "DESCRIBE_NOSPAWN"))
 		else
 			if owner.components.power ~= nil then
@@ -248,7 +248,7 @@ local function butter(inst)
 			if num > 0 then
 				owner:StartThread(function()
 					for k = 1, num do
-						local pt = TheWorld.components.birdspawner:GetSpawnPoint(Vector3(owner.Transform:GetWorldPosition() ))
+						local pt = GetWorld().components.birdspawner:GetSpawnPoint(Vector3(owner.Transform:GetWorldPosition() ))
 						local butter = SpawnPrefab("butterfly")
 						butter.Transform:SetPosition(pt.x, pt.y, pt.z)
 						butter:AddTag("magicbutter")
@@ -499,7 +499,7 @@ local function lament(inst) -- TODO : Recode with StartThread()
 			{"killerbee", 6, "suck"},
 			{"krampus", math.random(3), "suck"},
 			{"panflute", math.random(3), "suck", SleepNearbyPlayer},
-			{"deerclops", 1, "suck", function(prefab) prefab:DoTaskInTime(10, function() TheWorld:PushEvent("ms_sendlightningstrike", prefab.Transform:GetWorldPosition()); prefab:Remove()  end) end, "rog"},
+			{"deerclops", 1, "suck", function(prefab) prefab:DoTaskInTime(10, function() GetWorld():PushEvent("ms_sendlightningstrike", prefab.Transform:GetWorldPosition()); prefab:Remove()  end) end, "rog"},
 			{"mosquito", 4, "suck", nil, "rog"},
 			{"mosquito_poison", math.random(3), "suck", nil, "sw"},
 		}

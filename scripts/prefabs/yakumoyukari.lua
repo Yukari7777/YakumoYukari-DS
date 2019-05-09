@@ -62,7 +62,7 @@ local function onpreload(inst, data)
 			inst.components.upgrader.sanity_level = data.sanity_level or 0 
 			inst.components.upgrader.power_level = data.power_level or 0	
 			inst.components.upgrader.hatlevel = data.hatlevel or 1
-			inst.components.upgrader.ability = data.skilltree
+			inst.components.upgrader.ability = data.skilltree or {}
 			inst.components.upgrader:ApplyStatus()
 
 			--re-set these from the save data, because of load-order clipping issues
@@ -195,7 +195,7 @@ local function SetLight(inst, var)
 end
 
 local function OnSanityDelta(inst, data)
-	if inst.components.upgrader.NightVision and (TheWorld.state.phase == "night" or TheWorld:HasTag("cave")) and inst.sleepingbag == nil then
+	if inst.components.upgrader.NightVision and (GetClock():IsNight() or GetWorld():HasTag("cave")) and inst.sleepingbag == nil then
 		local sanitypercent = data.newpercent
 		if sanitypercent > 0.9 then
 			inst:SetLight(sanitypercent)
@@ -225,29 +225,6 @@ local function GetPoint(pt)
 	end
 end
 
-local function PeriodicFunction(inst, data)
-	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.hatequipped and 0.2 or 0)
-
-	if inst.components.health ~= nil then
-		if inst.IsInvincible then
-			InvincibleRegen(inst)
-		end
-
-		if inst.components.upgrader.nohealthpenalty then
-			inst.components.health:SetPenalty(0)
-		end
-	end
-
-	Cooldown(inst)
-	
-	if inst.components.upgrader.SightDistance and inst.components.upgrader.SightDistance > 0 then
-		local dis = inst.components.upgrader.SightDistance
-		local pt = GetPoint(Vector3(GetPlayer().Transform:GetWorldPosition()))
-		GetWorld().minimap.MiniMap:ShowArea(pt.x, pt.y, pt.z, 50 * dis)
-		GetWorld().Map:VisitTile(GetWorld().Map:GetTileCoordsAtPoint(pt.x, pt.y, pt.z))
-	end
-end
-
 local function Cooldown(inst)
 	if inst.components.upgrader.ability[1][2] then
 		if inst.regen_cool > 0 then
@@ -269,6 +246,25 @@ local function Cooldown(inst)
 
 	if inst.naughtiness > 0 then
 		inst.naughtiness = inst.naughtiness - 1
+	end
+end
+
+local function PeriodicFunction(inst, data)
+	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.hatequipped and 0.2 or 0)
+
+	if inst.components.health ~= nil then
+		if inst.IsInvincible then
+			InvincibleRegen(inst)
+		end
+	end
+
+	Cooldown(inst)
+	
+	if inst.components.upgrader.SightDistance and inst.components.upgrader.SightDistance > 0 then
+		local dis = inst.components.upgrader.SightDistance
+		local pt = GetPoint(Vector3(GetPlayer().Transform:GetWorldPosition()))
+		GetWorld().minimap.MiniMap:ShowArea(pt.x, pt.y, pt.z, 50 * dis)
+		GetWorld().Map:VisitTile(GetWorld().Map:GetTileCoordsAtPoint(pt.x, pt.y, pt.z))
 	end
 end
 
