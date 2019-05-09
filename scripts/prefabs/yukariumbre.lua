@@ -159,4 +159,4 @@ local function fn()
 	return inst
 end
 	
-return Prefab("common/inventory/yukariumbre", fn, assets, prefabs)
+return Prefab("common/inventory/yukariumbre", fn, assets, prefab)

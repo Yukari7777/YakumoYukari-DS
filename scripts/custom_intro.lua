@@ -1,6 +1,5 @@
-﻿local STRINGS = GLOBAL.STRINGS
+local STRINGS = GLOBAL.STRINGS
 local FRAMES = GLOBAL.FRAMES
-local SaveGameIndex = GLOBAL.SaveGameIndex
 
 local function YukariIntro(inst)
 	local function TakeOff(inst)
@@ -53,7 +52,7 @@ local function YukariIntro(inst)
 
     if GetPlayer():HasTag("yakumoyukari")  then
 		local SPEECH = STRINGS.YUKARI.CUSTOM_INTRO_SW
-		if SaveGameIndex:IsModeShipwrecked() then
+		if GLOBAL.SaveGameIndex:IsModeShipwrecked() then
 			inst.components.maxwelltalker.speeches.SHIPWRECKED_1 = {
 				voice = "dontstarve_DLC002/creatures/parrot/chirp",
 				idleanim = "idle",

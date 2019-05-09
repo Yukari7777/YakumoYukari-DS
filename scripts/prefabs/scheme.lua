@@ -1,13 +1,9 @@
-local assets =
-{   
-	Asset("ANIM", "anim/spell.zip"),    
+local assets = {   
+	Asset("ANIM", "anim/spell_none.zip"),    
 	Asset("ATLAS", "images/inventoryimages/scheme.xml"),    
 }
 
 prefabs = {}
-
-local Ingredients = TUNING.YUKARI.SCHEME_INGREDIENT
-local Ingredients_sw = TUNING.YUKARI.SCHEME_INGREDIENT_SW
 
 local function GetIngameName(prefab)
 	return STRINGS.NAMES[string.upper(prefab)]
@@ -20,9 +16,9 @@ local function GetTable(owner)
 	
 	if hatlevel < 5 then
 		if SaveGameIndex:IsModeShipwrecked() then
-			list = Ingredients_sw[hatlevel]
+			list = TUNING.YUKARI.SCHEME_INGREDIENT_SW[hatlevel]
 		else
-			list = Ingredients[hatlevel]
+			list = TUNING.YUKARI.SCHEME_INGREDIENT[hatlevel]
 		end
 	end
 	

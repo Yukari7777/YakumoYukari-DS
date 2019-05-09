@@ -7,10 +7,8 @@ PrefabFiles = {
 	"spellcards",
 	"barrierfield_fx",
 	"graze_fx",
-	"puff_fx",
 	"scheme",
 }
-
 
 Assets = {
     Asset( "IMAGE", "images/saveslot_portraits/yakumoyukari.tex" ),
@@ -49,6 +47,9 @@ AddMinimapAtlas("images/map_icons/scheme.xml")
 ----- GLOBAL & require set -----
 local require = GLOBAL.require
 require "class"
+GLOBAL.YUKARI_LANGUAGE = GetModConfigData("language")
+GLOBAL.YUKARI_DIFFICULTY = GetModConfigData("diff")
+require "constants_yukari"
 
 local STRINGS = GLOBAL.STRINGS
 local GetClock = GLOBAL.GetClock
@@ -62,30 +63,6 @@ local TheInput = GLOBAL.TheInput
 local IsPaused = GLOBAL.IsPaused
 local FindEntity = GLOBAL.FindEntity
 local GetSeasonManager = GLOBAL.GetSeasonManager
-
-GLOBAL.YAKUMOYUKARI_MODNAME = KnownModIndex:GetModActualName("Yakumo Yukari")
-GLOBAL.YUKARI_DIFFICULTY = GetModConfigData("diff")
-GLOBAL.DLC_ENABLED_FLAG = 0 + (IsDLCEnabled(GLOBAL.REIGN_OF_GIANTS) and 1 or 0) + (IsDLCEnabled(GLOBAL.CAPY_DLC) and 2 or 0) + (IsDLCEnabled(GLOBAL.PORKLAND_DLC) and 4 or 0)
--- ROG = 1, SW = 2, HL = 4 
-
-local Language = GetModConfigData("language")
-GLOBAL.YUKARI_LANGUAGE = "en"
-if Language == "AUTO" then
-	for _, moddir in ipairs(KnownModIndex:GetModsToLoad()) do
-		local modname = KnownModIndex:GetModInfo(moddir).name
---		if modname == "한글 모드 서버 버전" or modname == "한글 모드 클라이언트 버전" then 
---			GLOBAL.YUKARI_LANGUAGE = "kr"
-		if modname == "Chinese Language Pack" or modname == "Chinese Plus" then
-			GLOBAL.YUKARI_LANGUAGE = "ch"
---		elseif modname == "Russian Language Pack" or modname == "Russification Pack for DST" or modname == "Russian For Mods (Client)" then
---			GLOBAL.YUKARI_LANGUAGE = "ru"
-		end 
-	end 
-else
-	GLOBAL.YUKARI_LANGUAGE = Language
-end
-
-GLOBAL.YUKARISTATINDEX = { "health", "hunger", "sanity", "power" }
 
 modimport "scripts/tunings_yukari.lua"
 TUNING.YUKARI_STATUS = TUNING["YUKARI_STATUS"..(GLOBAL.YUKARI_DIFFICULTY or "")]
@@ -390,7 +367,7 @@ local function SayInfo()
 	if inspect % 2 == 1 then inst.components.talker:Say(str) end
 end
 
-TheInput:AddKeyDownHandler(GetModOptionKeyData("skill"), SayInfo)
+TheInput:AddKeyDownHandler(GetModOptionKeyData("skillkey"), SayInfo)
 
 AddModCharacter("yakumoyukari")
 table.insert(GLOBAL.CHARACTER_GENDERS.FEMALE, "yakumoyukari")

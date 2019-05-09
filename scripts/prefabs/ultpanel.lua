@@ -1,11 +1,12 @@
+require "constants_yukari"
 local IsSWEnabled = _G.DLC_ENABLED_FLAG % 4 >= 2
 
 function MakeUltimate(id)
 	if not IsSWEnabled and id > 4 then return end
 
 	local index = id % 4 + 1
-	local fname = statname..(id > 4 and "ultsw" or "ult")
 	local statname = _G.YUKARISTATINDEX[index]
+	local fname = statname..(id > 4 and "ultsw" or "ult")
 
 	local assets =
 	{   

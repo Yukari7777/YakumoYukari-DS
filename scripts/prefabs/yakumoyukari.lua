@@ -1,5 +1,4 @@
 local MakePlayerCharacter = require "prefabs/player_common"
-local RECIPES = require "recipes_yukari"
 local STATUS = TUNING.YUKARI_STATUS
 local YCONST = TUNING.YUKARI
 
@@ -493,7 +492,7 @@ local fn = function(inst)
 	end
 	inst.components.combat.areahitdamagepercent = TUNING.YUKARI.AOE_DAMAGE_PERCENT
 	inst.components.builder.science_bonus = 1
-	inst.components.builder:AddRecipeTab(RECIPES.RECIPETAB)
+	inst.components.builder:AddRecipeTab(require("recipes_yukari").RECIPETAB)
 	inst.components.eater:SetOnEatFn(oneat)
 	MakeSaneOnEatMeat(inst)
 	MakeGrazeable(inst)

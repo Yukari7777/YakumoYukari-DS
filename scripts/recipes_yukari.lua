@@ -1,8 +1,8 @@
-local difficulty = _G.YUKARI_DIFFICULTY 
+require "constants_yukari"
 
 local Recipes = {}
-local IsWorldDLCEnabled = GLOBAL.DLC_ENABLED_FLAG % 4 >= 2 or GLOBAL.DLC_ENABLED_FLAG % 8 >= 4
-local IsRoGEnabled = GLOBAL.DLC_ENABLED_FLAG % 2 == 1
+local IsWorldDLCEnabled = DLC_ENABLED_FLAG % 4 >= 2 or DLC_ENABLED_FLAG % 8 >= 4
+local IsRoGEnabled = DLC_ENABLED_FLAG % 2 == 1
 
 local function AddRecipe(name, ingredients, level, game_type, nounlock, recipetab)
 	if IsWorldDLCEnabled then
@@ -21,7 +21,7 @@ end
 local function GetRecipes()
 	if not GetPlayer():HasTag("yakumoyukari") then return end
 
-	if difficulty == "EASY" then
+	if YUKARI_DIFFICULTY  == "EASY" then
 		AddRecipe("healthpanel", {Ingredient("spidergland", 2), Ingredient("honey", 1)}, {SCIENCE = 1}, RECIPE_GAME_TYPE.COMMON)
 		AddRecipe("healthpanel", {Ingredient("log", 5), Ingredient("honey", 2)}, {SCIENCE = 1}, RECIPE_GAME_TYPE.SHIPWRECKED)
 		AddRecipe("hungerpanel", {Ingredient("meatballs", 2)}, {SCIENCE = 2}, RECIPE_GAME_TYPE.COMMON)

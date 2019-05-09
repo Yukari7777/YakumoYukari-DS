@@ -1,5 +1,4 @@
-local Ingredients = TUNING.YUKARI.UPGRADEPANEL_INGREDIENT
-local Ingredients_sw = TUNING.YUKARI.UPGRADEPANEL_INGREDIENT_SW
+require "constants_yukari"
 
 local function GetIngameName(prefab)
 	return STRINGS.NAMES[string.upper(prefab)]
@@ -27,10 +26,10 @@ local function GetIngreCount(owner, index)
 end
 
 local function GetTable(index)
-	if IsDLCEnabled(GLOBAL.CAPY_DLC) and SaveGameIndex:IsModeShipwrecked() then
-		return Ingredients_sw[index]
+	if IsDLCEnabled(CAPY_DLC) and SaveGameIndex:IsModeShipwrecked() then
+		return TUNING.YUKARI.UPGRADEPANEL_INGREDIENT_SW[index]
 	else
-		return Ingredients[index]
+		return TUNING.YUKARI.UPGRADEPANEL_INGREDIENT[index]
 	end
 end
 
@@ -132,7 +131,7 @@ local function DoUpgrade(inst, owner)
 	end
 
 	local index = inst.index 
-	local items = Ingredients[index]
+	local items = GetTable(index)
 	local count = GetIngreCount(owner, index)
 	local inventory = owner.components.inventory
 	
