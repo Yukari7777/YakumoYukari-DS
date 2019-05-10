@@ -47,7 +47,7 @@ local Upgrader = Class(function(self, inst)
 	self.InvincibleLearned = false
 	self.CanbeInvincibled = false
 	self.WaterProofer = false
-	self.IsGoggle = false
+	self.IsGasBlocker = false
 	self.FireResist = false
 	self.GodTeleport = false
 	self.SpikeEater = false
@@ -66,17 +66,18 @@ end)
 function Upgrader:InitializeList()
 	self.ability = {}
 	self.skill = {}
-	self.skillsort = 4
-	self.skilllevel = 6
+	self.skillsort = #YUKARISTATINDEX
+	self.maxlevel = CONST.MAX_SKILL_LEVEL
+	self.maxhatlevel = CONST.MAX_HATSKILL_LEVEL
 	for i = 1, self.skillsort, 1 do
 		self.ability[i] = {}
-		for j = 1, self.skilllevel, 1 do
+		for j = 1, self.maxlevel, 1 do
 			self.ability[i][j] = false
 		end
 	end
 	
 	self.hatskill = {}
-	for i = 1, 5, 1 do
+	for i = 1, self.maxhatlevel, 1 do
 		self.hatskill[i] = false
 	end
 end
@@ -95,11 +96,11 @@ function Upgrader:AbilityManager()
 	local hatskill = self.hatskill
 	local unlockpoint = STATUS.UNLOCKABILITY
 
-	for i = 1, 4, 1 do
-		for j = 1, 6, 1 do
-			--if not ability[i][j] and self[YUKARISTATINDEX[i].."_level"] >= unlockpoint[j] then
+	for i = 1, self.skillsort do
+		for j = 1, self.maxlevel do
+			if not ability[i][j] and self[YUKARISTATINDEX[i].."_level"] >= unlockpoint[i] then
 				ability[i][j] = true
-			--end
+			end
 		end
 	end
 
@@ -303,7 +304,7 @@ function Upgrader:ApplyHatAbility(hat)
 		end
 		
 		if skill[3] then
-			self.IsGoggle = true
+			self.IsGasBlocker = true
 			self.WaterProofer = true
 			self.hatdodgechance = 0.1
 			self.hatabsorption = 0.5
@@ -330,7 +331,7 @@ function Upgrader:ApplyHatAbility(hat)
 		self.WaterProofer = false
 		self.FireResist = false
 		self.GodTeleport = false
-		self.IsGoggle = false
+		self.IsGasBlocker = false
 		self.hatpowergain = 0
 		self.hatdodgechance = 0
 		self.hatabsorption = CONST.HAT_NO_DAMAGE_REDUCTION
@@ -341,7 +342,7 @@ function Upgrader:ApplyHatAbility(hat)
 		hat:SetSpeedMult(self.hatspeedmult)
 		hat:SetAbsorbPercent(self.hatabsorption)
 		hat:SetWaterProofness(self.WaterProofer)
-		hat:SetGoggle(self.IsGoggle)
+		hat:SetGasBlocker(self.IsGasBlocker)
 		self:SetFireDamageScale()
 	end
 
@@ -352,7 +353,7 @@ function Upgrader:UpdateSkillStatus()
 	local skill = self.skill
 
 	if self.powerupvalue ~= 0 then
-		skill.dmgmult = "Damage multiplier : "..string.format("%.2f", self.inst.components.combat.damagemultiplier).." (max : "..TUNING.YUKARI.DAMAGE_MULTIPLIER + 0.2 * self.powerupvalue..")"
+		skill.dmgmult = "Damage multiplier : "..string.format("%.2f", self.inst.components.combat.damagemultiplier).." (max : "..TUNING.YUKARI.BASE_DAMAGE_MULT + 0.2 * self.powerupvalue..")"
 	end
 
 	if self.ResistDark ~= 0 then

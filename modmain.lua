@@ -1,13 +1,13 @@
 PrefabFiles = {
 	"yakumoyukari",
---	"yukariumbre",
---	"yukarihat",
---	"upgradepanel",
---	"ultpanel",
---	"spellcards",
---	"barrierfield_fx",
---	"graze_fx",
---	"scheme",
+	"yukariumbre",
+	"yukarihat",
+	"upgradepanel",
+	"ultpanel",
+	"spellcards",
+	"barrierfield_fx",
+	"graze_fx",
+	"scheme",
 }
 
 Assets = {
@@ -141,7 +141,7 @@ local function BunnymanNormalRetargetFn(inst)
 	local function NormalRetargetFn(inst)
 		return FindEntity(inst, TUNING.PIG_TARGET_DIST, function(guy)
             if guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) then
-                if guy:HasTag("monster") then return guy end
+                if guy:HasTag("monster") or guy:HasTag("youkai") then return guy end
                 if guy:HasTag("player") and guy.components.inventory and guy:GetDistanceSqToInst(inst) < TUNING.BUNNYMAN_SEE_MEAT_DIST*TUNING.BUNNYMAN_SEE_MEAT_DIST and guy.components.inventory:FindItem(is_meat) then return guy end
             end
         end, nil, {"realyoukai"})
@@ -153,7 +153,7 @@ local function PigmanNormalRetargetFn(inst)
 	local function NormalRetargetFn(inst)
 		return FindEntity(inst, TUNING.PIG_TARGET_DIST, function(guy)
             if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
-                return guy:HasTag("monster") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
+                return (guy:HasTag("monster") or guy:HasTag("youkai")) and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
                 (inst.components.follower.leader ~= nil and guy:HasTag("abigail"))
             end
         end, nil, {"realyoukai"})
@@ -196,7 +196,7 @@ local function MosquitoRetargetFn(inst)
 	local function KillerRetarget(inst)
 		local range = GetSpringMod(20)
 		local notags = {"FX", "NOCLICK","INLIMBO", "insect", "realyoukai"}
-		local yestags = {"character", "animal", "monster"}
+		local yestags = {"character", "animal", "monster", "youkai"}
 		return FindEntity(inst, range, function(guy)
 			return inst.components.combat:CanTarget(guy)
 		end, nil, notags, yestags)
@@ -209,7 +209,7 @@ local function KillerbeeRetargetFn(inst)
 		local range = GetSpringMod(8)
 		return FindEntity(inst, range, function(guy)
 				return inst.components.combat:CanTarget(guy)
-			end, nil, {"insect", "realyoukai"}, {"character", "animal", "monster"})
+			end, nil, {"insect", "realyoukai"}, {"character", "animal", "monster", "youkai"})
 	end
 	inst.components.combat:SetRetargetFunction(2, KillerRetarget)
 end
@@ -220,7 +220,7 @@ local function BeeRetargetFn(inst)
 			local range = 4
 			return FindEntity(inst, range, function(guy)
 				return inst.components.combat:CanTarget(guy)
-			end, nil, {"insect", "realyoukai"}, {"character", "animal", "monster"})
+			end, nil, {"insect", "realyoukai"}, {"character", "animal", "monster", "youkai"})
 		else
 			return false
 		end
@@ -313,6 +313,8 @@ end
 
 local function SayInfo()
 	local inst = GetPlayer()
+	if not inst:HasTag("yakumoyukari") then return end
+
 	local HP = 0
 	local HN = 0
 	local SA = 0
@@ -330,8 +332,8 @@ local function SayInfo()
 
 		str = STRINGS.NAMES.HEALTHPANEL.." : "..HP.."\n"..STRINGS.NAMES.HUNGERPANEL.." : "..HN.."\n"..STRINGS.NAMES.SANITYPANEL.." : "..SA.."\n"..STRINGS.NAMES.POWERPANEL.." : "..PO.."\n"
 	elseif inst.infopage == 1 then
-		for i = 1, inst.components.upgrader.skillsort, 1 do
-			for j = 1, inst.components.upgrader.skilllevel, 1 do
+		for i = 1, #YUKARISTATINDEX do
+			for j = 1, TUNING.YUKARI.MAX_SKILL_LEVEL do
 				if inst.components.upgrader.ability[i][j] then
 					if i == 1 then HP = HP + 1
 					elseif i == 2 then HN = HN + 1
@@ -354,7 +356,7 @@ local function SayInfo()
 		inst.components.upgrader.skilltextpage = (skillindex ~= 0 and 2 + math.ceil(skillindex / 3) or 3)
 
 		for k = 1, 3 do
-			str = str..(skilltable[(inst.infopage-2) * 3 + k] or "").."\n"
+			str = str..(skilltable[(inst.infopage - 2) * 3 + k] or "").."\n"
 		end
 
 		if str == "\n\n\n" then

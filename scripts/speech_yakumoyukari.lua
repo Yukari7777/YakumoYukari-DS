@@ -1801,8 +1801,10 @@ return {
 	NODANGERSCHEME = "I can't concentrate right now!",
 
 	UNPAUSED = {
-		"Why do you make me wait?",
+		"How dare you let me wait?",
 		"Did you finish what you have done?",
-		"Don't let me wait."
+		"Don't let me wait in this game.",
+		"Stop pause, please?",
+		"You better not pause the game."
 	},
 }

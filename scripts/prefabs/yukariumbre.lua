@@ -106,8 +106,10 @@ end
 local function fn()  
 
 	local inst = CreateEntity()    
+
+	inst.entity:AddTransform()    
 	inst.entity:AddAnimState()    
-	inst.entity:AddSoundEmitter()
+	inst.entity:AddSoundEmitter()   
 	inst.entity:AddMiniMapEntity()
 	inst.MiniMapEntity:SetIcon("yukariumbre.tex")
 

@@ -1,8 +1,9 @@
 local MakePlayerCharacter = require "prefabs/player_common"
 local STATUS = TUNING.YUKARI_STATUS
-local YCONST = TUNING.YUKARI
+local CONST = TUNING.YUKARI
 
 local assets = {
+	Asset("ANIM", "anim/yakumoyukari.zip"),    
 	Asset("SCRIPT", "scripts/prefabs/player_common.lua"),
 	Asset("SOUND", "sound/willow.fsb"),
 	Asset("IMAGE", "images/colour_cubes/beaver_vision_cc.tex"),
@@ -20,7 +21,7 @@ local function GetStartInv()
 				"meat",
 				"meat",
 				"scheme",
-				"yukariumbre",
+				"yukarisumbre",
 				"yukarihat"}
 	else return {"scheme",
 				"yukariumbre",
@@ -31,7 +32,7 @@ end
 local start_inv = GetStartInv()
 
 local important_items = {
-	"yukariumbre",
+	"yukarisumbre",
 	"yukarihat",
 	"scheme",
 }
@@ -78,18 +79,22 @@ local function onpreload(inst, data)
 	end
 end
 
-local function DLCCompatiblePatch(inst)
+local function CompatiblePatch(inst)
 	if _G.DLC_ENABLED_FLAG == 0 then
 		inst.components.health.SetAbsorptionAmount = inst.components.health.SetAbsorbAmount
 	end
-end	
 
-local function OnWorldLoaded(inst)
-	local yukarihat = inst:GetYukariHat()
-	if yukarihat ~= nil then
-		inst.components.upgrader:ApplyHatAbility(yukarihat)
+	inst.components.health.GetMaxWithPenalty = inst.components.health.GetPenaltyPercent
+
+	local _GetString = GetString
+	GetString = function(character, stringtype, ...)
+		if type(character) == "table" then
+			character = string.upper(character.prefab)
+		end
+
+		return _GetString(character, stringtype, ...)
 	end
-end
+end	
 
 local function GetEquippedYukariHat(inst)
 	return inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD) ~= nil and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD).prefab == "yukarihat" and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD) or nil
@@ -114,7 +119,7 @@ local function OnAttackOther(inst, data)
 	end
 
 	if CanAOE and (data.weapon == nil or data.weapon.components.projectile == nil) then	
-		inst.components.combat:DoAreaAttack(target, YCONST.AOE_RADIUS, data.weapon, IsPreemitive, data.stimuli, { "INLIMBO", "companion", "wall" })
+		inst.components.combat:DoAreaAttack(target, CONST.AOE_RADIUS, data.weapon, IsPreemitive, data.stimuli, { "INLIMBO", "companion", "wall" })
 	end
 end
 
@@ -176,8 +181,8 @@ function OnHungerDelta(inst, data)
 	end
 
 	if inst.components.combat ~= nil then
-		local dmgmult = TUNING.YUKARI.DAMAGE_MULTIPLIER + math.max(data.newpercent - (1 - inst.components.upgrader.powerupvalue * 0.2), 0)
-		local scale = 0.95 + (dmgmult - TUNING.YUKARI.DAMAGE_MULTIPLIER) * 0.15
+		local dmgmult = CONST.BASE_DAMAGE_MULT + math.max(data.newpercent - (1 - inst.components.upgrader.powerupvalue * CONST.POWERUP_MULT), 0)
+		local scale = CONST.BASE_SCALE + (dmgmult - CONST.BASE_DAMAGE_MULT) * CONST.SCALING_MULT
 		inst.components.combat.damagemultiplier = dmgmult
 
 		inst.components.upgrader:ApplyScale("dreadful", scale)
@@ -197,7 +202,7 @@ end
 local function OnSanityDelta(inst, data)
 	if inst.components.upgrader.NightVision and (GetClock():IsNight() or GetWorld():HasTag("cave")) and inst.sleepingbag == nil then
 		local sanitypercent = data.newpercent
-		if sanitypercent > 0.9 then
+		if sanitypercent > CONST.NIGHT_VISION_SANITY then
 			inst:SetLight(sanitypercent)
 		else
 			inst:SetLight(false)
@@ -209,7 +214,7 @@ end
 
 local function GetPoint(pt)
 	local theta = math.random() * 2 * PI
-	local radius = 6 + math.random()*6
+	local radius = CONST.SIGHT_RADIUS + math.random() * CONST.SIGHT_RADIUS
 	
 	local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
 		local ground = GetWorld()
@@ -232,7 +237,7 @@ local function Cooldown(inst)
 		elseif inst.regen_cool == 0 
 		and inst.components.health ~= nil 
 		and inst.components.health:IsHurt() 
-		and inst.components.hunger:GetPercent() > 0.5 then
+		and inst.components.hunger:GetPercent() > CONST.REGEN_HEALTH then
 			HealthRegen(inst)
 			inst.regen_cool = inst.components.upgrader.regencool
 		end
@@ -250,7 +255,7 @@ local function Cooldown(inst)
 end
 
 local function PeriodicFunction(inst, data)
-	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.hatequipped and 0.2 or 0)
+	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.hatequipped and CONST.HAT_NIGHT_DRAIN_ABSORB_MULT or 0)
 
 	if inst.components.health ~= nil then
 		if inst.IsInvincible then
@@ -378,6 +383,13 @@ local function MakeDapperOnEquipItem(inst)
 	end
 end
 
+local function AddCustomRecipes(inst)
+	local TOUHOU = require("recipes_yukari")
+	for k, v in pairs(TOUHOU.RECIPES) do
+		inst.components.builder:AddRecipe(v)
+	end
+end
+
 local function OnEquipHat(inst, data)
 	inst.components.upgrader.hatequipped = data.isequipped
 end
@@ -454,7 +466,7 @@ local function DebugFunction(inst)
 end	
 
 local fn = function(inst)
-	DLCCompatiblePatch(inst)
+	CompatiblePatch(inst)
 	inst.entity:AddLight()
 
 	inst:AddTag("youkai")
@@ -482,14 +494,14 @@ local fn = function(inst)
 	inst.components.health:SetMaxHealth(80)
 	inst.components.hunger:SetMax(150)
 	inst.components.hunger.hungerrate = 1.5 * TUNING.WILSON_HUNGER_RATE
-	inst.components.combat.damagemultiplier = TUNING.YUKARI.DAMAGE_MULTIPLIER
+	inst.components.combat.damagemultiplier = CONST.BASE_DAMAGE_MULT
 	if _G.DLC_ENABLED_FLAG % 4 >= 2 then
-		inst.components.combat:AddDamageModifier("dreadful", TUNING.YUKARI.DAMAGE_MULTIPLIER - 1)
+		inst.components.combat:AddDamageModifier("dreadful", CONST.BASE_DAMAGE_MULT - 1)
 	end
-	inst.components.combat.areahitdamagepercent = TUNING.YUKARI.AOE_DAMAGE_PERCENT
+	inst.components.combat.areahitdamagepercent = CONST.AOE_DAMAGE_PERCENT
 	inst.components.builder.science_bonus = 1
-	inst.components.builder:AddRecipeTab(require("recipes_yukari").RECIPETAB)
 	inst.components.eater:SetOnEatFn(oneat)
+	AddCustomRecipes(inst)
 	MakeSaneOnEatMeat(inst)
 	MakeGrazeable(inst)
 	MakeDapperOnEquipItem(inst)
@@ -502,7 +514,6 @@ local fn = function(inst)
 	inst.IsSpellActive = IsSpellActive
 	
 	inst:DoPeriodicTask(1, PeriodicFunction)
-	--inst:DoTaskInTime(1, OnWorldLoaded)
 	inst:ListenForEvent("healthdelta", OnHealthDelta )
 	inst:ListenForEvent("hungerdelta", OnHungerDelta )
 	inst:ListenForEvent("sanitydelta", OnSanityDelta )

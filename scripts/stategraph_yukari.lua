@@ -50,6 +50,30 @@ AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.BUILD, SetFastBuilder
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.RESETMINE, SetFastResetter))
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.HARVEST, SetFastHarvester))
 
+local ytele = State({ -- copy-pasted of quicktele sg yet.
+    name = "ytele",
+    tags = {"doing", "busy", "canrotate"},
+
+    onenter = function(inst)
+        inst.AnimState:PlayAnimation("atk")
+        inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_weapon")
+    end,
+
+    timeline = 
+    {
+        TimeEvent(8*FRAMES, function(inst) inst:PerformBufferedAction() end),
+    },
+
+    events = {
+        EventHandler("animover", function(inst)
+            inst.sg:GoToState("idle") 
+        end ),
+    },
+})
+	
+AddStategraphState("wilson", ytele)
+AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.YTELE, "ytele"))
+
 local casttoho = State({
     name = "casttoho",
     tags = {"doing", "busy", "canrotate"},
