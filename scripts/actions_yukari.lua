@@ -6,8 +6,12 @@ local YTELE = Action({}, 10, nil, true, 14)
 YTELE.id = "YTELE"
 YTELE.str = STRINGS.ACTION_YTELE
 YTELE.fn = function(act)
-	if act.invobject and act.invobject.components.makegate then
-		return act.invobject.components.makegate:Teleport(act.pos, act.doer)
+	if act.invobject then
+		if act.invobject.components.makegate then
+			return act.invobject.components.makegate:Teleport(act.pos, act.doer)
+		elseif act.invobject.components.spellcard then
+			return act.invobject.components.spellcard:Teleport(act.pos, act.doer)
+		end
 	end
 end
 AddAction(YTELE)

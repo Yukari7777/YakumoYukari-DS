@@ -1715,7 +1715,9 @@ return {
 		SHADOWSKITTISH = "Unexpected. You, are not intended.",
 		SHADOWSKITTISH_WATER = "Viscidus. You are the scrap.",
 		CREEPYEYES = "Superintentor. But you can't see inside.",
+		SCHEMETOOL = "I've made this for the other one.",
 	},
+
 	DESCRIBE_GENERIC = "I don't even know about this.",
 	DESCRIBE_TOODARK = "It's BLACK!",
 	DESCRIBE_SMOLDERING = "That thing is about to catch fire.",

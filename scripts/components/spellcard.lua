@@ -126,10 +126,39 @@ function Spellcard:CanCast(doer)
 	return self.spell ~= nil
 end
 
+function Spellcard:SpawnEffect(inst)
+	local pt = inst:GetPosition()
+	local fx = SpawnPrefab("small_puff")
+	fx.Transform:SetPosition(pt.x, pt.y, pt.z)
+end
+
+function Spellcard:Teleport(pt, caster)
+	self:SpawnEffect(caster)
+	caster.SoundEmitter:PlaySound("dontstarve/common/staff_blink")
+	caster:Hide()
+	caster:DoTaskInTime(0.3, function() 
+		self:SpawnEffect(caster)
+		caster.Transform:SetPosition(pt.x, pt.y, pt.z)
+		caster:Show()
+	end)
+
+	caster.components.power:DoDelta(-TUNING.YUKARI.TELEPORT_POWER_COST)
+	
+	return true
+end
+
 function Spellcard:CollectInventoryActions(doer, actions)
 	if self:CanCast(doer) then
 		if inst.costpower ~= nil and doer.components.power:GetCurrent() >= inst.costpower or inst.canspell then
 			table.insert(actions, self.action)
+		end
+	end
+end
+
+function Spellcard:CollectPointActions(doer, pos, actions, right)
+	if right then
+		if self.inst:HasTag("yukariumbre") and doer.components.power:GetCurrent() >= TUNING.YUKARI.TELEPORT_POWER_COST then
+			table.insert(actions, ACTIONS.YTELE)
 		end
 	end
 end

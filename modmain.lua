@@ -49,6 +49,16 @@ local require = GLOBAL.require
 require "class"
 GLOBAL.YUKARI_LANGUAGE = GetModConfigData("language")
 GLOBAL.YUKARI_DIFFICULTY = GetModConfigData("diff")
+
+local SCHEME_ENABLED = GLOBAL.getmetatable(GLOBAL).__declared["SCHEME_ENABLED"] -- bypass the strict rule that global(_G) variables should be declared.
+if SCHEME_ENABLED then
+	print("[YAKUMOYUKARI] DETECTED SCHEME MOD")
+else
+	print("[YAKUMOYUKARI] UNABLED TO DETECT SCHEME MOD")
+	GLOBAL.SCHEME_ENABLED = false
+end
+
+
 require "constants_yukari"
 
 local STRINGS = GLOBAL.STRINGS
@@ -313,7 +323,7 @@ end
 
 local function SayInfo()
 	local inst = GetPlayer()
-	if not inst:HasTag("yakumoyukari") then return end
+	if inst == nil or not inst:HasTag("yakumoyukari") then return end
 
 	local HP = 0
 	local HN = 0

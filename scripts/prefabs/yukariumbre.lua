@@ -1,5 +1,4 @@
-local assets=
-{   
+local assets = {   
 	Asset("ANIM", "anim/yukariumbre.zip"),    
 	Asset("ANIM", "anim/swap_yukariumbre.zip"),   
 	Asset("ANIM", "anim/swap_yukariumbre2.zip"),
@@ -123,14 +122,19 @@ local function fn()
 	inst.AnimState:PlayAnimation("idle")  
 
 	inst:AddTag("nopunch")
+	inst:AddTag("yukariumbre")
 
 	inst.isunfolded = false
 	
 	inst:AddComponent("waterproofer")
 	inst.components.waterproofer:SetEffectiveness(0)
 	
-	inst:AddComponent("makegate")
-	inst.components.makegate.onusefn = onuse
+	if SCHEME_ENABLED then
+		inst:AddComponent("makegate")
+		inst.components.makegate.onusefn = onuse
+	else
+		inst:AddComponent("spellcard")
+	end
 	
 	inst:AddComponent("insulator")
     inst.components.insulator:SetSummer()
