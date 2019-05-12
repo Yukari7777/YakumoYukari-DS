@@ -326,9 +326,9 @@ end
 
 local function MakeSaneOnEatMeat(inst)
 	local _Eat = inst.components.eater.Eat
-	function inst.components.eater:Eat(food)
+	function inst.components.eater.Eat(self, food)
 		if self:CanEat(food) then
-			if food.components.edible.foodtype == FOODTYPE.MEAT and food.components.edible.sanityvalue < 0 then
+			if food.components.edible.foodtype == "MEAT" and food.components.edible.sanityvalue < 0 then
 				food.components.edible.sanityvalue = 0
 			end
 			if food.prefab == "humanmeat" or food.prefab == "humanmeat_cooked" or food.prefab == "humanmeat_dried" then
@@ -340,12 +340,12 @@ local function MakeSaneOnEatMeat(inst)
 				end)
 			end
 		end
-		return _Eat(food)
+		return _Eat(self, food)
 	end
 end
 
 local function MakeToolEfficient(item)
-	function item.components.tool:GetEffectiveness(action)
+	function item.components.tool.GetEffectiveness(self, action)
 		local owner = item.components.inventoryitem ~= nil and item.components.inventoryitem.owner
 		if owner ~= nil and owner.components.upgrader ~= nil and owner.components.upgrader.IsEfficient and action ~= ACTIONS.HAMMER then
 			return self.actions[action] * 1.5 or 0
@@ -356,7 +356,7 @@ end
 
 local function MakeGrazeable(inst)
 	local _ApplyDamage = inst.components.inventory.ApplyDamage
-	function inst.components.inventory:ApplyDamage(damage, attacker, weapon)
+	function inst.components.inventory.ApplyDamage(self, damage, attacker, weapon)
 		local totaldodge = (inst.components.upgrader.dodgechance + inst.components.upgrader.hatdodgechance) * (inst.sg:HasStateTag("moving") and 2 or 1) -- double when is moving
 		local candodge = inst.IsGrazing or math.random() < totaldodge and inst.components.freezeable == nil and not inst.components.health:IsInvincible() and (attacker ~= nil and attacker.components ~= nil and attacker.components.combat ~= nil)
 
@@ -364,7 +364,7 @@ local function MakeGrazeable(inst)
 			inst:PushEvent("graze")
 			return 0
 		end
-		return _ApplyDamage(damage, attacker, weapon)
+		return _ApplyDamage(self, damage, attacker, weapon)
 	end
 end
 

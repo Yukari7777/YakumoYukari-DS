@@ -11,7 +11,7 @@ local function AddRecipe(name, ingredients, level, game_type, nounlock, recipeta
 
 	if IsWorldDLCEnabled then
 		recipe = Recipe(name, ingredients, recipetab or RECIPETABS.TOUHOU, level, game_type, nil, nil, nounlock)
-	elseif game_type == RECIPE_GAME_TYPE.COMMON or (gmae_type == RECIPE_GAME_TYPE.ROG and IsRoGEnabled) then
+	elseif game_type == RECIPE_GAME_TYPE.COMMON or (game_type == RECIPE_GAME_TYPE.ROG and IsRoGEnabled) then
 		-- Vanilla's code doesn't support game_type argument.
 		recipe = Recipe(name, ingredients, recipetab or RECIPETABS.TOUHOU, level, nil, nil, nounlock)
 	end

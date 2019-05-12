@@ -136,8 +136,12 @@ end
 
 TheInput:AddKeyDownHandler(116, GodTelePort)
 
+local function IsSprintSeason()
+	return GetSeasonManager() and (GetSeasonManager():IsSpring() or (GetSeasonManager().IsGreenSeason and GetSeasonManager():IsGreenSeason()))
+end
+
 local function GetSpringMod(range)
-	if GetSeasonManager() and (GetSeasonManager():IsSpring() or GetSeasonManager():IsGreenSeason()) then
+	if IsSprintSeason() then
 		range = range * TUNING.SPRING_COMBAT_MOD
 	end
 	return range
@@ -226,7 +230,7 @@ end
 
 local function BeeRetargetFn(inst)
 	local function SpringBeeRetarget(inst)
-		if GetSeasonManager() and (GetSeasonManager():IsSpring() or GetSeasonManager():IsGreenSeason()) then
+		if IsSprintSeason() then
 			local range = 4
 			return FindEntity(inst, range, function(guy)
 				return inst.components.combat:CanTarget(guy)
@@ -342,7 +346,7 @@ local function SayInfo()
 
 		str = STRINGS.NAMES.HEALTHPANEL.." : "..HP.."\n"..STRINGS.NAMES.HUNGERPANEL.." : "..HN.."\n"..STRINGS.NAMES.SANITYPANEL.." : "..SA.."\n"..STRINGS.NAMES.POWERPANEL.." : "..PO.."\n"
 	elseif inst.infopage == 1 then
-		for i = 1, #YUKARISTATINDEX do
+		for i = 1, #GLOBAL.YUKARISTATINDEX do
 			for j = 1, TUNING.YUKARI.MAX_SKILL_LEVEL do
 				if inst.components.upgrader.ability[i][j] then
 					if i == 1 then HP = HP + 1
