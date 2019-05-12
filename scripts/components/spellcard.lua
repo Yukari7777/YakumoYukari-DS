@@ -149,7 +149,7 @@ end
 
 function Spellcard:CollectInventoryActions(doer, actions)
 	if self:CanCast(doer) then
-		if inst.costpower ~= nil and doer.components.power:GetCurrent() >= inst.costpower or inst.canspell then
+		if self.inst.costpower ~= nil and doer.components.power:GetCurrent() >= self.inst.costpower or self.inst.canspell then
 			table.insert(actions, self.action)
 		end
 	end
