@@ -153,7 +153,7 @@ local function DoUpgrade(inst, owner)
 		return left_count
 	end
 
-	for i = 1, 3, 1 do -- I won't use RemoveItem function in inventory components because it doesn't get items in custom backpack slot. 
+	for i = 1, 3 do -- I won't use RemoveItem function in inventory components because it doesn't get items in custom backpack slot. 
 		local left_count = count[i]
 
 		while left_count > 0 do

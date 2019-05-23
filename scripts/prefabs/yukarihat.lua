@@ -26,6 +26,16 @@ local function GetPercentTweak(self)
 	return self.condition / self.maxcondition
 end
 
+local function SetInsulatorType(inst)
+	if _G.DLC_ENABLED_FLAG % 2 == 0 then return end
+
+	if GetSeasonManager():IsSummer() then
+		inst.components.insulator:SetSummer()
+	else
+		inst.components.insulator:SetWinter()
+	end
+end
+
 local function MakeIndestructible(inst)
 	inst.components.armor.SetCondition = function() return end
 	inst.components.armor.GetPercent = GetPercentTweak
@@ -39,7 +49,7 @@ local function SetAbsorbPercent(inst, percent)
 end
 
 local function SetSpeedMult(inst, mult)
-	inst.components.equippable.walkspeedmult = mult
+	inst.components.equippable.walkspeedmult = _G.DLC_ENABLED_FLAG >= 2 and mult - 1 or mult
 end
 
 local function SetWaterProofness(inst, val)
@@ -48,8 +58,16 @@ local function SetWaterProofness(inst, val)
 end
 
 local function SetGasBlocker(inst, val)
-	inst.components.equippable.poisonblocker = val	
 	inst.components.equippable.poisongasblocker = val
+end
+
+local function SetPoisonBlocker(inst, val)
+	inst.components.equippable.poisonblocker = val
+end
+
+local function SetInsulator(inst, val)
+	SetInsulatorType(inst)
+	inst.components.insulator.insulattion = val and TUNING.INSULATION_MED * 1.5 or 0
 end
 
 local function Initialize(inst)
@@ -57,7 +75,9 @@ local function Initialize(inst)
 	inst:SetWaterProofness(false)
 	inst:SetAbsorbPercent(.01)
 	inst:SetSpeedMult(1)
+	inst:SetInsulator(false)
 	inst:SetGasBlocker(false)
+	inst:SetPoisonBlocker(false)
 end
 
 local function onequiphat(inst, owner)
@@ -80,45 +100,47 @@ local function onunequiphat(inst, owner)
 	UpdateSound(inst)
 end
 
-local function fn()  
+local function fn()
 
-	local inst = CreateEntity()    
+	local inst = CreateEntity()
 
-	inst.entity:AddTransform()    
-	inst.entity:AddAnimState()    
-	inst.entity:AddSoundEmitter()   
+	inst.entity:AddTransform()
+	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
 	inst.entity:AddMiniMapEntity()
 
     inst.MiniMapEntity:SetIcon("yukarihat.tex")
 
-	MakeInventoryPhysics(inst)    
-	if _G.DLC_ENABLED_FLAG % 4 >= 2 then    
+	MakeInventoryPhysics(inst)
+	if _G.DLC_ENABLED_FLAG % 4 >= 2 then
 		MakeInventoryFloatable(inst, "idle", "idle")
-	end	
-		
+	end
+
 	inst.AnimState:SetBank("yukarihat")
 	inst.AnimState:SetBuild("yukarihat")
-	inst.AnimState:PlayAnimation("idle")   
+	inst.AnimState:PlayAnimation("idle")
 
 	inst:AddTag("hat")
 	inst:AddTag("yukarihat")
 
-	inst:AddComponent("inspectable")        
-	
-	inst:AddComponent("inventoryitem")   
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/yukarihat.xml"  
-	
+	inst:AddComponent("inspectable")
+
+	inst:AddComponent("inventoryitem")
+	inst.components.inventoryitem.atlasname = "images/inventoryimages/yukarihat.xml"
+
+	inst:AddComponent("insulator")
+
 	inst:AddComponent("waterproofer")
 	inst.components.waterproofer:SetEffectiveness(0)
 
 	inst:AddComponent("armor")
 	MakeIndestructible(inst)
-	
-	inst:AddComponent("equippable")    
+
+	inst:AddComponent("equippable")
 	inst.components.equippable.equipslot = EQUIPSLOTS.HEAD
 	inst.components.equippable:SetOnEquip( onequiphat )
     inst.components.equippable:SetOnUnequip( onunequiphat )
-	inst.components.equippable.poisonblocker = false	
+	inst.components.equippable.poisonblocker = false
 	inst.components.equippable.poisongasblocker = false
 
 	inst.Initialize = Initialize
@@ -126,6 +148,15 @@ local function fn()
 	inst.SetAbsorbPercent = SetAbsorbPercent
 	inst.SetSpeedMult = SetSpeedMult
 	inst.SetGasBlocker = SetGasBlocker
+	inst.SetPoisonBlocker = SetPoisonBlocker
+	inst.SetInsulator = SetInsulator
+
+	if _G.DLC_ENABLED_FLAG % 2 >= 1 then
+		inst:DoTaskInTime(0, function()
+			inst:ListenForEvent("seasonChange", SetInsulatorType(inst), GetWorld() )
+			SetInsulatorType(inst)
+		end)
+	end
 	
 	return inst
 end

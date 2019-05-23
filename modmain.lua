@@ -72,6 +72,7 @@ local GetString = GLOBAL.GetString
 local TheInput = GLOBAL.TheInput
 local IsPaused = GLOBAL.IsPaused
 local FindEntity = GLOBAL.FindEntity
+local TheFrontEnd = GLOBAL.TheFrontEnd
 local GetSeasonManager = GLOBAL.GetSeasonManager
 
 modimport "scripts/tunings_yukari.lua"
@@ -107,6 +108,7 @@ local function ToolEfficientFn(self)
 end
 
 function GodTelePort()
+	if true then return end
 	local Chara = GetPlayer()
 	if Chara and Chara:HasTag("yakumoyukari") then
 		if Chara.components.upgrader.GodTelepoirt and Chara.istelevalid and not IsPaused() then
@@ -327,7 +329,7 @@ end
 
 local function SayInfo()
 	local inst = GetPlayer()
-	if inst == nil or not inst:HasTag("yakumoyukari") then return end
+	if GLOBAL.GetWorld() == nil or not inst:HasTag("yakumoyukari") then return end
 
 	local HP = 0
 	local HN = 0
@@ -336,7 +338,7 @@ local function SayInfo()
 	local str = ""
 	local skilltable = {}
 	local inspect = GetModConfigData("skill") or 1
-	inst.infopage = inst.infopage >= (inst.components.upgrader.skilltextpage or TUNING.YUKARI.SKILLPAGE_BASE) and 0 or inst.infopage
+	inst.infopage = inst.infopage >= (inst.components.upgrader.SkillTextPage or TUNING.YUKARI.SKILLPAGE_BASE) and 0 or inst.infopage
 
 	if inst.infopage == 0 then
 		HP = inst.components.upgrader.health_level
@@ -367,7 +369,7 @@ local function SayInfo()
 			skillindex = skillindex + 1
 			skilltable[skillindex] = v
 		end
-		inst.components.upgrader.skilltextpage = (skillindex ~= 0 and 2 + math.ceil(skillindex / 3) or 3)
+		inst.components.upgrader.SkillTextPage = (skillindex ~= 0 and 2 + math.ceil(skillindex / 3) or 3)
 
 		for k = 1, 3 do
 			str = str..(skilltable[(inst.infopage - 2) * 3 + k] or "").."\n"

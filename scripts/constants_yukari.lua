@@ -17,7 +17,7 @@ RATE_SCALE = {
 if YUKARI_LANGUAGE == "AUTO" then
 	for _, moddir in ipairs(KnownModIndex:GetModsToLoad()) do
 		local modname = KnownModIndex:GetModInfo(moddir).name
---		if modname == "ÇÑ±Û ¸ðµå ¼­¹ö ¹öÀü" or modname == "ÇÑ±Û ¸ðµå Å¬¶óÀÌ¾ðÆ® ¹öÀü" then 
+--		if modname == "ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½" or modname == "ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½" then 
 --			YUKARI_LANGUAGE = "kr"
 		if modname == "Chinese Language Pack" or modname == "Chinese Plus" then
 			YUKARI_LANGUAGE = "ch"

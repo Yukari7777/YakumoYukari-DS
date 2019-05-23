@@ -6,6 +6,36 @@ local IsRoGEnabled = DLC_ENABLED_FLAG % 2 == 1
 
 RECIPETABS.TOUHOU = {str = "TOUHOU", sort = 99, icon = "touhoutab.tex", icon_atlas = "images/inventoryimages/touhoutab.xml"}
 
+local SchemeIngredients = {
+	Vanilla = {
+		{{"rocks", 80}, {"log", 80}, {"rope", 20}},
+		{{"silk", 30}, {"pigskin", 20}, {"tentaclespots", 5}},
+		{{"monstermeat", 60}, {"nightmarefuel", 50}, {"livinglog", 20}},
+		{{"thulecite", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_laplace", 2}, {"spellcard_necro", 1}}
+	},
+
+	ROG = {
+		{{"rocks", 80}, {"log", 80}, {"rope", 20}},
+		{{"silk", 30}, {"pigskin", 20}, {"tentaclespots", 10}, {"beefalohat", 1}, {"eyebrellahat", 1}},
+		{{"monstermeat", 60}, {"nightmarefuel", 50}, {"livinglog", 20}, {"armordragonfly", 1}},
+		{{"thulecite", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_laplace", 2}, {"spellcard_necro", 1}}
+	},
+	
+	SW = {
+		{{"rocks", 60}, {"log", 60}, {"bamboo", 15}, {"vine", 15}},
+		{{"tar", 40}, {"silk", 40}, {"pigskin", 20}, {"limestone", 10}, {"oxhat", 1}, {"double_umbrellahat", 1}},
+		{{"monstermeat", 60}, {"fish", 60}, {"antivenom", 20}, {"quackenbeak", 1}},
+		{{"obsidian", 40}, {"dragoonheart", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_balance", 5}, {"spellcard_curse", 3}, {"spellcard_laplace", 3}, {"spellcard_necro", 1}}
+	},
+
+	PL = {
+		{{"rocks", 80}, {"log", 80}, {"rope", 20}},
+		{{"silk", 30}, {"pigskin", 20}, {"tentaclespots", 5}},
+		{{"monstermeat", 60}, {"nightmarefuel", 50}, {"livinglog", 20}},
+		{{"thulecite", 20}, {"spellcard_away", 10}, {"spellcard_matter", 5}, {"spellcard_laplace", 2}, {"spellcard_necro", 1}}
+	},
+}
+
 local function AddRecipe(name, ingredients, level, game_type, nounlock, recipetab)
 	local recipe
 
@@ -74,5 +104,6 @@ local function GetRecipes()
 end
 
 return {
-	RECIPES = GetRecipes()
+	RECIPES = GetRecipes(),
+	SCHEME = SchemeIngredients
 }

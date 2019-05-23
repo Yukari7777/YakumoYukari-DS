@@ -228,10 +228,10 @@ STRINGS.ACTIVATED = "activated"
 STRINGS.READY = "ready"
 STRINGS.SECONDS = "seconds"
 
-ACTIONS.UTELEPORT.str = "눈 箇"
-ACTIONS.SPAWNG.str = " 냥"
-ACTIONS.CASTTOHO.str = "嘉 랬"
-ACTIONS.CASTTOHOH.str = "嘉 랬"
+STRINGS.ACTION_YTELE = "눈 箇"
+STRINGS.ACTION_SPAWNG = " 냥"
+STRINGS.ACTION_CASTTOHO = "嘉 랬"
+STRINGS.ACTION_CASTTOHOH = "嘉 랬"
 
 STRINGS.CUSTOM_INTRO = {
 	"哦 哦 哦 哦 哦 哦 哦 哇 啊 啊 啊 啊 哦 哦!!",

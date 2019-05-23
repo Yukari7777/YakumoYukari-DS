@@ -48,7 +48,7 @@ local function onsave(inst, data)
 	data.sanity_level = inst.components.upgrader.sanity_level
 	data.power_level = inst.components.upgrader.power_level
 	data.skilltree = inst.components.upgrader.ability
-	data.hatlevel = inst.components.upgrader.hatlevel
+	data.HatLevel = inst.components.upgrader.HatLevel
 end
 
 local function onpreload(inst, data)
@@ -62,7 +62,7 @@ local function onpreload(inst, data)
 			inst.components.upgrader.hunger_level = data.hunger_level or 0
 			inst.components.upgrader.sanity_level = data.sanity_level or 0 
 			inst.components.upgrader.power_level = data.power_level or 0	
-			inst.components.upgrader.hatlevel = data.hatlevel or 1
+			inst.components.upgrader.HatLevel = data.HatLevel or 1
 			inst.components.upgrader.ability = data.skilltree or {}
 			inst.components.upgrader:ApplyStatus()
 
@@ -80,8 +80,24 @@ local function onpreload(inst, data)
 end
 
 local function CompatiblePatch(inst)
-	if _G.DLC_ENABLED_FLAG == 0 then
+	if _G.DLC_ENABLED_FLAG % 2 == 0 then
 		inst.components.health.SetAbsorptionAmount = inst.components.health.SetAbsorbAmount
+
+		function inst.components.temperature.GetInsulation(self)
+			local insulation = 0
+
+			insulation = insulation + self.inherentinsulation
+
+			if self.inst.components.inventory then
+				for k,v in pairs (self.inst.components.inventory.equipslots) do
+					if v.components.insulator then
+						insulation = insulation + v.components.insulator.insulation
+					end
+				end
+			end
+
+			return insulation, 0
+		end
 	end
 
 	inst.components.health.GetMaxWithPenalty = inst.components.health.GetPenaltyPercent
@@ -165,13 +181,13 @@ end
 
 local function HealthRegen(inst)
 	if inst.components.health ~= nil then
-		inst.components.health:DoDelta(inst.components.upgrader.regenamount)
+		inst.components.health:DoDelta(inst.components.upgrader.RegenAmount)
 	end
 end
 
 local function InvincibleRegen(inst)
 	if inst.components.health ~= nil and inst.IsInvincible then
-		inst.components.health:DoDelta(inst.components.upgrader.emergency, nil, nil, true)
+		inst.components.health:DoDelta(inst.components.upgrader.EmergencyRegenAmount, nil, nil, true)
 	end
 end
 
@@ -181,7 +197,7 @@ function OnHungerDelta(inst, data)
 	end
 
 	if inst.components.combat ~= nil then
-		local dmgmult = CONST.BASE_DAMAGE_MULT + math.max(data.newpercent - (1 - inst.components.upgrader.powerupvalue * CONST.POWERUP_MULT), 0)
+		local dmgmult = CONST.BASE_DAMAGE_MULT + math.max(data.newpercent - (1 - inst.components.upgrader.PowerUpValue * CONST.POWERUP_MULT), 0)
 		local scale = CONST.BASE_SCALE + (dmgmult - CONST.BASE_DAMAGE_MULT) * CONST.SCALING_MULT
 		inst.components.combat.damagemultiplier = dmgmult
 
@@ -239,7 +255,7 @@ local function Cooldown(inst)
 		and inst.components.health:IsHurt() 
 		and inst.components.hunger:GetPercent() > CONST.REGEN_HEALTH then
 			HealthRegen(inst)
-			inst.regen_cool = inst.components.upgrader.regencool
+			inst.regen_cool = inst.components.upgrader.RegenCool
 		end
 	end
 
@@ -255,7 +271,7 @@ local function Cooldown(inst)
 end
 
 local function PeriodicFunction(inst, data)
-	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.hatequipped and CONST.HAT_NIGHT_DRAIN_ABSORB_MULT or 0)
+	inst.components.sanity.night_drain_mult = 1 - inst.components.upgrader.ResistDark - (inst.components.upgrader.HatEquipped and CONST.HAT_NIGHT_DRAIN_ABSORB_MULT or 0)
 
 	if inst.components.health ~= nil then
 		if inst.IsInvincible then
@@ -357,7 +373,7 @@ end
 local function MakeGrazeable(inst)
 	local _ApplyDamage = inst.components.inventory.ApplyDamage
 	function inst.components.inventory.ApplyDamage(self, damage, attacker, weapon)
-		local totaldodge = (inst.components.upgrader.dodgechance + inst.components.upgrader.hatdodgechance) * (inst.sg:HasStateTag("moving") and 2 or 1) -- double when is moving
+		local totaldodge = (inst.components.upgrader.DodgeChance + inst.components.upgrader.HatDodgeChance) * (inst.sg:HasStateTag("moving") and 2 or 1) -- double when is moving
 		local candodge = inst.IsGrazing or math.random() < totaldodge and inst.components.freezeable == nil and not inst.components.health:IsInvincible() and (attacker ~= nil and attacker.components ~= nil and attacker.components.combat ~= nil)
 
 		if candodge then
@@ -375,7 +391,7 @@ local function MakeDapperOnEquipItem(inst)
 		for k, v in pairs(self.inst.components.inventory.equipslots) do
 			if v.components.equippable ~= nil then
 				local itemdap = v.components.equippable:GetDapperness(self.inst)
-				NumBeforeCalc = itemdap < 0 and NumBeforeCalc + itemdap * self.inst.components.upgrader.absorbsanity or NumBeforeCalc
+				NumBeforeCalc = itemdap < 0 and NumBeforeCalc + itemdap * self.inst.components.upgrader.SanityAbsorption or NumBeforeCalc
 			end
 		end
 		self.dapperness = NumBeforeCalc ~= 0 and -NumBeforeCalc or 0
@@ -383,15 +399,8 @@ local function MakeDapperOnEquipItem(inst)
 	end
 end
 
-local function AddCustomRecipes(inst)
-	local TOUHOU = require("recipes_yukari")
-	for k, v in pairs(TOUHOU.RECIPES) do
-		inst.components.builder:AddRecipe(v)
-	end
-end
-
 local function OnEquipHat(inst, data)
-	inst.components.upgrader.hatequipped = data.isequipped
+	inst.components.upgrader.HatEquipped = data.isequipped
 end
 
 local ShouldApplyStatus = {
@@ -416,7 +425,7 @@ local function OnEquip(inst, data)
 
 	if ShouldApply then
 		-- I don't like how Klei sets the fire_damage_scale.
-		inst.components.upgrader.fireimmuned = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY) ~= nil and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY).prefab == "armordragonfly"
+		inst.components.upgrader.FireImmuned = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY) ~= nil and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY).prefab == "armordragonfly"
 
 		if item.prefab == "yukarihat" then
 			inst.components.upgrader:ApplyHatAbility(item)
@@ -488,8 +497,8 @@ local fn = function(inst)
 	inst.infopage = 0
 	inst._spellsactive = {}
 	
+	require("recipes_yukari")
 	inst.soundsname = "willow"
-	
 	inst.components.sanity:SetMax(75)
 	inst.components.health:SetMaxHealth(80)
 	inst.components.hunger:SetMax(150)
@@ -501,18 +510,18 @@ local fn = function(inst)
 	inst.components.combat.areahitdamagepercent = CONST.AOE_DAMAGE_PERCENT
 	inst.components.builder.science_bonus = 1
 	inst.components.eater:SetOnEatFn(oneat)
-	AddCustomRecipes(inst)
+	
 	MakeSaneOnEatMeat(inst)
 	MakeGrazeable(inst)
 	MakeDapperOnEquipItem(inst)
-
+	
 	inst.OnSave = onsave
 	inst.OnPreLoad = onpreload
 	inst.GetYukariHat = GetEquippedYukariHat
 	inst.SetLight = SetLight
 	inst.SetSpellActive = SetSpellActive
 	inst.IsSpellActive = IsSpellActive
-	
+
 	inst:DoPeriodicTask(1, PeriodicFunction)
 	inst:ListenForEvent("healthdelta", OnHealthDelta )
 	inst:ListenForEvent("hungerdelta", OnHungerDelta )

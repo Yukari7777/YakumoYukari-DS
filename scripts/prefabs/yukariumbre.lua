@@ -79,6 +79,7 @@ local function Fold(inst)
 		inst.components.weapon:SetDamage(TUNING.YUKARI.UMBRE_DAMAGE)
 		inst.components.waterproofer:SetEffectiveness(0)
 		inst.components.equippable.walkspeedmult = TUNING.CANE_SPEED_MULT
+		inst.components.insulator.insulattion = 0
 		inst:RemoveTag("umbrella")
 		
 		inst.isunfolded = false
@@ -91,7 +92,8 @@ local function Fold(inst)
 		owner.DynamicShadow:SetSize(2.2, 1.4)
 		inst.components.weapon:SetDamage(TUNING.YUKARI.UMBRE_DAMAGE_SMALL)
 		inst.components.waterproofer:SetEffectiveness(1)
-		inst.components.equippable.walkspeedmult = 1
+		inst.components.equippable.walkspeedmult = _G.DLC_ENABLED_FLAG >= 2 and 0 or 1
+		inst.components.insulator.insulattion = TUNING.INSULATION_MED
 		inst:AddTag("umbrella")
 		
 		inst.isunfolded = true
@@ -137,7 +139,9 @@ local function fn()
 	end
 	
 	inst:AddComponent("insulator")
-    inst.components.insulator:SetSummer()
+	if _G.DLC_ENABLED_FLAG % 2 >= 1 then
+		inst.components.insulator:SetSummer()
+	end
 	
 	inst:AddComponent("reticule")
     inst.components.reticule.targetfn = blinkstaff_reticuletargetfn
