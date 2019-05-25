@@ -100,8 +100,8 @@ function Upgrader:AbilityManager()
 	local unlockpoint = STATUS.UNLOCKABILITY
 
 	for i = 1, self.skillsort do
-		for j = 1, self.maxlevel do
-			if not ability[i][j] and self[YUKARISTATINDEX[i].."_level"] >= unlockpoint[i] then
+		for j = 1, self.skillsort do
+			if not ability[i][j] and self[YUKARISTATINDEX[i].."_level"] >= unlockpoint[j] then
 				ability[i][j] = true
 			end
 		end
