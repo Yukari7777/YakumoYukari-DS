@@ -80,7 +80,13 @@ local function onpreload(inst, data)
 end
 
 local function CompatiblePatch(inst)
-	if _G.DLC_ENABLED_FLAG % 2 == 0 then
+	rawset(_G, "IsHamletEnabled", IsDLCEnabled(PORKLAND_DLC))
+	rawset(_G, "IsShipwreckedEnabled", SaveGameIndex:IsModeShipwrecked())
+	rawset(_G, "IsRoGEnabled", PrefabExists("acorn"))
+	rawset(_G, "DLC_ENABLED_FLAG", (_G.IsRoGEnabled and 1 or 0) + (_G.IsShipwreckedEnabled and 2 or 0) + (_G.IsHamletEnabled and 4 or 0))
+	rawset(_G, "IsVanilla", _G.DLC_ENABLED_FLAG == 0)
+
+	if not _G.IsRoGEnabled then
 		inst.components.health.SetAbsorptionAmount = inst.components.health.SetAbsorbAmount
 
 		function inst.components.temperature.GetInsulation(self)
@@ -110,6 +116,15 @@ local function CompatiblePatch(inst)
 
 		return _GetString(character, stringtype, ...)
 	end
+
+	inst:DoTaskInTime(0, function()
+		if not _G.IsShipwreckedEnabled then
+			local keys = {52, 53, 54} -- To remove annoying debugkeys in runtime(KEY_4, KEY_5, KEY_6)
+			for k, v in pairs(keys) do 
+				handlers[v] = {}
+			end
+		end
+	end)
 end	
 
 local function GetEquippedYukariHat(inst)
@@ -192,10 +207,6 @@ local function InvincibleRegen(inst)
 end
 
 function OnHungerDelta(inst, data)
-	if inst.yukari_classified ~= nil and inst.yukari_classified.inspellcurse:value() or inst.yukari_classified == nil then
-		return
-	end
-
 	if inst.components.combat ~= nil then
 		local dmgmult = CONST.BASE_DAMAGE_MULT + math.max(data.newpercent - (1 - inst.components.upgrader.PowerUpValue * CONST.POWERUP_MULT), 0)
 		local scale = CONST.BASE_SCALE + (dmgmult - CONST.BASE_DAMAGE_MULT) * CONST.SCALING_MULT
@@ -504,7 +515,7 @@ local fn = function(inst)
 	inst.components.hunger:SetMax(150)
 	inst.components.hunger.hungerrate = 1.5 * TUNING.WILSON_HUNGER_RATE
 	inst.components.combat.damagemultiplier = CONST.BASE_DAMAGE_MULT
-	if _G.DLC_ENABLED_FLAG % 4 >= 2 then
+	if _G.DLC_ENABLED_FLAG >= 2 then
 		inst.components.combat:AddDamageModifier("dreadful", CONST.BASE_DAMAGE_MULT - 1)
 	end
 	inst.components.combat.areahitdamagepercent = CONST.AOE_DAMAGE_PERCENT

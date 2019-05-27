@@ -1,8 +1,6 @@
 require "constants_yukari"
 
 local Recipes = {}
-local IsWorldDLCEnabled = DLC_ENABLED_FLAG % 4 >= 2 or DLC_ENABLED_FLAG % 8 >= 4
-local IsRoGEnabled = DLC_ENABLED_FLAG % 2 == 1
 
 RECIPETABS.TOUHOU = {str = "TOUHOU", sort = 99, icon = "touhoutab.tex", icon_atlas = "images/inventoryimages/touhoutab.xml"}
 
@@ -39,9 +37,9 @@ local SchemeIngredients = {
 local function AddRecipe(name, ingredients, level, game_type, nounlock, recipetab)
 	local recipe
 
-	if IsWorldDLCEnabled then
+	if _G.DLC_ENABLED_FLAG >= 2 then
 		recipe = Recipe(name, ingredients, recipetab or RECIPETABS.TOUHOU, level, game_type, nil, nil, nounlock)
-	elseif game_type == RECIPE_GAME_TYPE.COMMON or (game_type == RECIPE_GAME_TYPE.ROG and IsRoGEnabled) then
+	elseif game_type == RECIPE_GAME_TYPE.COMMON or (game_type == RECIPE_GAME_TYPE.ROG and _G.IsRoGEnabled) then
 		-- Vanilla's code doesn't support game_type argument.
 		recipe = Recipe(name, ingredients, recipetab or RECIPETABS.TOUHOU, level, nil, nil, nounlock)
 	end

@@ -1,5 +1,4 @@
 require "constants_yukari"
-local IsSWEnabled = _G.DLC_ENABLED_FLAG % 4 >= 2
 
 function MakeUltimate(id)
 	--if not IsSWEnabled and id >= 4 then return end
@@ -52,7 +51,7 @@ function MakeUltimate(id)
 		inst.entity:AddSoundEmitter()  
 		
 		MakeInventoryPhysics(inst)   
-		if IsSWEnabled then    
+		if IsDLCEnabled(CAPY_DLC) then    
 			MakeInventoryFloatable(inst, "idle", "idle")
 		end	
 		

@@ -318,7 +318,7 @@ AddPrefabPostInit("spider", SpiderRetargetFn)
 AddPrefabPostInit("spider_warrior", WarriorRetargetFn)
 AddPrefabPostInit("spiderqueen", SpiderqueenRetargetFn)
 
-if GLOBAL.DLC_ENABLED_FLAG % 4 >= 2 or GLOBAL.DLC_ENABLED_FLAG % 8 >= 4 then
+if IsDLCEnabled(2) or IsDLCEnabled(3) then
 	AddPrefabPostInit("mosquito_poison", MosquitoRetargetFn)
 end
 

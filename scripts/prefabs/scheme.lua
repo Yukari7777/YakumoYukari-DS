@@ -169,9 +169,9 @@ local function fn()
     inst.MiniMapEntity:SetIcon("scheme.tex")
 
 	MakeInventoryPhysics(inst)
-	if _G.DLC_ENABLED_FLAG % 4 >= 2 then    
+	if IsDLCEnabled(CAPY_DLC) then   
 		MakeInventoryFloatable(inst, "idle", "idle")
-	end	
+	end
 
 	inst.AnimState:SetBank("spell_none")    
 	inst.AnimState:SetBuild("spell_none")    

@@ -206,10 +206,10 @@ function MakePanel(id)
 		inst.entity:AddTransform()    
 		inst.entity:AddAnimState()    	
 		
-		MakeInventoryPhysics(inst)   
-		if _G.DLC_ENABLED_FLAG % 4 >= 2 then    
+		MakeInventoryPhysics(inst)    
+		if IsDLCEnabled(CAPY_DLC) then   
 			MakeInventoryFloatable(inst, "idle", "idle")
-		end	
+		end
 		
 		inst.AnimState:SetBank(fname)    
 		inst.AnimState:SetBuild(fname)    

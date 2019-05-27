@@ -27,7 +27,7 @@ local function GetPercentTweak(self)
 end
 
 local function SetInsulatorType(inst)
-	if _G.DLC_ENABLED_FLAG % 2 == 0 then return end
+	if not _G.IsRoGEnabled then return end
 
 	if GetSeasonManager():IsSummer() then
 		inst.components.insulator:SetSummer()
@@ -112,9 +112,7 @@ local function fn()
     inst.MiniMapEntity:SetIcon("yukarihat.tex")
 
 	MakeInventoryPhysics(inst)
-	if _G.DLC_ENABLED_FLAG % 4 >= 2 then
-		MakeInventoryFloatable(inst, "idle", "idle")
-	end
+	MakeInventoryFloatable(inst, "idle", "idle")
 
 	inst.AnimState:SetBank("yukarihat")
 	inst.AnimState:SetBuild("yukarihat")
@@ -151,7 +149,7 @@ local function fn()
 	inst.SetPoisonBlocker = SetPoisonBlocker
 	inst.SetInsulator = SetInsulator
 
-	if _G.DLC_ENABLED_FLAG % 2 >= 1 then
+	if _G.IsRoGEnabled then
 		inst:DoTaskInTime(0, function()
 			inst:ListenForEvent("seasonChange", SetInsulatorType(inst), GetWorld() )
 			SetInsulatorType(inst)

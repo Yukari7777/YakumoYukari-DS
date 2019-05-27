@@ -115,9 +115,7 @@ local function fn()
 	inst.MiniMapEntity:SetIcon("yukariumbre.tex")
 
 	MakeInventoryPhysics(inst)     
-	if _G.DLC_ENABLED_FLAG % 4 >= 2 then
-		MakeInventoryFloatable(inst, "idle", "idle")	
-	end
+	MakeInventoryFloatable(inst, "idle", "idle")	
 	
 	inst.AnimState:SetBank("yukariumbre")    
 	inst.AnimState:SetBuild("yukariumbre")    
@@ -139,7 +137,7 @@ local function fn()
 	end
 	
 	inst:AddComponent("insulator")
-	if _G.DLC_ENABLED_FLAG % 2 >= 1 then
+	if _G.IsRoGEnabled then
 		inst.components.insulator:SetSummer()
 	end
 	

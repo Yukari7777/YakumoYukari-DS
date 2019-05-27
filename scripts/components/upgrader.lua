@@ -370,7 +370,7 @@ function Upgrader:UpdateSkillStatus()
 	end	
 
 	local winter, summer = self.inst.components.temperature:GetInsulation()
-	if winter ~= 0 and summer ~= 0 then
+	if winter ~= 0 or summer ~= 0 then
 		skill.insulation =  "Total insulation : "..summer.."(summer), "..winter.."(winter)"
 	end
 

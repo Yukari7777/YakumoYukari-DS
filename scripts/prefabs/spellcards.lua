@@ -140,7 +140,7 @@ local function curse(inst)
 		owner.components.combat:SetAttackPeriod(0)
 		owner.components.locomotor.walkspeed = 4 + mod
 		owner.components.locomotor.runspeed = 6 + mod
-		if _G.DLC_ENABLED_FLAG % 4 >= 2 or _G.DLC_ENABLED_FLAG % 8 >= 4 then
+		if _G.DLC_ENABLED_FLAG >= 2 then
 			owner.components.locomotor:RemoveSpeedModifier_Additive("dreadful")
 		end
 		owner.components.upgrader:ApplyScale("dreadful", 1 + mod * 0.083)
@@ -719,10 +719,10 @@ local function MakeCard(name)
 		inst.entity:AddTransform()    
 		inst.entity:AddAnimState()   
 		
-		MakeInventoryPhysics(inst)  
-		if _G.DLC_ENABLED_FLAG % 4 >= 2 then    
+		MakeInventoryPhysics(inst)   
+		if IsDLCEnabled(CAPY_DLC) then   
 			MakeInventoryFloatable(inst, "idle", "idle")
-		end	
+		end
 		
 		inst.AnimState:SetBank("spell_none")    
 		inst.AnimState:SetBuild("spell_none")    

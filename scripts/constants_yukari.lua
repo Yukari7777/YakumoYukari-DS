@@ -1,8 +1,6 @@
 -- This is not for the local variable CONST I use. It is written in tunings_yukari.
 
 YAKUMOYUKARI_MODNAME = KnownModIndex:GetModActualName("Yakumo Yukari")
-DLC_ENABLED_FLAG = 0 + (IsDLCEnabled(REIGN_OF_GIANTS) and 1 or 0) + (IsDLCEnabled(CAPY_DLC) and 2 or 0) + (IsDLCEnabled(PORKLAND_DLC) and 4 or 0)
--- ROG = 1, SW = 2, HL = 4 
 
 RATE_SCALE = {
     NEUTRAL = 0,
