@@ -118,10 +118,10 @@ local function CompatiblePatch(inst)
 	end
 
 	inst:DoTaskInTime(0, function()
-		if not _G.IsShipwreckedEnabled then
-			local keys = {52, 53, 54} -- To remove annoying debugkeys in runtime(KEY_4, KEY_5, KEY_6)
+		if not _G.IsShipwreckedEnabled and handlers then
+			local keys = {"KEY_4", "KEY_5", "KEY_6"}
 			for k, v in pairs(keys) do 
-				handlers[v] = {}
+				handlers[_G[v]] = {}
 			end
 		end
 	end)
