@@ -151,7 +151,7 @@ end
 
 local function BunnymanNormalRetargetFn(inst)
 	local function is_meat(item)
-		return item.components.edible and item.components.edible.foodtype == GLOBAL.FOODTYPE.MEAT
+		return item.components.edible and item.components.edible.foodtype == "MEAT" 
 	end
 	
 	local function NormalRetargetFn(inst)
