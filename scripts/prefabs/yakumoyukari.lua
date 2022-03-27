@@ -1,3 +1,4 @@
+require "debugkeys"
 local MakePlayerCharacter = require "prefabs/player_common"
 local STATUS = TUNING.YUKARI_STATUS
 local CONST = TUNING.YUKARI

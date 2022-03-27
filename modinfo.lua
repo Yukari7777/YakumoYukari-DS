@@ -1,7 +1,7 @@
 name = "Yakumo Yukari"
 description = "Yakumo Yukari comes from unknown world to manipulate Don't Starve world!"
 author = "Yakumo Yukari"
-version = "0.11.15"
+version = "0.11.16"
 forumthread = ""
 api_version = 6
 
@@ -10,6 +10,7 @@ dont_starve_compatible = true
 reign_of_giants_compatible = true
 shipwrecked_compatible = true
 porkland_compatible = true
+hamlet_compatible = true
 dst_compatible = false
 
 icon_atlas = "modicon.xml"
