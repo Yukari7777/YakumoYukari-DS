@@ -19,7 +19,7 @@ AddStategraphState("wilson", domediumaction)
 
 local function SetFastPicker(inst, action)
 	if action.target.components.pickable then
-        if action.target.components.pickable.quickpick or inst.FastActionLevel >= 1 then
+        if action.target.components.pickable.quickpick or inst.FastActionLevel ~= nil and inst.FastActionLevel >= 1 then
             return "doshortaction"
         else
             return "dolongaction"
@@ -30,7 +30,7 @@ end
 local function SetFastBuilder(inst, action)
 	if action.recipe and action.recipe == "livinglog" and action.doer and action.doer.prefab == "wormwood" then
         return "form_log"
-	elseif inst.FastActionLevel >= 2 then
+	elseif inst.FastActionLevel ~= nil and inst.FastActionLevel >= 2 then
 		return "domediumaction"
     else            
         return "dolongaction"
@@ -38,11 +38,11 @@ local function SetFastBuilder(inst, action)
 end
 
 local function SetFastResetter(inst, action)
-	return inst.FastActionLevel >= 3 and "doshortaction" or "dolongaction"
+	return inst.FastActionLevel ~= nil and inst.FastActionLevel >= 3 and "doshortaction" or "dolongaction"
 end
 
 local function SetFastHarvester(inst, action) 
-	return inst.FastActionLevel >= 4 and "doshortaction" or "dolongaction"
+	return inst.FastActionLevel ~= nil and inst.FastActionLevel >= 4 and "doshortaction" or "dolongaction"
 end
 
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.PICK, SetFastPicker))
