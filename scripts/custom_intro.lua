@@ -4,7 +4,7 @@ GLOBAL.require "constants_yukari"
 
 local function YukariIntro(inst)
 	local function TakeOff(inst)
-		local bird = SpawnPrefab("wallyintro_bird")
+		local bird = GLOBAL.SpawnPrefab("wallyintro_bird")
 		bird.Transform:SetPosition(inst:GetPosition():Get())
 		bird.Transform:SetRotation(inst.Transform:GetRotation())
 		bird.AnimState:PlayAnimation("takeoff_diagonal_pre")
@@ -32,7 +32,7 @@ local function YukariIntro(inst)
 
 		bird:ListenForEvent("animover", bird.animoverfn)
 		
-		local mast = SpawnPrefab("wallyintro_shipmast")
+		local mast = GLOBAL.SpawnPrefab("wallyintro_shipmast")
 		mast.Transform:SetPosition(inst:GetPosition():Get())
 		mast.Transform:SetRotation(inst.Transform:GetRotation())
 		
